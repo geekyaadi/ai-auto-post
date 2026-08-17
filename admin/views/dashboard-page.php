@@ -21,14 +21,19 @@ $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across mod
                 <img src="<?php echo esc_url( AAP_PLUGIN_URL . 'admin/ai-auto-post-by-aadi.png' ); ?>" alt="Logo" style="height:32px; width:auto; vertical-align:middle; margin-right:10px; border-radius:4px;">
                 <span class="aap-logo-badge">Control Center</span>
             </div>
-            <div class="aap-header-nav">
+                        <div class="aap-header-nav">
                 <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link active">Dashboard</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link">Scheduler</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Manager</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Manager</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Bulk Translator</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Google Indexing</a>
-<a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Article Rewriter</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Article Rewriter</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Speed Optimizer</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
             </div>
         </div>
@@ -75,13 +80,17 @@ $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across mod
                         <h2 class="aap-panel-title">🔑 API Key Health Dashboard</h2>
                         <div class="aap-panel-actions">
                             <button type="button" id="aap-btn-ping-all" class="aap-btn aap-btn-secondary aap-btn-sm">🏓 Ping All</button>
-                            <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-btn aap-btn-ghost aap-btn-sm">⚙️ Manage</a>
+                                            <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
+                                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-btn aap-btn-ghost aap-btn-sm">⚙️ Manage</a>
                         </div>
                     </div>
 
                     <?php if (empty($all_keys)): ?>
                     <div class="aap-empty-state">
-                        No API keys configured. <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">Configure keys first →</a>
+                        No API keys configured.                 <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
+                                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">Configure keys first →</a>
                     </div>
                     <?php else: ?>
                     <table class="aap-table" id="aap-keys-table">
