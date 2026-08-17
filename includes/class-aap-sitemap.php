@@ -1,7 +1,12 @@
 <?php
 /**
  * XML Sitemap Manager & Controller Engine for AI Auto Post
- * Supports: Homepage (Site URL), Posts, Pages, Categories, Tags with individual Priority & Change Frequency controls.
+ * Supports RankMath/Yoast Style Modular XML Sitemap Index Architecture:
+ * - sitemap.xml / sitemap_index.xml (Master Index)
+ * - post-sitemap.xml (Posts)
+ * - page-sitemap.xml (Pages)
+ * - category-sitemap.xml (Categories)
+ * - tag-sitemap.xml (Tags)
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -21,10 +26,13 @@ class AAP_Sitemap {
         $slug_clean = trim( $slug, '/' );
         $base_name  = preg_replace( '/\.xml$/i', '', $slug_clean );
 
-        add_rewrite_rule( '^' . preg_quote( $slug_clean, '#' ) . '$', 'index.php?aap_sitemap=1', 'top' );
-        add_rewrite_rule( '^' . preg_quote( $base_name, '#' ) . '\.xml$', 'index.php?aap_sitemap=1', 'top' );
-        add_rewrite_rule( '^sitemap\.xml$', 'index.php?aap_sitemap=1', 'top' );
-        add_rewrite_rule( '^sitemap-xml\.xml$', 'index.php?aap_sitemap=1', 'top' );
+        add_rewrite_rule( '^' . preg_quote( $slug_clean, '#' ) . '$', 'index.php?aap_sitemap=index', 'top' );
+        add_rewrite_rule( '^sitemap_index\.xml$', 'index.php?aap_sitemap=index', 'top' );
+        add_rewrite_rule( '^sitemap\.xml$', 'index.php?aap_sitemap=index', 'top' );
+        add_rewrite_rule( '^post-sitemap\.xml$', 'index.php?aap_sitemap=posts', 'top' );
+        add_rewrite_rule( '^page-sitemap\.xml$', 'index.php?aap_sitemap=pages', 'top' );
+        add_rewrite_rule( '^category-sitemap\.xml$', 'index.php?aap_sitemap=categories', 'top' );
+        add_rewrite_rule( '^tag-sitemap\.xml$', 'index.php?aap_sitemap=tags', 'top' );
     }
 
     public static function add_query_vars( $vars ) {
@@ -37,39 +45,55 @@ class AAP_Sitemap {
             self::render_sitemap();
         }
 
-        $uri  = isset( $_SERVER['REQUEST_URI'] ) ? strtok( $_SERVER['REQUEST_URI'], '?' ) : '';
+        $uri = isset( $_SERVER['REQUEST_URI'] ) ? strtok( $_SERVER['REQUEST_URI'], '?' ) : '';
+        if ( empty( $uri ) ) return;
+
+        $path_clean = trim( $uri, '/' );
         $slug = get_option( 'aap_sitemap_slug', 'sitemap.xml' );
         $slug_clean = trim( $slug, '/' );
 
-        if ( ! empty( $uri ) ) {
-            $path_clean = trim( $uri, '/' );
-            if ( $path_clean === $slug_clean || $path_clean === 'sitemap.xml' || $path_clean === 'sitemap-xml.xml' ) {
-                self::render_sitemap();
-            }
+        $valid_paths = [
+            $slug_clean,
+            'sitemap.xml',
+            'sitemap_index.xml',
+            'post-sitemap.xml',
+            'page-sitemap.xml',
+            'category-sitemap.xml',
+            'tag-sitemap.xml',
+        ];
+
+        if ( in_array( $path_clean, $valid_paths, true ) ) {
+            self::render_sitemap();
         }
     }
 
     public static function render_sitemap() {
-        // Prevent duplicate execution if called from both parse_request & template_redirect
         static $rendered = false;
         if ( $rendered ) return;
 
-        $uri  = isset( $_SERVER['REQUEST_URI'] ) ? strtok( $_SERVER['REQUEST_URI'], '?' ) : '';
-        $slug = get_option( 'aap_sitemap_slug', 'sitemap.xml' );
-        $slug_clean = trim( $slug, '/' );
+        $uri        = isset( $_SERVER['REQUEST_URI'] ) ? strtok( $_SERVER['REQUEST_URI'], '?' ) : '';
         $path_clean = trim( $uri, '/' );
+        $slug       = get_option( 'aap_sitemap_slug', 'sitemap.xml' );
+        $slug_clean = trim( $slug, '/' );
 
-        $is_sitemap_req = ( get_query_var( 'aap_sitemap' ) === '1' ) ||
-                          isset( $_GET['aap_sitemap'] ) ||
-                          ( $path_clean === $slug_clean ) ||
-                          ( $path_clean === 'sitemap.xml' ) ||
-                          ( $path_clean === 'sitemap-xml.xml' );
+        $type = get_query_var( 'aap_sitemap' );
+        if ( empty( $type ) && isset( $_GET['aap_sitemap'] ) ) {
+            $type = sanitize_text_field( $_GET['aap_sitemap'] );
+        }
 
-        if ( ! $is_sitemap_req ) return;
+        if ( empty( $type ) ) {
+            if ( $path_clean === 'post-sitemap.xml' ) $type = 'posts';
+            elseif ( $path_clean === 'page-sitemap.xml' ) $type = 'pages';
+            elseif ( $path_clean === 'category-sitemap.xml' ) $type = 'categories';
+            elseif ( $path_clean === 'tag-sitemap.xml' ) $type = 'tags';
+            elseif ( $path_clean === 'sitemap_index.xml' || $path_clean === 'sitemap.xml' || $path_clean === $slug_clean ) $type = 'index';
+        }
+
+        if ( empty( $type ) ) return;
 
         $rendered = true;
 
-        // Clean all previous output buffers to avoid blank XML or "text declaration not at start of entity" errors
+        // Clear output buffer
         while ( ob_get_level() > 0 ) {
             @ob_end_clean();
         }
@@ -78,7 +102,174 @@ class AAP_Sitemap {
         header( 'Content-Type: text/xml; charset=utf-8' );
         header( 'X-Robots-Tag: noindex, follow', true );
 
-        // Options & Priorities
+        $mode = get_option( 'aap_sitemap_mode', 'index' ); // 'index' or 'single'
+
+        if ( $type === 'index' && $mode === 'index' ) {
+            self::render_index_sitemap();
+        } elseif ( $type === 'posts' ) {
+            self::render_posts_sitemap();
+        } elseif ( $type === 'pages' ) {
+            self::render_pages_sitemap();
+        } elseif ( $type === 'categories' ) {
+            self::render_categories_sitemap();
+        } elseif ( $type === 'tags' ) {
+            self::render_tags_sitemap();
+        } else {
+            self::render_combined_sitemap();
+        }
+
+        exit;
+    }
+
+    private static function render_index_sitemap() {
+        $lastmod = date( 'c', strtotime( get_lastpostmodified( 'GMT' ) ?: current_time( 'mysql' ) ) );
+
+        echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        echo '<?xml-stylesheet type="text/xsl" href="' . esc_url( AAP_PLUGIN_URL . 'admin/sitemap-style.xsl' ) . '"?>' . "\n";
+        echo '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+
+        if ( get_option( 'aap_sitemap_enable_posts', '1' ) === '1' ) {
+            echo '  <sitemap>' . "\n";
+            echo '    <loc>' . esc_url( home_url( '/post-sitemap.xml' ) ) . '</loc>' . "\n";
+            echo '    <lastmod>' . esc_html( $lastmod ) . '</lastmod>' . "\n";
+            echo '  </sitemap>' . "\n";
+        }
+
+        if ( get_option( 'aap_sitemap_enable_pages', '1' ) === '1' ) {
+            echo '  <sitemap>' . "\n";
+            echo '    <loc>' . esc_url( home_url( '/page-sitemap.xml' ) ) . '</loc>' . "\n";
+            echo '    <lastmod>' . esc_html( $lastmod ) . '</lastmod>' . "\n";
+            echo '  </sitemap>' . "\n";
+        }
+
+        if ( get_option( 'aap_sitemap_enable_cats', '1' ) === '1' ) {
+            echo '  <sitemap>' . "\n";
+            echo '    <loc>' . esc_url( home_url( '/category-sitemap.xml' ) ) . '</loc>' . "\n";
+            echo '    <lastmod>' . esc_html( $lastmod ) . '</lastmod>' . "\n";
+            echo '  </sitemap>' . "\n";
+        }
+
+        if ( get_option( 'aap_sitemap_enable_tags', '1' ) === '1' ) {
+            echo '  <sitemap>' . "\n";
+            echo '    <loc>' . esc_url( home_url( '/tag-sitemap.xml' ) ) . '</loc>' . "\n";
+            echo '    <lastmod>' . esc_html( $lastmod ) . '</lastmod>' . "\n";
+            echo '  </sitemap>' . "\n";
+        }
+
+        echo '</sitemapindex>';
+    }
+
+    private static function render_posts_sitemap() {
+        $post_priority = get_option( 'aap_sitemap_priority_post', '0.8' );
+        $post_freq     = get_option( 'aap_sitemap_changefreq_post', 'daily' );
+        $include_imgs  = get_option( 'aap_sitemap_include_images', '1' ) === '1';
+
+        echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        echo '<?xml-stylesheet type="text/xsl" href="' . esc_url( AAP_PLUGIN_URL . 'admin/sitemap-style.xsl' ) . '"?>' . "\n";
+        echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"';
+        if ( $include_imgs ) echo ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"';
+        echo '>' . "\n";
+
+        $posts = get_posts( [
+            'numberposts' => 1000,
+            'post_type'   => 'post',
+            'post_status' => 'publish',
+            'orderby'     => 'date',
+            'order'       => 'DESC',
+        ] );
+
+        foreach ( $posts as $p ) {
+            echo '  <url>' . "\n";
+            echo '    <loc>' . esc_xml( get_permalink( $p->ID ) ) . '</loc>' . "\n";
+            echo '    <lastmod>' . date( 'c', strtotime( $p->post_modified_gmt ) ) . '</lastmod>' . "\n";
+            echo '    <changefreq>' . esc_xml( $post_freq ) . '</changefreq>' . "\n";
+            echo '    <priority>' . esc_xml( $post_priority ) . '</priority>' . "\n";
+
+            if ( $include_imgs && has_post_thumbnail( $p->ID ) ) {
+                $thumb_url = wp_get_attachment_image_url( get_post_thumbnail_id( $p->ID ), 'full' );
+                if ( $thumb_url ) {
+                    echo '    <image:image>' . "\n";
+                    echo '      <image:loc>' . esc_xml( $thumb_url ) . '</image:loc>' . "\n";
+                    echo '      <image:title>' . esc_xml( $p->post_title ) . '</image:title>' . "\n";
+                    echo '    </image:image>' . "\n";
+                }
+            }
+
+            echo '  </url>' . "\n";
+        }
+
+        echo '</urlset>';
+    }
+
+    private static function render_pages_sitemap() {
+        $page_priority = get_option( 'aap_sitemap_priority_page', '0.6' );
+        $page_freq     = get_option( 'aap_sitemap_changefreq_page', 'weekly' );
+
+        echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        echo '<?xml-stylesheet type="text/xsl" href="' . esc_url( AAP_PLUGIN_URL . 'admin/sitemap-style.xsl' ) . '"?>' . "\n";
+        echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+
+        $pages = get_posts( [
+            'numberposts' => 500,
+            'post_type'   => 'page',
+            'post_status' => 'publish',
+            'orderby'     => 'date',
+            'order'       => 'DESC',
+        ] );
+
+        foreach ( $pages as $page ) {
+            echo '  <url>' . "\n";
+            echo '    <loc>' . esc_xml( get_permalink( $page->ID ) ) . '</loc>' . "\n";
+            echo '    <lastmod>' . date( 'c', strtotime( $page->post_modified_gmt ) ) . '</lastmod>' . "\n";
+            echo '    <changefreq>' . esc_xml( $page_freq ) . '</changefreq>' . "\n";
+            echo '    <priority>' . esc_xml( $page_priority ) . '</priority>' . "\n";
+            echo '  </url>' . "\n";
+        }
+
+        echo '</urlset>';
+    }
+
+    private static function render_categories_sitemap() {
+        $cat_priority = get_option( 'aap_sitemap_priority_cat', '0.5' );
+        $cat_freq     = get_option( 'aap_sitemap_changefreq_cat', 'weekly' );
+
+        echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        echo '<?xml-stylesheet type="text/xsl" href="' . esc_url( AAP_PLUGIN_URL . 'admin/sitemap-style.xsl' ) . '"?>' . "\n";
+        echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+
+        $categories = get_categories( [ 'hide_empty' => true ] );
+        foreach ( $categories as $cat ) {
+            echo '  <url>' . "\n";
+            echo '    <loc>' . esc_xml( get_category_link( $cat->term_id ) ) . '</loc>' . "\n";
+            echo '    <changefreq>' . esc_xml( $cat_freq ) . '</changefreq>' . "\n";
+            echo '    <priority>' . esc_xml( $cat_priority ) . '</priority>' . "\n";
+            echo '  </url>' . "\n";
+        }
+
+        echo '</urlset>';
+    }
+
+    private static function render_tags_sitemap() {
+        $tag_priority = get_option( 'aap_sitemap_priority_tag', '0.4' );
+        $tag_freq     = get_option( 'aap_sitemap_changefreq_tag', 'monthly' );
+
+        echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        echo '<?xml-stylesheet type="text/xsl" href="' . esc_url( AAP_PLUGIN_URL . 'admin/sitemap-style.xsl' ) . '"?>' . "\n";
+        echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+
+        $tags = get_tags( [ 'hide_empty' => true ] );
+        foreach ( $tags as $tag ) {
+            echo '  <url>' . "\n";
+            echo '    <loc>' . esc_xml( get_tag_link( $tag->term_id ) ) . '</loc>' . "\n";
+            echo '    <changefreq>' . esc_xml( $tag_freq ) . '</changefreq>' . "\n";
+            echo '    <priority>' . esc_xml( $tag_priority ) . '</priority>' . "\n";
+            echo '  </url>' . "\n";
+        }
+
+        echo '</urlset>';
+    }
+
+    private static function render_combined_sitemap() {
         $enable_home   = get_option( 'aap_sitemap_enable_home', '1' ) === '1';
         $home_priority = get_option( 'aap_sitemap_priority_home', '1.0' );
         $home_freq     = get_option( 'aap_sitemap_changefreq_home', 'daily' );
@@ -101,119 +292,77 @@ class AAP_Sitemap {
 
         $include_imgs  = get_option( 'aap_sitemap_include_images', '1' ) === '1';
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<?xml-stylesheet type="text/xsl" href="' . esc_url( AAP_PLUGIN_URL . 'admin/sitemap-style.xsl' ) . '"?>' . "\n";
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"';
-        if ( $include_imgs ) {
-            $xml .= ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"';
-        }
-        $xml .= '>' . "\n";
+        echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        echo '<?xml-stylesheet type="text/xsl" href="' . esc_url( AAP_PLUGIN_URL . 'admin/sitemap-style.xsl' ) . '"?>' . "\n";
+        echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"';
+        if ( $include_imgs ) echo ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"';
+        echo '>' . "\n";
 
-        // 1. Homepage Entry (Site URL)
         if ( $enable_home ) {
-            $xml .= '  <url>' . "\n";
-            $xml .= '    <loc>' . esc_xml( home_url( '/' ) ) . '</loc>' . "\n";
-            $xml .= '    <lastmod>' . date( 'c', strtotime( get_lastpostmodified( 'GMT' ) ?: current_time('mysql') ) ) . '</lastmod>' . "\n";
-            $xml .= '    <changefreq>' . esc_xml( $home_freq ) . '</changefreq>' . "\n";
-            $xml .= '    <priority>' . esc_xml( $home_priority ) . '</priority>' . "\n";
-            $xml .= '  </url>' . "\n";
+            echo '  <url>' . "\n";
+            echo '    <loc>' . esc_xml( home_url( '/' ) ) . '</loc>' . "\n";
+            echo '    <lastmod>' . date( 'c', strtotime( get_lastpostmodified( 'GMT' ) ?: current_time('mysql') ) ) . '</lastmod>' . "\n";
+            echo '    <changefreq>' . esc_xml( $home_freq ) . '</changefreq>' . "\n";
+            echo '    <priority>' . esc_xml( $home_priority ) . '</priority>' . "\n";
+            echo '  </url>' . "\n";
         }
 
-        // 2. Posts Entries
         if ( $enable_posts ) {
-            $posts = get_posts( [
-                'numberposts' => 500,
-                'post_type'   => 'post',
-                'post_status' => 'publish',
-                'orderby'     => 'date',
-                'order'       => 'DESC',
-            ] );
-
+            $posts = get_posts( [ 'numberposts' => 500, 'post_type' => 'post', 'post_status' => 'publish' ] );
             foreach ( $posts as $p ) {
-                $permalink = get_permalink( $p->ID );
-                $lastmod   = date( 'c', strtotime( $p->post_modified_gmt ) );
-
-                $xml .= '  <url>' . "\n";
-                $xml .= '    <loc>' . esc_xml( $permalink ) . '</loc>' . "\n";
-                $xml .= '    <lastmod>' . esc_xml( $lastmod ) . '</lastmod>' . "\n";
-                $xml .= '    <changefreq>' . esc_xml( $post_freq ) . '</changefreq>' . "\n";
-                $xml .= '    <priority>' . esc_xml( $post_priority ) . '</priority>' . "\n";
-
-                if ( $include_imgs && has_post_thumbnail( $p->ID ) ) {
-                    $thumb_url = wp_get_attachment_image_url( get_post_thumbnail_id( $p->ID ), 'full' );
-                    if ( $thumb_url ) {
-                        $xml .= '    <image:image>' . "\n";
-                        $xml .= '      <image:loc>' . esc_xml( $thumb_url ) . '</image:loc>' . "\n";
-                        $xml .= '      <image:title>' . esc_xml( $p->post_title ) . '</image:title>' . "\n";
-                        $xml .= '    </image:image>' . "\n";
-                    }
-                }
-
-                $xml .= '  </url>' . "\n";
+                echo '  <url>' . "\n";
+                echo '    <loc>' . esc_xml( get_permalink( $p->ID ) ) . '</loc>' . "\n";
+                echo '    <lastmod>' . date( 'c', strtotime( $p->post_modified_gmt ) ) . '</lastmod>' . "\n";
+                echo '    <changefreq>' . esc_xml( $post_freq ) . '</changefreq>' . "\n";
+                echo '    <priority>' . esc_xml( $post_priority ) . '</priority>' . "\n";
+                echo '  </url>' . "\n";
             }
         }
 
-        // 3. Pages Entries
         if ( $enable_pages ) {
-            $pages = get_posts( [
-                'numberposts' => 200,
-                'post_type'   => 'page',
-                'post_status' => 'publish',
-                'orderby'     => 'date',
-                'order'       => 'DESC',
-            ] );
-
+            $pages = get_posts( [ 'numberposts' => 200, 'post_type' => 'page', 'post_status' => 'publish' ] );
             foreach ( $pages as $page ) {
-                $xml .= '  <url>' . "\n";
-                $xml .= '    <loc>' . esc_xml( get_permalink( $page->ID ) ) . '</loc>' . "\n";
-                $xml .= '    <lastmod>' . date( 'c', strtotime( $page->post_modified_gmt ) ) . '</lastmod>' . "\n";
-                $xml .= '    <changefreq>' . esc_xml( $page_freq ) . '</changefreq>' . "\n";
-                $xml .= '    <priority>' . esc_xml( $page_priority ) . '</priority>' . "\n";
-                $xml .= '  </url>' . "\n";
+                echo '  <url>' . "\n";
+                echo '    <loc>' . esc_xml( get_permalink( $page->ID ) ) . '</loc>' . "\n";
+                echo '    <lastmod>' . date( 'c', strtotime( $page->post_modified_gmt ) ) . '</lastmod>' . "\n";
+                echo '    <changefreq>' . esc_xml( $page_freq ) . '</changefreq>' . "\n";
+                echo '    <priority>' . esc_xml( $page_priority ) . '</priority>' . "\n";
+                echo '  </url>' . "\n";
             }
         }
 
-        // 4. Categories Entries
         if ( $enable_cats ) {
             $categories = get_categories( [ 'hide_empty' => true ] );
             foreach ( $categories as $cat ) {
-                $xml .= '  <url>' . "\n";
-                $xml .= '    <loc>' . esc_xml( get_category_link( $cat->term_id ) ) . '</loc>' . "\n";
-                $xml .= '    <changefreq>' . esc_xml( $cat_freq ) . '</changefreq>' . "\n";
-                $xml .= '    <priority>' . esc_xml( $cat_priority ) . '</priority>' . "\n";
-                $xml .= '  </url>' . "\n";
+                echo '  <url>' . "\n";
+                echo '    <loc>' . esc_xml( get_category_link( $cat->term_id ) ) . '</loc>' . "\n";
+                echo '    <changefreq>' . esc_xml( $cat_freq ) . '</changefreq>' . "\n";
+                echo '    <priority>' . esc_xml( $cat_priority ) . '</priority>' . "\n";
+                echo '  </url>' . "\n";
             }
         }
 
-        // 5. Tags Entries
         if ( $enable_tags ) {
             $tags = get_tags( [ 'hide_empty' => true ] );
             foreach ( $tags as $tag ) {
-                $xml .= '  <url>' . "\n";
-                $xml .= '    <loc>' . esc_xml( get_tag_link( $tag->term_id ) ) . '</loc>' . "\n";
-                $xml .= '    <changefreq>' . esc_xml( $tag_freq ) . '</changefreq>' . "\n";
-                $xml .= '    <priority>' . esc_xml( $tag_priority ) . '</priority>' . "\n";
-                $xml .= '  </url>' . "\n";
+                echo '  <url>' . "\n";
+                echo '    <loc>' . esc_xml( get_tag_link( $tag->term_id ) ) . '</loc>' . "\n";
+                echo '    <changefreq>' . esc_xml( $tag_freq ) . '</changefreq>' . "\n";
+                echo '    <priority>' . esc_xml( $tag_priority ) . '</priority>' . "\n";
+                echo '  </url>' . "\n";
             }
         }
 
-        $xml .= '</urlset>';
-
-        echo $xml;
-        exit;
+        echo '</urlset>';
     }
 
     public static function ping_search_engines( $post_id ) {
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
-
         $sitemap_url = home_url( '/' . get_option( 'aap_sitemap_slug', 'sitemap.xml' ) );
 
-        // Ping Google
         if ( get_option( 'aap_sitemap_auto_ping_google', '1' ) === '1' ) {
             wp_remote_get( 'https://www.google.com/ping?sitemap=' . urlencode( $sitemap_url ), [ 'timeout' => 5 ] );
         }
-
-        // Ping Bing
         if ( get_option( 'aap_sitemap_auto_ping_bing', '1' ) === '1' ) {
             wp_remote_get( 'https://www.bing.com/ping?sitemap=' . urlencode( $sitemap_url ), [ 'timeout' => 5 ] );
         }
