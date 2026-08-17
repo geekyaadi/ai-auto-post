@@ -19,23 +19,25 @@ $purged = isset( $_GET['purged'] ) && $_GET['purged'] === 'true';
         <div class="aap-header-inner">
             <div class="aap-logo">
                 <img src="<?php echo esc_url( AAP_PLUGIN_URL . 'admin/ai-auto-post-by-aadi.png' ); ?>" alt="Logo" style="height:32px; width:auto; vertical-align:middle; margin-right:10px; border-radius:4px;">
-                <span class="aap-logo-badge" style="background: linear-gradient(135deg, #10b981, #059669);">⚡ Speed Optimizer</span>
+                <span class="aap-logo-badge">⚡ Speed Optimizer</span>
             </div>
                         <div class="aap-header-nav">
-                <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link">Dashboard</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link">Scheduler</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Manager</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Manager</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Bulk Translator</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Google Indexing</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Article Rewriter</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link active">Speed Optimizer</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
-            </div>
+    <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link">Dashboard</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link">Scheduler</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Tool</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Tool</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Translator</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Indexing</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Rewriter</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link active">Optimizer</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-redirects'); ?>" class="aap-nav-link">Redirect</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-codes'); ?>" class="aap-nav-link">Codes</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
+</div>
         </div>
     </div>
 
@@ -53,13 +55,13 @@ $purged = isset( $_GET['purged'] ) && $_GET['purged'] === 'true';
         <?php endif; ?>
 
         <!-- Hero Speed Overview Card -->
-        <div class="aap-panel" style="margin-bottom:20px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #334155;">
+        <div class="aap-panel" style="margin-bottom:20px; background: #ffffff; border: 1px solid var(--aap-border);">
             <div class="aap-panel-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
                 <div>
-                    <h2 class="aap-panel-title" style="color:#f8fafc; font-size:20px; margin:0 0 5px 0; display:flex; align-items:center; gap:8px;">
+                    <h2 class="aap-panel-title" style="color:var(--aap-text-dark); font-size:20px; margin:0 0 5px 0; display:flex; align-items:center; gap:8px;">
                         <span>⚡</span> AI Auto Post Speed & Performance Turbo Engine
                     </h2>
-                    <p style="color:#94a3b8; margin:0; font-size:13px;">Optimize Core Web Vitals (LCP, CLS, INP) for Google PageSpeed 95+ and instant mobile rendering.</p>
+                    <p style="color:var(--aap-text-muted); margin:0; font-size:13px;">Optimize Core Web Vitals (LCP, CLS, INP) for Google PageSpeed 95+ and instant mobile rendering.</p>
                 </div>
                 <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" style="margin:0;">
                     <?php wp_nonce_field('aap_purge_speed_cache'); ?>
