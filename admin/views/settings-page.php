@@ -43,20 +43,22 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                 <span class="aap-logo-badge">Settings (v<?php echo AAP_VERSION; ?>)</span>
             </div>
                         <div class="aap-header-nav">
-                <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link">Dashboard</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link">Scheduler</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Manager</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Manager</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Bulk Translator</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Google Indexing</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Article Rewriter</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Speed Optimizer</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link active">Settings</a>
-            </div>
+    <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link">Dashboard</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link">Scheduler</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Tool</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Tool</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Translator</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Indexing</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Rewriter</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Optimizer</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-redirects'); ?>" class="aap-nav-link">Redirect</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-codes'); ?>" class="aap-nav-link">Codes</a>
+    <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link active">Settings</a>
+</div>
         </div>
     </div>
     <div class="aap-content">
@@ -64,6 +66,12 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
         <?php if ( $msg && isset($msg_map[$msg]) ): ?>
         <div class="aap-alert aap-alert-<?php echo $msg_map[$msg]['type']; ?>">
             <?php echo esc_html($msg_map[$msg]['text']); ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if ( isset($_GET['retrofitted']) ): ?>
+        <div class="aap-alert aap-alert-success" style="margin-bottom:20px;">
+            🎉 <strong>Retrofit Processing Complete!</strong> Successfully updated <?php echo intval($_GET['retrofitted']); ?> old/existing posts with Auto-Internal Links, High-DA Outbound Links, and Table of Contents (TOC).
         </div>
         <?php endif; ?>
 
@@ -504,8 +512,59 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
 
                 </div>
                 
-                <!-- ── COLUMN 2 (Thumbnail Generator, Custom Prompts, Style Reference) ── -->
+                <!-- ── COLUMN 2 (Retrofit Old Posts, Thumbnail Generator, Custom Prompts) ── -->
                 <div class="aap-settings-column">
+
+                    <!-- CARD 0: RETROFIT OLD POSTS ENGINE -->
+                    <div class="aap-panel">
+                        <div class="aap-panel-header">
+                            <h2 class="aap-panel-title">🔄 Retrofit Old Posts Engine</h2>
+                        </div>
+                        <p style="color:var(--aap-text-muted); font-size:12px; margin-bottom:15px;">
+                            Bulk inject Auto-Internal Links, High-DA Outbound Links, and Table of Contents (TOC) into your <strong>existing / old published posts</strong> in 1-click!
+                        </p>
+                        <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+                            <?php wp_nonce_field( 'aap_retrofit_nonce' ); ?>
+                            <input type="hidden" name="action" value="aap_retrofit_old_posts">
+
+                            <div class="aap-field">
+                                <label class="aap-label">Enhancements to Apply</label>
+                                <label style="display:block; margin-bottom:6px; font-size:13px;">
+                                    <input type="checkbox" name="do_internal" value="1" checked> 🔗 Auto-Internal Links
+                                </label>
+                                <label style="display:block; margin-bottom:6px; font-size:13px;">
+                                    <input type="checkbox" name="do_outbound" value="1" checked> 🌐 High-DA Outbound Links
+                                </label>
+                                <label style="display:block; margin-bottom:6px; font-size:13px;">
+                                    <input type="checkbox" name="do_toc" value="1" checked> 📌 Table of Contents (TOC)
+                                </label>
+                            </div>
+
+                            <div class="aap-field">
+                                <label class="aap-label">Post Count Limit</label>
+                                <select name="post_limit" class="aap-select">
+                                    <option value="10">Last 10 Published Posts</option>
+                                    <option value="25" selected>Last 25 Published Posts</option>
+                                    <option value="50">Last 50 Published Posts</option>
+                                    <option value="100">Last 100 Published Posts</option>
+                                </select>
+                            </div>
+
+                            <div class="aap-field">
+                                <label class="aap-label">Filter Category (Optional)</label>
+                                <?php
+                                wp_dropdown_categories( [
+                                    'show_option_all' => 'All Categories',
+                                    'name'            => 'category_id',
+                                    'class'           => 'aap-select',
+                                    'hide_empty'      => 0,
+                                ] );
+                                ?>
+                            </div>
+
+                            <button type="submit" class="button button-primary" style="width:100%; border-radius:4px; margin-top:5px;" onclick="return confirm('Bulk process selected old posts now?');">🚀 Bulk Enhance Old Posts Now</button>
+                        </form>
+                    </div>
 
                     <!-- CARD 1: THUMBNAIL GENERATOR & ENGAGEMENT -->
                     <div class="aap-panel">
