@@ -2,18 +2,20 @@
 $keys          = AAP_Key_Manager::get_all_keys();
 $reset_minutes = (int) get_option( 'aap_key_reset_minutes', 60 );
 $msg_map       = [
-    'key_added'   => ['type'=>'success','text'=>'✅ API key added successfully.'],
-    'key_exists'  => ['type'=>'warning','text'=>'⚠️ This API key already exists.'],
-    'key_empty'   => ['type'=>'error',  'text'=>'❌ API key cannot be empty.'],
-    'key_deleted' => ['type'=>'success','text'=>'✅ API key deleted.'],
-    'key_reset'   => ['type'=>'success','text'=>'✅ API key reset to active.'],
-    'saved'       => ['type'=>'success','text'=>'✅ Settings saved.'],
+    'key_added'      => ['type'=>'success','text'=>'✅ API key added successfully.'],
+    'key_exists'     => ['type'=>'warning','text'=>'⚠️ This API key already exists.'],
+    'key_empty'      => ['type'=>'error',  'text'=>'❌ API key cannot be empty.'],
+    'key_deleted'    => ['type'=>'success','text'=>'✅ API key deleted.'],
+    'key_reset'      => ['type'=>'success','text'=>'✅ API key reset to active.'],
+    'saved'          => ['type'=>'success','text'=>'✅ Settings saved.'],
+    'settings_reset' => ['type'=>'success','text'=>'✅ All plugin settings have been reset to factory defaults.'],
+    'data_cleared'   => ['type'=>'success','text'=>'✅ Plugin cache, temporary transients, queue, and history logs have been cleared.'],
 ];
 $msg = $_GET['msg'] ?? ( isset($_GET['saved']) ? 'saved' : '' );
 
 // Default Prompts for Prefilling
-$default_prompt_titles  = "Generate exactly {count} highly engaging, CTR-optimized, SEO blog post title ideas for the niche: \"{niche}\". Output as a JSON array of title strings.";
-$default_prompt_article = "Write a comprehensive, 100% unique, human-like, SEO-optimized blog post titled: \"{title}\". Language: {language}. Word Count: {word_count}. Tone: {tone}. Use proper HTML tags (h2, h3, p, ul, ol, strong, em).";
+$default_prompt_titles  = "Generate exactly {count} unique, highly engaging, CTR-optimized SEO blog post title ideas for the niche/topic: \"{niche}\". Write in the language: \"{language}\". Return ONLY a numbered list (1. Title, 2. Title, etc.).";
+$default_prompt_article = "Write a comprehensive, 100% unique, human-like, SEO-optimized blog post titled: \"{title}\". Write in language: \"{language}\". Target length: {word_count} words. Tone: {tone}. {focus_clause}. NO AI intros (\"In today's digital world...\") or outros (\"In conclusion...\"). NO robotic buzzwords (delve, tapestry, testament, crucial, furthermore). Use clean HTML (h2, h3, p, ul, li, strong).";
 $default_prompt_meta    = "Write an SEO-optimized meta description (max 160 characters) for a blog post titled: \"{title}\". Language: {language}.";
 $default_prompt_tags    = "Generate exactly {tag_count} relevant, specific SEO tags for a blog post titled: \"{title}\". Language: {language}. Return as a JSON array.";
 $default_prompt_faq     = "Generate exactly {faq_count} relevant Frequently Asked Questions with detailed answers for a blog post titled: \"{title}\". Language: {language}. Return as a JSON array of objects with \"question\" and \"answer\" keys.";
@@ -675,6 +677,38 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                 <button type="submit" class="aap-btn aap-btn-primary" style="padding: 10px 24px; font-weight: 600; border-radius: 6px;">💾 Save All Settings</button>
             </div>
         </form>
+
+        <!-- ============================================================ -->
+        <!-- SYSTEM MAINTENANCE & DATA CONTROL -->
+        <!-- ============================================================ -->
+        <div class="aap-panel" style="margin-top:20px; border-color: rgba(239, 68, 68, 0.25);">
+            <div class="aap-panel-header" style="border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px; margin-bottom: 15px;">
+                <h2 class="aap-panel-title" style="color: #f87171;">🛠️ System Maintenance &amp; Data Control</h2>
+            </div>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+                <div>
+                    <div style="font-weight: 600; font-size: 14px; color: #f1f5f9; margin-bottom: 4px;">Reset Settings or Purge Plugin Cache &amp; Data</div>
+                    <div class="aap-hint" style="color: #94a3b8;">Reset all options back to plugin defaults or clear temporary transients, queue data, history logs, and system caches.</div>
+                </div>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                    <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" onsubmit="return confirm('⚠️ Are you sure you want to reset all plugin settings to factory defaults?');" style="margin:0;">
+                        <?php wp_nonce_field('aap_reset_settings'); ?>
+                        <input type="hidden" name="action" value="aap_reset_settings">
+                        <button type="submit" class="aap-btn aap-btn-secondary" style="border-color: #ef4444; color: #ef4444; padding: 8px 16px;">
+                            🔄 Reset Settings
+                        </button>
+                    </form>
+
+                    <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" onsubmit="return confirm('🧹 Clear all plugin cache, temporary transients, queue, and history logs?');" style="margin:0;">
+                        <?php wp_nonce_field('aap_clear_plugin_data'); ?>
+                        <input type="hidden" name="action" value="aap_clear_plugin_data">
+                        <button type="submit" class="aap-btn aap-btn-danger" style="background: #dc2626; color: #fff; padding: 8px 16px;">
+                            🧹 Clear Plugin Data &amp; Cache
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
     </div><!-- .aap-content -->
 </div>
