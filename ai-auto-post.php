@@ -3,7 +3,7 @@
  * Plugin Name:       AI Auto Post
  * Plugin URI:        https://github.com/geekyaadi/ai-auto-post
  * Description:       Auto-generate SEO blog posts using Google Gemini API - with multi-key rotation, scheduling, queue, history log, and full quality controls.
- * Version:           1.3.3
+ * Version:           1.3.5
  * Author:            Aadi
  * Author URI:        https://github.com/geekyaadi
  * Contributors:      Anand Soni
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Constants
-define( 'AAP_VERSION',     '1.3.3' );
+define( 'AAP_VERSION',     '1.3.5' );
 define( 'AAP_PLUGIN_FILE', __FILE__ );
 define( 'AAP_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
 define( 'AAP_PLUGIN_URL',  plugin_dir_url( __FILE__ ) );
@@ -38,6 +38,11 @@ $includes = [
     'includes/class-aap-updater.php',
     'includes/class-aap-text-to-image.php',
     'includes/class-aap-gsc-helper.php',
+    'includes/class-aap-speed-optimizer.php',
+    'includes/class-aap-sitemap.php',
+    'includes/class-aap-pages-generator.php',
+    'includes/class-aap-cookie-consent.php',
+    'includes/class-aap-outbound-linker.php',
 ];
 
 foreach ( $includes as $file ) {
@@ -111,6 +116,9 @@ function aap_init() {
     AAP_Settings::init();
     AAP_Ajax::init();
     AAP_Scheduler::init();
+    AAP_Speed_Optimizer::init();
+    AAP_Sitemap::init();
+    AAP_Cookie_Consent::init();
     
     // Enable automated updates from GitHub Release API
     if ( is_admin() ) {
