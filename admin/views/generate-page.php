@@ -8,14 +8,19 @@
                 <img src="<?php echo esc_url( AAP_PLUGIN_URL . 'admin/ai-auto-post-by-aadi.png' ); ?>" alt="Logo" style="height:32px; width:auto; vertical-align:middle; margin-right:10px; border-radius:4px;">
                 <span class="aap-logo-badge">Generator</span>
             </div>
-            <div class="aap-header-nav">
+                        <div class="aap-header-nav">
                 <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link">Dashboard</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link active">Generate Post</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link">Scheduler</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Manager</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Manager</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Bulk Translator</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Google Indexing</a>
-<a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Article Rewriter</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Article Rewriter</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Speed Optimizer</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
             </div>
         </div>
@@ -29,14 +34,18 @@
         ?>
         <div class="aap-alert aap-alert-warning">
             <span class="aap-alert-icon">⚠️</span>
-            No API keys configured. <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">Add your Gemini API key →</a>
+            No API keys configured.                 <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
+                                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">Add your Gemini API key →</a>
         </div>
         <?php endif; ?>
 
         <?php if ( $key_stats['active'] === 0 && $key_stats['total'] > 0 ): ?>
         <div class="aap-alert aap-alert-error">
             <span class="aap-alert-icon">🔴</span>
-            All API keys are currently exhausted. Keys auto-reset after <?php echo (int) get_option('aap_key_reset_minutes', 60); ?> minutes, or you can <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">manually reset them</a>.
+            All API keys are currently exhausted. Keys auto-reset after <?php echo (int) get_option('aap_key_reset_minutes', 60); ?> minutes, or you can                 <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
+                                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">manually reset them</a>.
         </div>
         <?php endif; ?>
 
