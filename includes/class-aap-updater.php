@@ -32,6 +32,10 @@ class AAP_Updater {
         
         // Rename folder post-install if zipball name matches GitHub format
         add_filter( 'upgrader_post_install', [ $this, 'post_install' ], 10, 3 );
+
+        // Force "Enable auto-updates" link on Plugins Screen (plugins.php) & enable background updates
+        add_filter( 'plugin_auto_update_setting_html', [ $this, 'auto_update_setting_html' ], 10, 3 );
+        add_filter( 'auto_update_plugin', [ $this, 'should_auto_update' ], 10, 2 );
     }
 
     /**
@@ -204,5 +208,47 @@ class AAP_Updater {
             }
         }
         return $response;
+    }
+
+    /**
+     * Force WordPress Plugins Screen (plugins.php) to display the "Enable auto-updates" link
+     */
+    public function auto_update_setting_html( $html, $plugin_file, $plugin_data ) {
+        if ( $plugin_file !== $this->slug ) {
+            return $html;
+        }
+
+        $auto_updates = (array) get_site_option( 'auto_update_plugins', [] );
+        $is_enabled   = in_array( $this->slug, $auto_updates, true ) || get_option( 'aap_auto_update_enabled', '1' ) === '1';
+
+        $text   = $is_enabled ? __( 'Disable auto-updates', 'ai-auto-post' ) : __( 'Enable auto-updates', 'ai-auto-post' );
+        $action = $is_enabled ? 'disable' : 'enable';
+        $url    = wp_nonce_url(
+            self_admin_url( 'plugins.php?action=' . $action . '-auto-update&plugin=' . urlencode( $this->slug ) ),
+            'updates'
+        );
+
+        $html  = '<a href="' . esc_url( $url ) . '" class="toggle-auto-update button-link" data-wp-action="' . esc_attr( $action ) . '">';
+        $html .= '<span class="label">' . esc_html( $text ) . '</span>';
+        $html .= '</a>';
+
+        if ( $is_enabled ) {
+            $html .= '<div class="auto-update-time">' . esc_html__( 'Auto-updates enabled', 'ai-auto-post' ) . '</div>';
+        }
+
+        return $html;
+    }
+
+    /**
+     * Instruct WordPress automatic background updater to update this plugin
+     */
+    public function should_auto_update( $update, $item ) {
+        if ( isset( $item->plugin ) && $item->plugin === $this->slug ) {
+            $auto_updates = (array) get_site_option( 'auto_update_plugins', [] );
+            if ( in_array( $this->slug, $auto_updates, true ) || get_option( 'aap_auto_update_enabled', '1' ) === '1' ) {
+                return true;
+            }
+        }
+        return $update;
     }
 }
