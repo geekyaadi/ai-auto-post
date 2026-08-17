@@ -60,11 +60,11 @@ $cookie_saved    = isset( $_GET['cookie_updated'] ) && $_GET['cookie_updated'] =
 
         <!-- SECTION 1: Essential & Legal Pages Generator -->
         <div class="aap-panel" style="margin-bottom:25px;">
-            <div class="aap-panel-header" style="background: linear-gradient(135deg, #1e1b4b 0%, #311b92 100%); padding:20px; border-radius:10px 10px 0 0;">
-                <h2 class="aap-panel-title" style="color:#ffffff; margin:0 0 5px 0; font-size:20px;">📄 One-Click Essential & Legal Pages Generator</h2>
-                <p style="color:#c7d2fe; margin:0; font-size:13px;">Instantly generate 1000+ words, GDPR/AdSense compliant human-written pages tailored for your website.</p>
+            <div class="aap-panel-header" style="padding-bottom:12px; border-bottom:1px solid #e2e8f0; margin-bottom:18px;">
+                <h2 class="aap-panel-title" style="color:var(--aap-text-dark); margin:0 0 4px 0; font-size:16px; font-weight:600;">📄 One-Click Essential &amp; Legal Pages Generator</h2>
+                <p style="color:var(--aap-text-muted); margin:0; font-size:13px;">Instantly generate 1000+ words, GDPR/AdSense compliant human-written pages tailored for your website.</p>
             </div>
-            <div class="aap-panel-body" style="padding:24px;">
+            <div class="aap-panel-body">
                 <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
                     <?php wp_nonce_field('aap_generate_essential_pages'); ?>
                     <input type="hidden" name="action" value="aap_generate_essential_pages">
@@ -84,41 +84,41 @@ $cookie_saved    = isset( $_GET['cookie_updated'] ) && $_GET['cookie_updated'] =
                         </div>
                     </div>
 
-                    <h3 style="margin-top:20px; margin-bottom:12px; font-size:16px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">Select Pages to Generate:</h3>
+                    <h3 style="margin-top:20px; margin-bottom:12px; font-size:15px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">Select Pages to Generate:</h3>
                     
                     <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:12px; margin-bottom:25px;">
-                        <label style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:8px; display:flex; align-items:center; gap:10px; cursor:pointer;">
+                        <label style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:6px; display:flex; align-items:center; gap:10px; cursor:pointer;">
                             <input type="checkbox" name="pages[]" value="about_us" checked>
                             <span>ℹ️ <strong>About Us</strong> Page</span>
                         </label>
-                        <label style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:8px; display:flex; align-items:center; gap:10px; cursor:pointer;">
+                        <label style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:6px; display:flex; align-items:center; gap:10px; cursor:pointer;">
                             <input type="checkbox" name="pages[]" value="contact_us" checked>
                             <span>📬 <strong>Contact Us</strong> Page</span>
                         </label>
-                        <label style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:8px; display:flex; align-items:center; gap:10px; cursor:pointer;">
+                        <label style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:6px; display:flex; align-items:center; gap:10px; cursor:pointer;">
                             <input type="checkbox" name="pages[]" value="privacy_policy" checked>
-                            <span>🔒 <strong>Privacy Policy</strong> (GDPR & CCPA)</span>
+                            <span>🔒 <strong>Privacy Policy</strong> (GDPR &amp; CCPA)</span>
                         </label>
-                        <label style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:8px; display:flex; align-items:center; gap:10px; cursor:pointer;">
+                        <label style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:6px; display:flex; align-items:center; gap:10px; cursor:pointer;">
                             <input type="checkbox" name="pages[]" value="disclaimer" checked>
-                            <span>⚠️ <strong>Disclaimer</strong> (AdSense & Affiliate)</span>
+                            <span>⚠️ <strong>Disclaimer</strong> (AdSense &amp; Affiliate)</span>
                         </label>
-                        <label style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:8px; display:flex; align-items:center; gap:10px; cursor:pointer;">
+                        <label style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:6px; display:flex; align-items:center; gap:10px; cursor:pointer;">
                             <input type="checkbox" name="pages[]" value="terms_conditions" checked>
                             <span>📜 <strong>Terms and Conditions</strong></span>
                         </label>
-                        <label style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:8px; display:flex; align-items:center; gap:10px; cursor:pointer;">
+                        <label style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:6px; display:flex; align-items:center; gap:10px; cursor:pointer;">
                             <input type="checkbox" name="pages[]" value="dmca" checked>
-                            <span>🛡️ <strong>DMCA & Copyright Policy</strong></span>
+                            <span>🛡️ <strong>DMCA &amp; Copyright Policy</strong></span>
                         </label>
-                        <label style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:8px; display:flex; align-items:center; gap:10px; cursor:pointer;">
+                        <label style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:6px; display:flex; align-items:center; gap:10px; cursor:pointer;">
                             <input type="checkbox" name="pages[]" value="editorial_guidelines" checked>
                             <span>🌟 <strong>Editorial Guidelines (E-E-A-T)</strong></span>
                         </label>
                     </div>
 
-                    <button type="submit" class="aap-btn aap-btn-primary" style="padding:14px 28px; font-size:16px; background:linear-gradient(135deg, #4f46e5, #3b82f6); border:none; box-shadow:0 4px 12px rgba(59,130,246,0.3);">
-                        🚀 Generate & Publish Selected Pages
+                    <button type="submit" class="button button-primary button-large" style="padding:6px 20px; font-size:14px;">
+                        🚀 Generate &amp; Publish Selected Pages
                     </button>
                 </form>
             </div>
@@ -126,9 +126,9 @@ $cookie_saved    = isset( $_GET['cookie_updated'] ) && $_GET['cookie_updated'] =
 
         <!-- SECTION 2: Cookie Consent Banner Controller -->
         <div class="aap-panel">
-            <div class="aap-panel-header" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding:20px; border-radius:10px 10px 0 0;">
-                <h2 class="aap-panel-title" style="color:#ffffff; margin:0 0 5px 0; font-size:20px;">🍪 Cookie Consent Banner Controller</h2>
-                <p style="color:#94a3b8; margin:0; font-size:13px;">Customize style, layout, text content, and toggle cookie consent popup on your website.</p>
+            <div class="aap-panel-header" style="padding-bottom:12px; border-bottom:1px solid #e2e8f0; margin-bottom:18px;">
+                <h2 class="aap-panel-title" style="color:var(--aap-text-dark); margin:0 0 4px 0; font-size:16px; font-weight:600;">🍪 Cookie Consent Banner Controller</h2>
+                <p style="color:var(--aap-text-muted); margin:0; font-size:13px;">Customize style, layout, text content, and toggle cookie consent popup on your website.</p>
             </div>
             <div class="aap-panel-body" style="padding:24px;">
                 <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
