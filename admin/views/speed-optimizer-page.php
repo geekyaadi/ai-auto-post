@@ -66,7 +66,7 @@ $purged = isset( $_GET['purged'] ) && $_GET['purged'] === 'true';
                 <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" style="margin:0;">
                     <?php wp_nonce_field('aap_purge_speed_cache'); ?>
                     <input type="hidden" name="action" value="aap_purge_speed_cache">
-                    <button type="submit" class="aap-btn aap-btn-success" style="background:#10b981; border:none; padding:10px 18px; font-weight:600; cursor:pointer;">
+                    <button type="submit" class="button button-primary" style="background:#d63638; border-color:#b32d2e; color:#ffffff; padding:6px 16px; font-weight:600; cursor:pointer;">
                         ⚡ Purge All Site Caches Now
                     </button>
                 </form>
