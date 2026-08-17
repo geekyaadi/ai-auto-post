@@ -25,9 +25,14 @@ class AAP_Post_Creator {
         // 1. Resolve / create category
         $category_id = self::resolve_category( $data['category'] ?? '' );
 
-        // 2. FAQ and Schema Generation
+        // 2. Table of Contents Generator (TOC)
         $article_content = $data['article'];
-        $schema_script   = '';
+        if ( get_option( 'aap_enable_toc', 1 ) ) {
+            $article_content = self::inject_table_of_contents( $article_content );
+        }
+
+        // 3. FAQ and Schema Generation
+        $schema_script = '';
 
         if ( get_option( 'aap_enable_faq', 1 ) ) {
             $session_id = 'faq_' . uniqid();
@@ -77,12 +82,45 @@ class AAP_Post_Creator {
             }
         }
 
+        // Always inject Article/BlogPosting Schema for RankMath/Yoast 90+ SEO Score
+        $article_schema = json_encode( [
+            '@context' => 'https://schema.org',
+            '@type'    => 'BlogPosting',
+            'headline' => sanitize_text_field( $data['title'] ),
+            'description' => sanitize_text_field( $data['meta_description'] ?? '' ),
+            'datePublished' => current_time( 'c' ),
+            'dateModified'  => current_time( 'c' ),
+            'author' => [
+                '@type' => 'Person',
+                'name'  => get_the_author_meta( 'display_name', $author_id ) ?: get_bloginfo( 'name' )
+            ],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name'  => get_bloginfo( 'name' ),
+                'url'   => home_url()
+            ]
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+        $schema_script .= "\n<script type=\"application/ld+json\">" . $article_schema . "</script>";
+
+        // Apply Speed Optimizer: Lazy Loading for Images & Iframes
+        if ( get_option( 'aap_speed_lazy_loading', '1' ) === '1' ) {
+            $article_content = preg_replace( '/<img(?![^>]*loading=)/i', '<img loading="lazy" decoding="async"', $article_content );
+            $article_content = preg_replace( '/<iframe(?![^>]*loading=)/i', '<iframe loading="lazy"', $article_content );
+        }
+
         $sanitized_content = wp_kses_post( $article_content );
+
+        // Apply Speed Optimizer: HTML Minification
+        if ( get_option( 'aap_speed_html_minification', '1' ) === '1' ) {
+            $sanitized_content = preg_replace( '/\s+/', ' ', $sanitized_content );
+            $sanitized_content = str_replace( [' >', '< '], ['>', '<'], $sanitized_content );
+        }
+
         if ( ! empty( $schema_script ) ) {
             $sanitized_content .= $schema_script;
         }
 
-        // 3. Insert post
+        // 4. Insert post
         $post_id = wp_insert_post( [
             'post_title'   => sanitize_text_field( $data['title'] ),
             'post_content' => $sanitized_content,
@@ -93,28 +131,42 @@ class AAP_Post_Creator {
 
         if ( is_wp_error( $post_id ) ) return $post_id;
 
-        // Apply Auto-Internal Linking
-        if ( get_option( 'aap_enable_internal_linking', 0 ) ) {
-            $linked_content = self::apply_internal_linking( $post_id, $data['article'] );
-            if ( $linked_content !== $data['article'] ) {
-                wp_update_post( [
-                    'ID'           => $post_id,
-                    'post_content' => wp_kses_post( $linked_content ),
-                ] );
-            }
+        // Apply Controlled Auto-Internal Linking & High-DA Outbound Linking
+        $current_content = $article_content;
+        if ( get_option( 'aap_enable_internal_linking', 1 ) ) {
+            $current_content = self::apply_internal_linking( $post_id, $current_content );
         }
 
-        // 3. Tags
+        if ( class_exists( 'AAP_Outbound_Linker' ) ) {
+            $current_content = AAP_Outbound_Linker::process( $current_content, $data['title'] );
+        }
+
+        if ( $current_content !== $article_content ) {
+            $final_content = wp_kses_post( $current_content );
+            if ( get_option( 'aap_speed_html_minification', '1' ) === '1' ) {
+                $final_content = preg_replace( '/\s+/', ' ', $final_content );
+                $final_content = str_replace( [' >', '< '], ['>', '<'], $final_content );
+            }
+            wp_update_post( [
+                'ID'           => $post_id,
+                'post_content' => $final_content . $schema_script,
+            ] );
+        }
+
+        // 5. Tags
         if ( ! empty( $data['tags'] ) ) {
             wp_set_post_tags( $post_id, $data['tags'], false );
         }
 
-        // 4. Meta description (Yoast, RankMath, fallback custom field)
-        if ( ! empty( $data['meta_description'] ) ) {
-            self::set_meta_description( $post_id, $data['meta_description'] );
+        // Auto Cache Purge on publish
+        if ( get_option( 'aap_speed_auto_cache_purge', '1' ) === '1' && function_exists( 'aap_purge_all_caches' ) ) {
+            aap_purge_all_caches();
         }
 
-        // 5. Thumbnail
+        // 6. Meta description & 90+ RankMath / Yoast SEO Optimization
+        self::set_meta_description( $post_id, $data['meta_description'] ?? '', $data['title'], $data['focus_keywords'] ?? '' );
+
+        // 7. Thumbnail with WebP conversion
         if ( ! empty( $data['thumbnail_data'] ) ) {
             $attachment_id = self::upload_image(
                 $data['thumbnail_data']['base64'],
@@ -127,7 +179,7 @@ class AAP_Post_Creator {
             }
         }
 
-        // 6. OG Image (stored as custom field)
+        // 8. OG Image (stored as custom field)
         if ( ! empty( $data['og_image_data'] ) ) {
             $og_id = self::upload_image(
                 $data['og_image_data']['base64'],
@@ -145,14 +197,78 @@ class AAP_Post_Creator {
             }
         }
 
-        // 7. Mark as AI-generated
+        // 9. Mark as AI-generated
         update_post_meta( $post_id, '_aap_generated', true );
         update_post_meta( $post_id, '_aap_generated_at', current_time( 'mysql' ) );
 
-        // 8. Auto-Comment Generation
+        // 10. Auto-Comment Generation
         self::generate_auto_comments( $post_id, $data['title'] );
 
         return $post_id;
+    }
+
+    // -------------------------------------------------------------------------
+    // Table of Contents (TOC) Auto-Generator
+    // -------------------------------------------------------------------------
+
+    public static function inject_table_of_contents( string $content ) {
+        if ( empty( trim( $content ) ) ) return $content;
+
+        // Match h2 and h3 tags
+        preg_match_all( '/<(h[23])([^>]*)>(.*?)<\/h[23]>/isu', $content, $matches, PREG_SET_ORDER );
+        if ( empty( $matches ) || count( $matches ) < 2 ) {
+            return $content; // Need at least 2 headings for a TOC
+        }
+
+        $toc_items = [];
+        $index = 1;
+
+        foreach ( $matches as $m ) {
+            $tag   = strtolower( $m[1] ); // h2 or h3
+            $attrs = $m[2];
+            $title = strip_tags( $m[3] );
+            if ( empty( trim( $title ) ) ) continue;
+
+            $anchor_id = 'aap-toc-' . $index;
+            $index++;
+
+            // Replace original heading with anchored heading
+            $old_heading = $m[0];
+            $new_heading = "<{$tag}{$attrs} id=\"{$anchor_id}\">" . $m[3] . "</{$tag}>";
+            $content     = str_replace( $old_heading, $new_heading, $content );
+
+            $toc_items[] = [
+                'tag'    => $tag,
+                'id'     => $anchor_id,
+                'title'  => esc_html( $title ),
+            ];
+        }
+
+        if ( empty( $toc_items ) ) return $content;
+
+        // Build HTML Table of Contents
+        $toc_html = "\n<div class=\"aap-toc-container\" style=\"background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:18px 22px; margin:25px 0; font-family:system-ui,-apple-system,sans-serif;\">";
+        $toc_html .= "<div class=\"aap-toc-header\" style=\"display:flex; justify-content:space-between; align-items:center;\">";
+        $toc_html .= "<strong style=\"color:#f8fafc; font-size:16px; font-weight:700;\">📌 Table of Contents</strong>";
+        $toc_html .= "</div>";
+        $toc_html .= "<ol class=\"aap-toc-list\" style=\"margin-top:12px; margin-bottom:0; padding-left:22px; color:#94a3b8; font-size:14px; line-height:1.8;\">";
+
+        foreach ( $toc_items as $item ) {
+            $indent = ( $item['tag'] === 'h3' ) ? ' style="margin-left: 18px; list-style-type: circle;"' : '';
+            $toc_html .= "<li{$indent}><a href=\"#{$item['id']}\" style=\"color:#38bdf8; text-decoration:none; transition:all 0.2s;\">{$item['title']}</a></li>";
+        }
+
+        $toc_html .= "</ol></div>\n\n";
+
+        // Insert TOC right before the first <h2> heading
+        if ( preg_match( '/<h2[^>]*>/i', $content, $m, PREG_OFFSET_CAPTURE ) ) {
+            $pos = $m[0][1];
+            $content = substr( $content, 0, $pos ) . $toc_html . substr( $content, $pos );
+        } else {
+            $content = $toc_html . $content;
+        }
+
+        return $content;
     }
 
     // -------------------------------------------------------------------------
@@ -181,27 +297,81 @@ class AAP_Post_Creator {
     }
 
     // -------------------------------------------------------------------------
-    // Meta description — supports Yoast, RankMath, and custom fallback
+    // Meta description — supports Yoast, RankMath (90+ score fields), & fallback
     // -------------------------------------------------------------------------
 
-    private static function set_meta_description( int $post_id, string $meta ) {
-        $meta = sanitize_text_field( $meta );
+    private static function set_meta_description( int $post_id, string $meta, string $title = '', string $focus_keywords = '' ) {
+        $meta  = sanitize_text_field( $meta );
+        $title = sanitize_text_field( $title );
+        $kw    = sanitize_text_field( $focus_keywords ?: $title );
+
         // Yoast SEO
         update_post_meta( $post_id, '_yoast_wpseo_metadesc', $meta );
-        // RankMath
+        update_post_meta( $post_id, '_yoast_wpseo_focuskw', $kw );
+        update_post_meta( $post_id, '_yoast_wpseo_opengraph-title', $title );
+        update_post_meta( $post_id, '_yoast_wpseo_opengraph-description', $meta );
+
+        // RankMath SEO (90+ score optimization)
         update_post_meta( $post_id, 'rank_math_description', $meta );
+        update_post_meta( $post_id, 'rank_math_title', '%title% %sep% %sitename%' );
+        update_post_meta( $post_id, 'rank_math_focus_keyword', strtolower( $kw ) );
+        update_post_meta( $post_id, 'rank_math_robots', [ 'index' ] );
+        update_post_meta( $post_id, 'rank_math_facebook_title', $title );
+        update_post_meta( $post_id, 'rank_math_facebook_description', $meta );
+
         // Generic fallback
         update_post_meta( $post_id, '_aap_meta_description', $meta );
     }
 
     // -------------------------------------------------------------------------
-    // Upload base64 image to WP media library
+    // Upload base64 image to WP media library with Auto WebP Conversion & Compression
     // -------------------------------------------------------------------------
 
     public static function upload_image( string $base64, string $mime_type, string $filename_base, string $alt_text = '' ) {
         require_once ABSPATH . 'wp-admin/includes/file.php';
         require_once ABSPATH . 'wp-admin/includes/image.php';
         require_once ABSPATH . 'wp-admin/includes/media.php';
+
+        $decoded = base64_decode( $base64 );
+        if ( ! $decoded ) {
+            return new WP_Error( 'decode_failed', 'Failed to decode image data.' );
+        }
+
+        // Apply Custom Text Overlay if enabled
+        if ( get_option( 'aap_enable_text_overlay', 0 ) && strpos( $filename_base, '-thumbnail' ) !== false ) {
+            $image = @imagecreatefromstring( $decoded );
+            if ( $image ) {
+                $overlay_text = $alt_text ?: get_bloginfo( 'name' );
+                $image = self::draw_text_overlay( $image, $overlay_text );
+
+                ob_start();
+                if ( $mime_type === 'image/png' ) {
+                    imagepng( $image );
+                } else {
+                    imagejpeg( $image, null, 90 );
+                }
+                $new_decoded = ob_get_clean();
+                if ( $new_decoded ) {
+                    $decoded = $new_decoded;
+                }
+                imagedestroy( $image );
+            }
+        }
+
+        // Auto WebP Conversion & Compression (Reduces image size by ~75%)
+        if ( function_exists( 'imagewebp' ) && function_exists( 'imagecreatefromstring' ) ) {
+            $img_resource = @imagecreatefromstring( $decoded );
+            if ( $img_resource ) {
+                ob_start();
+                imagewebp( $img_resource, null, 82 ); // 82% quality compression
+                $webp_bytes = ob_get_clean();
+                imagedestroy( $img_resource );
+                if ( ! empty( $webp_bytes ) ) {
+                    $decoded   = $webp_bytes;
+                    $mime_type = 'image/webp';
+                }
+            }
+        }
 
         $ext      = self::mime_to_ext( $mime_type );
         $filename = sanitize_file_name( $filename_base . '.' . $ext );
@@ -274,11 +444,12 @@ class AAP_Post_Creator {
     // -------------------------------------------------------------------------
 
     private static function apply_internal_linking( int $post_id, string $content ) {
-        if ( ! get_option( 'aap_enable_internal_linking', 0 ) ) {
+        if ( ! get_option( 'aap_enable_internal_linking', 1 ) ) {
             return $content;
         }
 
-        $max_links = (int) get_option( 'aap_max_internal_links', 3 );
+        $max_links  = (int) get_option( 'aap_max_internal_links', 3 );
+        $link_style = get_option( 'aap_internal_link_style', 'callout_box' );
         if ( $max_links <= 0 ) {
             return $content;
         }
@@ -310,19 +481,43 @@ class AAP_Post_Creator {
                 continue;
             }
 
-            $pattern = '/<a[^>]*>.*?<\/a>|<[^>]+>|(?:\b)(' . preg_quote( $title, '/' ) . ')(?:\b)/isu';
-            $replaced = false;
+            if ( $link_style === 'inline' ) {
+                $pattern = '/<a[^>]*>.*?<\/a>|<[^>]+>|(?:\b)(' . preg_quote( $title, '/' ) . ')(?:\b)/isu';
+                $replaced = false;
 
-            $content = preg_replace_callback( $pattern, function( $matches ) use ( &$link_count, &$replaced, $max_links, $url ) {
-                if ( isset( $matches[1] ) && $matches[1] !== '' ) {
-                    if ( $link_count < $max_links && ! $replaced ) {
-                        $link_count++;
-                        $replaced = true;
-                        return '<a href="' . esc_url( $url ) . '">' . esc_html( $matches[1] ) . '</a>';
+                $content = preg_replace_callback( $pattern, function( $matches ) use ( &$link_count, &$replaced, $max_links, $url ) {
+                    if ( isset( $matches[1] ) && $matches[1] !== '' ) {
+                        if ( $link_count < $max_links && ! $replaced ) {
+                            $link_count++;
+                            $replaced = true;
+                            return '<a href="' . esc_url( $url ) . '" class="aap-internal-link" style="color: #0284c7; text-decoration: underline; font-weight: 600;">' . esc_html( $matches[1] ) . '</a>';
+                        }
                     }
+                    return $matches[0];
+                }, $content );
+            } else {
+                // Callout Box or Card Design
+                $link_count++;
+                if ( $link_style === 'card' ) {
+                    $link_html = "\n<div class=\"aap-related-card\" style=\"background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #334155; border-radius: 10px; padding: 16px 20px; margin: 24px 0; font-family: system-ui, -apple-system, sans-serif;\">";
+                    $link_html .= "<div style=\"font-size: 11px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px;\">📌 RECOMMENDED READ</div>";
+                    $link_html .= "<div style=\"font-size: 15px; font-weight: 600;\"><a href=\"" . esc_url( $url ) . "\" style=\"color: #f8fafc; text-decoration: none;\">" . esc_html( $title ) . " ➔</a></div>";
+                    $link_html .= "</div>\n";
+                } else {
+                    // Default Callout Box
+                    $link_html = "\n<div class=\"aap-related-box\" style=\"background: #f8fafc; border-left: 4px solid #0284c7; padding: 12px 18px; margin: 20px 0; border-radius: 6px; font-family: system-ui, -apple-system, sans-serif;\">";
+                    $link_html .= "<strong style=\"color: #0284c7; font-size: 14px;\">📖 READ ALSO:</strong> <a href=\"" . esc_url( $url ) . "\" style=\"color: #0f172a; font-weight: 600; text-decoration: none;\">" . esc_html( $title ) . "</a>";
+                    $link_html .= "</div>\n";
                 }
-                return $matches[0];
-            }, $content );
+
+                // Insert after paragraph </p>
+                if ( preg_match( '/<\/p>/i', $content, $m, PREG_OFFSET_CAPTURE ) ) {
+                    $pos = $m[0][1] + 4;
+                    $content = substr( $content, 0, $pos ) . $link_html . substr( $content, $pos );
+                } else {
+                    $content .= $link_html;
+                }
+            }
         }
 
         return $content;
