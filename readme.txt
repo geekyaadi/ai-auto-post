@@ -4,7 +4,7 @@ Tags: ai, gemini, auto-post, content-generation, seo, gsc-indexing, article-rewr
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.3.7
+Stable tag: 1.3.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
