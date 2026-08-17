@@ -15,7 +15,7 @@ $msg = $_GET['msg'] ?? ( isset($_GET['saved']) ? 'saved' : '' );
 
 // Default Prompts for Prefilling
 $default_prompt_titles  = "Generate exactly {count} unique, highly engaging, CTR-optimized SEO blog post title ideas for the niche/topic: \"{niche}\". Write in the language: \"{language}\". Return ONLY a numbered list (1. Title, 2. Title, etc.).";
-$default_prompt_article = "Write a comprehensive, 100% unique, human-like, SEO-optimized blog post titled: \"{title}\". Write in language: \"{language}\". Target length: {word_count} words. Tone: {tone}. {focus_clause}. NO AI intros (\"In today's digital world...\") or outros (\"In conclusion...\"). NO robotic buzzwords (delve, tapestry, testament, crucial, furthermore). Use clean HTML (h2, h3, p, ul, li, strong).";
+$default_prompt_article = "Write a comprehensive, 100% unique, human-like, SEO-optimized blog post titled: \"{title}\". Write in language: \"{language}\". Target length: {word_count} words. Tone: {tone}. {focus_clause}. MODERN SEO: Use clean HTML hierarchy (h2, h3, h4), include at least ONE HTML Data Table (<table>), lists (ul, ol), bold key terms (strong). NO AI intros (\"In today's digital world...\") or outros (\"In conclusion...\"). NO robotic buzzwords (delve, tapestry, testament, crucial, furthermore).";
 $default_prompt_meta    = "Write an SEO-optimized meta description (max 160 characters) for a blog post titled: \"{title}\". Language: {language}.";
 $default_prompt_tags    = "Generate exactly {tag_count} relevant, specific SEO tags for a blog post titled: \"{title}\". Language: {language}. Return as a JSON array.";
 $default_prompt_faq     = "Generate exactly {faq_count} relevant Frequently Asked Questions with detailed answers for a blog post titled: \"{title}\". Language: {language}. Return as a JSON array of objects with \"question\" and \"answer\" keys.";
@@ -42,14 +42,19 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                 <img src="<?php echo esc_url( AAP_PLUGIN_URL . 'admin/ai-auto-post-by-aadi.png' ); ?>" alt="Logo" style="height:32px; width:auto; vertical-align:middle; margin-right:10px; border-radius:4px;">
                 <span class="aap-logo-badge">Settings (v<?php echo AAP_VERSION; ?>)</span>
             </div>
-            <div class="aap-header-nav">
+                        <div class="aap-header-nav">
                 <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link">Dashboard</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link">Scheduler</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Manager</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Manager</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Bulk Translator</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Google Indexing</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Article Rewriter</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Speed Optimizer</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link active">Settings</a>
             </div>
         </div>
@@ -338,6 +343,16 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                             </div>
 
                             <div class="aap-field">
+                                <label class="aap-label">Table of Contents (TOC) Auto-Generator</label>
+                                <label class="aap-toggle">
+                                    <input type="checkbox" name="aap_enable_toc" value="1" <?php checked(get_option('aap_enable_toc',1),1); ?>>
+                                    <span class="aap-toggle-slider"></span>
+                                    <span class="aap-toggle-label">Auto-inject Table of Contents Box</span>
+                                </label>
+                                <div class="aap-hint">Auto-injects a mobile-friendly TOC before the first H2 heading.</div>
+                            </div>
+
+                            <div class="aap-field">
                                 <label class="aap-label">Dynamic FAQ &amp; Schema Generator</label>
                                 <label class="aap-toggle">
                                     <input type="checkbox" name="aap_enable_faq" value="1" <?php checked(get_option('aap_enable_faq',1),1); ?>>
@@ -380,7 +395,57 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                             <div class="aap-field">
                                 <label class="aap-label">Max Links Per Post</label>
                                 <input type="number" name="aap_max_internal_links" class="aap-input" value="<?php echo esc_attr(get_option('aap_max_internal_links',3)); ?>" min="1" max="10">
-                                <div class="aap-hint">Maximum number of internal links (recommended: 3).</div>
+                                <div class="aap-hint">Maximum number of internal links per post (1 to 10).</div>
+                            </div>
+
+                            <div class="aap-field">
+                                <label class="aap-label">Internal Link Design Style</label>
+                                <select name="aap_internal_link_style" class="aap-select">
+                                    <option value="callout_box" <?php selected(get_option('aap_internal_link_style','callout_box'),'callout_box'); ?>>📖 Clean Callout Box (Recommended)</option>
+                                    <option value="card" <?php selected(get_option('aap_internal_link_style','callout_box'),'card'); ?>>📌 Modern Gradient Card</option>
+                                    <option value="inline" <?php selected(get_option('aap_internal_link_style','callout_box'),'inline'); ?>>🔗 Inline Hyperlink in Text</option>
+                                </select>
+                                <div class="aap-hint">Choose how internal links are rendered inside generated articles.</div>
+                            </div>
+
+                            <!-- 🌐 AUTO OUTBOUND HIGH-DA LINKING ENGINE -->
+                            <div class="aap-field aap-field-full" style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px; margin-top: 10px;">
+                                <label class="aap-label">🌐 Auto Outbound High-DA Links Engine</label>
+                                <label class="aap-toggle">
+                                    <input type="checkbox" name="aap_enable_outbound_linking" value="1" <?php checked(get_option('aap_enable_outbound_linking', 1), 1); ?>>
+                                    <span class="aap-toggle-slider"></span>
+                                    <span class="aap-toggle-label">Enable High-DA External Outbound Links</span>
+                                </label>
+                                <div class="aap-hint">Automatically inject contextual links to Wikipedia, MDN, WebMD, Investopedia &amp; Edu/Gov sources for E-E-A-T trust.</div>
+                            </div>
+
+                            <div class="aap-field">
+                                <label class="aap-label">Max Outbound Links Per Post</label>
+                                <input type="number" name="aap_max_outbound_links" class="aap-input" value="<?php echo esc_attr(get_option('aap_max_outbound_links', 2)); ?>" min="1" max="10">
+                                <div class="aap-hint">Maximum external outbound links per post (1 to 10).</div>
+                            </div>
+
+                            <div class="aap-field">
+                                <label class="aap-label">Link Open Target</label>
+                                <select name="aap_outbound_target" class="aap-select">
+                                    <option value="_blank" <?php selected(get_option('aap_outbound_target', '_blank'), '_blank'); ?>>↗️ Open in New Tab (_blank)</option>
+                                    <option value="_self" <?php selected(get_option('aap_outbound_target', '_blank'), '_self'); ?>>➡️ Open in Same Tab (_self)</option>
+                                </select>
+                            </div>
+
+                            <div class="aap-field">
+                                <label class="aap-label">Link Rel Attribute</label>
+                                <select name="aap_outbound_rel" class="aap-select">
+                                    <option value="nofollow noopener" <?php selected(get_option('aap_outbound_rel', 'nofollow noopener'), 'nofollow noopener'); ?>>🛡️ nofollow noopener (Recommended)</option>
+                                    <option value="dofollow noopener" <?php selected(get_option('aap_outbound_rel', 'nofollow noopener'), 'dofollow noopener'); ?>>🔗 dofollow noopener</option>
+                                    <option value="sponsored noopener" <?php selected(get_option('aap_outbound_rel', 'nofollow noopener'), 'sponsored noopener'); ?>>💸 sponsored noopener</option>
+                                </select>
+                            </div>
+
+                            <div class="aap-field aap-field-full">
+                                <label class="aap-label">Outbound Domain Blacklist (1 per line)</label>
+                                <textarea name="aap_outbound_blacklist" class="aap-textarea" rows="2" placeholder="e.g. competitor.com&#10;spam-domain.com"><?php echo esc_textarea(get_option('aap_outbound_blacklist', '')); ?></textarea>
+                                <div class="aap-hint">Domains listed here will never be linked externally.</div>
                             </div>
 
                             <div class="aap-field aap-field-full">
