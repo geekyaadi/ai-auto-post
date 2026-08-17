@@ -36,7 +36,7 @@ $total_pages = $query->max_num_pages;
                 <img src="<?php echo esc_url( AAP_PLUGIN_URL . 'admin/ai-auto-post-by-aadi.png' ); ?>" alt="Logo" style="height:32px; width:auto; vertical-align:middle; margin-right:10px; border-radius:4px;">
                 <span class="aap-logo-badge">Google Indexing Tool</span>
             </div>
-            <div class="aap-header-nav">
+                        <div class="aap-header-nav">
                 <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link">Dashboard</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
@@ -46,6 +46,9 @@ $total_pages = $query->max_num_pages;
                 <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Bulk Translator</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link active">Google Indexing</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Article Rewriter</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Speed Optimizer</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
             </div>
         </div>
@@ -65,7 +68,10 @@ $total_pages = $query->max_num_pages;
             </div>
             <?php if ( ! $has_creds ): ?>
             <div class="aap-alert aap-alert-warning" style="margin:15px 0 5px;">
-                ⚠️ Google Service Account JSON key is not configured. Go to <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">Settings → Internal Linking & Indexing</a> to paste or upload your credentials.
+                ⚠️ Google Service Account JSON key is not configured. Go to                 <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Speed Optimizer</a>
+                                <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
+                                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">Settings → Internal Linking & Indexing</a> to paste or upload your credentials.
             </div>
             <?php else: ?>
             <div class="aap-hint" style="padding: 10px 0 0;">
@@ -73,7 +79,10 @@ $total_pages = $query->max_num_pages;
                 <?php if ( get_option( 'aap_enable_gsc_auto_ping', 0 ) ): ?>
                 <br><strong>Auto-Ping is ON</strong> — New posts will be automatically submitted to Google on publish.
                 <?php else: ?>
-                <br><em>Auto-Ping is OFF</em> — Enable it in <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">Settings</a> to auto-submit new posts.
+                <br><em>Auto-Ping is OFF</em> — Enable it in                 <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Speed Optimizer</a>
+                                <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
+                                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">Settings</a> to auto-submit new posts.
                 <?php endif; ?>
             </div>
             <?php endif; ?>
