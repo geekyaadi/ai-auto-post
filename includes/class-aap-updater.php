@@ -33,8 +33,7 @@ class AAP_Updater {
         // Rename folder post-install if zipball name matches GitHub format
         add_filter( 'upgrader_post_install', [ $this, 'post_install' ], 10, 3 );
 
-        // Force "Enable auto-updates" link on Plugins Screen (plugins.php) & enable background updates
-        add_filter( 'plugin_auto_update_setting_html', [ $this, 'auto_update_setting_html' ], 10, 3 );
+        // Automatic background updates support
         add_filter( 'auto_update_plugin', [ $this, 'should_auto_update' ], 10, 2 );
     }
 
@@ -85,23 +84,34 @@ class AAP_Updater {
     }
 
     /**
-     * Inject update payload if a newer version exists
+     * Inject update payload into WordPress update_plugins transient
      */
     public function check_update( $transient ) {
-        if ( empty( $transient->checked ) ) {
+        if ( empty( $transient ) || ! is_object( $transient ) || empty( $transient->checked ) ) {
             return $transient;
         }
 
         $release = $this->get_github_release_info();
-        if ( ! $release ) {
+        if ( ! $release || empty( $release['tag_name'] ) ) {
             return $transient;
         }
 
         $new_version     = ltrim( $release['tag_name'], 'v' );
         $current_version = AAP_VERSION;
 
+        $logo_url = 'https://raw.githubusercontent.com/geekyaadi/ai-auto-post/main/admin/ai-auto-post-by-aadi.png';
+        $obj = new stdClass();
+        $obj->slug        = 'ai-auto-post';
+        $obj->plugin      = $this->slug;
+        $obj->new_version = $new_version;
+        $obj->url         = $release['html_url'];
+        $obj->icons       = [
+            'default' => $logo_url,
+            '1x'      => $logo_url,
+            '2x'      => $logo_url,
+        ];
+
         if ( version_compare( $new_version, $current_version, '>' ) ) {
-            // Find ZIP package URL. Prefer release asset if uploaded, else fallback to zipball
             $package = $release['zipball_url'];
             if ( ! empty( $release['assets'] ) ) {
                 foreach ( $release['assets'] as $asset ) {
@@ -111,21 +121,11 @@ class AAP_Updater {
                     }
                 }
             }
-
-            $logo_url = 'https://raw.githubusercontent.com/geekyaadi/ai-auto-post/main/admin/ai-auto-post-by-aadi.png';
-            $obj = new stdClass();
-            $obj->slug        = 'ai-auto-post';
-            $obj->plugin      = $this->slug;
-            $obj->new_version = $new_version;
-            $obj->url         = $release['html_url'];
-            $obj->package     = $package;
-            $obj->icons       = [
-                'default' => $logo_url,
-                '1x'      => $logo_url,
-                '2x'      => $logo_url,
-            ];
-
+            $obj->package = $package;
             $transient->response[ $this->slug ] = $obj;
+        } else {
+            $obj->package = '';
+            $transient->no_update[ $this->slug ] = $obj;
         }
 
         return $transient;
@@ -211,39 +211,10 @@ class AAP_Updater {
     }
 
     /**
-     * Force WordPress Plugins Screen (plugins.php) to display the "Enable auto-updates" link
-     */
-    public function auto_update_setting_html( $html, $plugin_file, $plugin_data ) {
-        if ( $plugin_file !== $this->slug ) {
-            return $html;
-        }
-
-        $auto_updates = (array) get_site_option( 'auto_update_plugins', [] );
-        $is_enabled   = in_array( $this->slug, $auto_updates, true ) || get_option( 'aap_auto_update_enabled', '1' ) === '1';
-
-        $text   = $is_enabled ? __( 'Disable auto-updates', 'ai-auto-post' ) : __( 'Enable auto-updates', 'ai-auto-post' );
-        $action = $is_enabled ? 'disable' : 'enable';
-        $url    = wp_nonce_url(
-            self_admin_url( 'plugins.php?action=' . $action . '-auto-update&plugin=' . urlencode( $this->slug ) ),
-            'updates'
-        );
-
-        $html  = '<a href="' . esc_url( $url ) . '" class="toggle-auto-update button-link" data-wp-action="' . esc_attr( $action ) . '">';
-        $html .= '<span class="label">' . esc_html( $text ) . '</span>';
-        $html .= '</a>';
-
-        if ( $is_enabled ) {
-            $html .= '<div class="auto-update-time">' . esc_html__( 'Auto-updates enabled', 'ai-auto-post' ) . '</div>';
-        }
-
-        return $html;
-    }
-
-    /**
      * Instruct WordPress automatic background updater to update this plugin
      */
     public function should_auto_update( $update, $item ) {
-        if ( isset( $item->plugin ) && $item->plugin === $this->slug ) {
+        if ( is_object( $item ) && isset( $item->plugin ) && $item->plugin === $this->slug ) {
             $auto_updates = (array) get_site_option( 'auto_update_plugins', [] );
             if ( in_array( $this->slug, $auto_updates, true ) || get_option( 'aap_auto_update_enabled', '1' ) === '1' ) {
                 return true;
