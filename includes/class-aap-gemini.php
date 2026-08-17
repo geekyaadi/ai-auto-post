@@ -82,23 +82,27 @@ class AAP_Gemini {
         // On each quota error we advance to the next slot, wrapping around.
 
         $all_keys = AAP_Key_Manager::get_all_keys();
-        $provider = get_option( 'aap_active_provider', 'gemini' );
+        $active_provider    = get_option( 'aap_active_provider', 'gemini' );
+        $secondary_provider = ( $active_provider === 'gemini' ) ? 'openai' : 'gemini';
 
-        // Filter keys for the current provider
-        $provider_keys = [];
+        // Categorize non-invalid keys by provider
+        $primary_keys   = [];
+        $secondary_keys = [];
         foreach ( $all_keys as $k ) {
-            if ( ( $k['provider'] ?? 'gemini' ) === $provider && $k['status'] !== 'invalid' ) {
-                $provider_keys[] = $k['key'];
+            if ( ( $k['status'] ?? 'active' ) === 'invalid' ) continue;
+            $k_prov = $k['provider'] ?? 'gemini';
+            if ( $k_prov === $active_provider ) {
+                $primary_keys[] = $k['key'];
+            } else {
+                $secondary_keys[] = $k['key'];
             }
         }
 
-        if ( empty( $provider_keys ) ) {
+        if ( empty( $primary_keys ) && empty( $secondary_keys ) ) {
             return new WP_Error( 'no_key', __( 'No active API keys available.', 'ai-auto-post' ) );
         }
 
-        // BUG FIX #1: Determine model type correctly.
-        // Image generation models (gemini-2.0-flash used with responseModalities=IMAGE)
-        // are NOT in the MODELS constant (which only lists text models), so detect by name.
+        // Determine model type
         $image_model_names = [ 'gemini-2.0-flash', 'gemini-2.0-flash-exp', 'dall-e-3', 'imagen-3.0-generate-002' ];
         if ( isset( AAP_Rate_Limits::MODELS[ $model ] ) ) {
             $model_type = AAP_Rate_Limits::MODELS[ $model ]['type'] ?? 'text';
@@ -108,42 +112,35 @@ class AAP_Gemini {
             $model_type = 'text';
         }
 
-        $all_models = AAP_Rate_Limits::get_fallback_models_for_type( $model_type, $provider );
+        $primary_models = AAP_Rate_Limits::get_fallback_models_for_type( $model_type, $active_provider );
+        $primary_models = array_values( array_unique( array_merge( [ $model ], $primary_models ) ) );
 
-        // Always put the requested model first so it's tried first
-        $all_models = array_values( array_unique( array_merge( [ $model ], $all_models ) ) );
+        $secondary_models = AAP_Rate_Limits::get_fallback_models_for_type( $model_type, $secondary_provider );
 
-        // For image type, if fallback list is empty (image models not in MODELS),
-        // just use the requested model alone — no model cycling for image generation
-        if ( $model_type === 'image' && count( $all_models ) === 1 ) {
-            // Only cycle across KEYS, not models
-        }
-
-        // Build the flat rotation list: [key0+model0, key0+model1, ..., key1+model0, ...]
+        // Build Cross-Provider & Cross-Model rotation slots:
+        // 1. Primary Keys × Primary Models
+        // 2. Secondary Keys × Secondary Models (Automated Failover!)
         $slots = [];
-        foreach ( $provider_keys as $key ) {
-            foreach ( $all_models as $m ) {
-                $slots[] = [ 'key' => $key, 'model' => $m ];
+        foreach ( $primary_keys as $key ) {
+            foreach ( $primary_models as $m ) {
+                $slots[] = [ 'key' => $key, 'model' => $m, 'provider' => $active_provider ];
+            }
+        }
+        foreach ( $secondary_keys as $key ) {
+            foreach ( $secondary_models as $m ) {
+                $slots[] = [ 'key' => $key, 'model' => $m, 'provider' => $secondary_provider ];
             }
         }
         $total_slots = count( $slots );
 
-        // BUG FIX #2a: Use model-type-specific slot transient.
-        // Text steps and image steps build DIFFERENT slot arrays (different sizes),
-        // so sharing a transient causes slot index out-of-range → reset → wrong key.
         $slot_transient = 'aap_session_slot_' . $session_id . '_' . $model_type;
         $current_slot   = (int) get_transient( $slot_transient );
 
-        // Make sure the stored slot index is in range; if not, reset to 0
         if ( ! isset( $slots[ $current_slot ] ) ) {
             $current_slot = 0;
         }
 
-        // BUG FIX #2b: Use a tried-set instead of a skipped-counter.
-        // Counter approach had off-by-one: $skipped <= $total_slots allowed wrapping
-        // back to already-tried slots. tried-set correctly stops when all N unique
-        // slots have been visited.
-        $tried_set     = []; // slot indices already attempted an HTTP call
+        $tried_set     = [];
         $switched      = false;
         $current_model = $model;
 
@@ -152,6 +149,7 @@ class AAP_Gemini {
             $slot          = $slots[ $current_slot ];
             $current_key   = $slot['key'];
             $current_model = $slot['model'];
+            $slot_provider = $slot['provider'];
 
             // Auto-reset check each loop
             AAP_Key_Manager::auto_reset_check();
@@ -164,8 +162,8 @@ class AAP_Gemini {
 
             // Skip exhausted / invalid keys without counting as a "tried" attempt
             if ( $key_data && in_array( $key_data['status'], [ 'exhausted', 'invalid' ], true ) ) {
-                $tried_set[ $current_slot ] = true; // mark this slot as done
-                if ( count( $tried_set ) >= $total_slots ) break; // all slots visited
+                $tried_set[ $current_slot ] = true;
+                if ( count( $tried_set ) >= $total_slots ) break;
                 $current_slot = ( $current_slot + 1 ) % $total_slots;
                 $switched = true;
                 continue;
@@ -187,7 +185,7 @@ class AAP_Gemini {
             AAP_Key_Manager::increment_requests( $current_key );
 
             // ── Prepare HTTP Request ──────────────────────────────────────────
-            if ( $provider === 'openai' ) {
+            if ( $slot_provider === 'openai' ) {
                 if ( $current_model === 'dall-e-3' ) {
                     $url = 'https://api.openai.com/v1/images/generations';
                     $prompt = '';
@@ -252,8 +250,8 @@ class AAP_Gemini {
 
             // ── Quota / Rate-limit hit (429) → advance slot ───────────────────
             if ( $http_code === 429 ||
-                 ( $provider === 'openai' && isset( $body_decoded['error']['type'] ) && $body_decoded['error']['type'] === 'insufficient_quota' ) ||
-                 ( $provider === 'gemini' && AAP_Key_Manager::is_quota_error( $response ) ) ) {
+                 ( $slot_provider === 'openai' && isset( $body_decoded['error']['type'] ) && $body_decoded['error']['type'] === 'insufficient_quota' ) ||
+                 ( $slot_provider === 'gemini' && AAP_Key_Manager::is_quota_error( $response ) ) ) {
 
                 $retry_after = AAP_Key_Manager::parse_retry_after( $response, $body_decoded );
 
@@ -280,8 +278,8 @@ class AAP_Gemini {
             // ── Invalid Key → mark invalid, skip all its slots ────────────────
             if ( in_array( $http_code, [ 400, 401, 403 ], true ) ) {
                 $is_invalid = false;
-                if ( $provider === 'openai' && in_array( $http_code, [ 401, 403 ], true ) ) $is_invalid = true;
-                elseif ( $provider === 'gemini' && AAP_Key_Manager::is_invalid_key_error( $response ) ) $is_invalid = true;
+                if ( $slot_provider === 'openai' && in_array( $http_code, [ 401, 403 ], true ) ) $is_invalid = true;
+                elseif ( $slot_provider === 'gemini' && AAP_Key_Manager::is_invalid_key_error( $response ) ) $is_invalid = true;
 
                 if ( $is_invalid ) {
                     AAP_Key_Manager::mark_invalid( $current_key );
@@ -497,8 +495,27 @@ Return ONLY a JSON array of strings, e.g. [\"Comment 1\", \"Comment 2\"]. No con
         $clean = preg_replace( '/^```json\s*/i', '', trim( $raw ) );
         $clean = preg_replace( '/```\s*$/', '', $clean );
         $arr   = json_decode( $clean, true );
-
         return is_array( $arr ) ? $arr : [];
+    }
+
+    public static function generate_custom_text( string $prompt, string $session_id = '' ) {
+        if ( empty( $session_id ) ) {
+            $session_id = 'aap_custom_' . uniqid();
+        }
+        $body = self::text_body( $prompt, [
+            'generationConfig' => [ 'temperature' => 0.7, 'maxOutputTokens' => 4096 ],
+        ] );
+
+        $result = self::request( $session_id, self::get_text_model(), $body );
+        if ( is_wp_error( $result ) ) {
+            return $result;
+        }
+
+        $text  = self::extract_text( $result['data'] );
+        $clean = preg_replace( '/^```(?:html|markdown)?\s*/i', '', trim( $text ) );
+        $clean = preg_replace( '/```\s*$/', '', $clean );
+
+        return trim( $clean );
     }
 
     // -------------------------------------------------------------------------
@@ -518,13 +535,17 @@ Word count target: {word_count} words.
 Tone: {tone}.
 {focus_clause}
 
-CRITICAL INSTRUCTIONS FOR 1000% HUMAN WRITING STYLE & EASY ADSENSE APPROVAL:
+CRITICAL INSTRUCTIONS FOR MODERN 2026 SEO & 1000% HUMAN ADSENSE APPROVAL:
 1. NATIVE HUMAN PROSE: Write like a seasoned human journalist and niche expert. Vary sentence structures naturally (burstiness), mixing brief punchy thoughts with detailed explanations.
-2. NO CLICHÉ AI INTROS: Do NOT open with generic AI phrases (e.g. avoid: \"In today's fast-paced digital world\", \"Have you ever wondered\", \"Welcome to our guide\", \"In this article, we will explore\"). Start IMMEDIATELY with an engaging hook, a compelling real-world observation, or a bold direct sentence.
-3. NO CLICHÉ AI OUTROS: Do NOT end with robotic summary titles or lines (e.g. avoid: \"In conclusion\", \"To sum up\", \"All in all\", \"Final thoughts\", \"In summary\"). Conclude with a realistic, practical human insight.
-4. STRICTLY BANNED ROBOTIC BUZZWORDS: Do NOT use any of these overused AI words in any language: \"delve\", \"tapestry\", \"testament\", \"spearhead\", \"paramount\", \"beacon\", \"game-changer\", \"seamless\", \"unleash\", \"elevate\", \"crucial\", \"moreover\", \"furthermore\", \"first and foremost\", \"it is worth noting that\".
-5. E-E-A-T & VALUE: Provide genuine depth, actionable tips, pros/cons, real-world scenario insights, and structured formatting. Content must be 100% original and plagiarism-free.
-6. HTML FORMATTING: Use clean HTML tags (h2, h3, p, ul, li, strong, em). Paragraphs must be short (2-3 sentences max). Do NOT include code block fences. Output ONLY the raw HTML content.";
+2. MODERN SEO STRUCTURE:
+   - Use clear heading hierarchy (h2, h3, h4) properly nested.
+   - Include at least ONE HTML Data Table (<table><thead><tr><th>Header</th></tr></thead><tbody><tr><td>Data</td></tr></tbody></table>) comparing key specifications, pros & cons, or options.
+   - Include bulleted (<ul>) and numbered (<ol>) lists for easy scannability.
+   - Use <strong> bold formatting on key concepts and important takeaways.
+3. NO CLICHÉ AI INTROS: Do NOT open with generic AI phrases (e.g. avoid: \"In today's fast-paced digital world\", \"Have you ever wondered\", \"Welcome to our guide\", \"In this article, we will explore\"). Start IMMEDIATELY with an engaging hook or real-world observation.
+4. NO CLICHÉ AI OUTROS: Do NOT end with robotic summary titles or lines (e.g. avoid: \"In conclusion\", \"To sum up\", \"All in all\", \"Final thoughts\", \"In summary\"). Conclude with a realistic, practical human insight.
+5. STRICTLY BANNED BUZZWORDS: Do NOT use any overused AI words in any language: \"delve\", \"tapestry\", \"testament\", \"spearhead\", \"paramount\", \"beacon\", \"game-changer\", \"seamless\", \"unleash\", \"elevate\", \"crucial\", \"moreover\", \"furthermore\".
+6. HTML FORMATTING: Use clean HTML tags (h2, h3, h4, p, table, thead, tbody, tr, th, td, ul, ol, li, strong, em). Paragraphs must be short (2-3 sentences max). Output ONLY the raw HTML content (no code block fences).";
 
         $focus_clause = $focus_keywords
             ? "Focus Keywords to integrate naturally: \"{$focus_keywords}\"."
