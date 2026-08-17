@@ -23,14 +23,19 @@ $msg = $_GET['msg'] ?? ( isset($_GET['saved']) ? 'saved' : '' );
                 <img src="<?php echo esc_url( AAP_PLUGIN_URL . 'admin/ai-auto-post-by-aadi.png' ); ?>" alt="Logo" style="height:32px; width:auto; vertical-align:middle; margin-right:10px; border-radius:4px;">
                 <span class="aap-logo-badge">Scheduler</span>
             </div>
-            <div class="aap-header-nav">
+                        <div class="aap-header-nav">
                 <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link">Dashboard</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link active">Scheduler</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Manager</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Manager</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Bulk Translator</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Google Indexing</a>
-<a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Article Rewriter</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Article Rewriter</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Speed Optimizer</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
                 <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
             </div>
         </div>
