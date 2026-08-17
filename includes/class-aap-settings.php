@@ -22,7 +22,7 @@ class AAP_Settings {
         add_action( 'admin_post_aap_clear_queue',    [ __CLASS__, 'handle_clear_queue' ] );
         add_action( 'admin_post_aap_delete_selected_queue', [ __CLASS__, 'handle_delete_selected_queue' ] );
         add_action( 'admin_post_aap_delete_history', [ __CLASS__, 'handle_delete_history' ] );
-        add_action( 'admin_post_aap_clear_history',  [ __CLASS__, 'clear_history' ] );
+        add_action( 'admin_post_aap_clear_history',  [ __CLASS__, 'handle_clear_history' ] );
         add_action( 'admin_post_aap_reset_settings',   [ __CLASS__, 'handle_reset_settings' ] );
         add_action( 'admin_post_aap_clear_plugin_data', [ __CLASS__, 'handle_clear_plugin_data' ] );
         add_action( 'admin_post_aap_save_speed_settings', [ __CLASS__, 'save_speed_settings' ] );
