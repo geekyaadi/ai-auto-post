@@ -49,6 +49,10 @@ class AAP_Ajax {
             self::error( __( 'Security check failed.', 'ai-auto-post' ) );
             exit;
         }
+        if ( ! current_user_can( 'manage_options' ) ) {
+            self::error( __( 'Unauthorized capability check failed.', 'ai-auto-post' ) );
+            exit;
+        }
     }
 
     // -------------------------------------------------------------------------
