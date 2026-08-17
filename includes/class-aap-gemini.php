@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class AAP_Gemini {
 
     // Default model IDs — overridden by plugin settings
-    const DEFAULT_TEXT_MODEL  = 'gemini-3.1-flash-lite-preview';
+    const DEFAULT_TEXT_MODEL  = 'gemini-2.5-flash';
     const DEFAULT_IMAGE_MODEL = 'gemini-2.0-flash';
     const API_BASE            = 'https://generativelanguage.googleapis.com/v1beta/models/';
 
@@ -215,10 +215,13 @@ class AAP_Gemini {
                     }
                     if ( empty( $messages ) ) $messages[] = [ 'role' => 'user', 'content' => 'Hello' ];
                     $req_body = [
-                        'model'       => $current_model,
-                        'messages'    => $messages,
-                        'temperature' => isset( $body['generationConfig']['temperature'] ) ? (float) $body['generationConfig']['temperature'] : 0.7,
+                        'model'    => $current_model,
+                        'messages' => $messages,
                     ];
+                    // Reasoning models like o1, o1-mini, o3-mini do not accept custom temperature parameter
+                    if ( strpos( $current_model, 'o1' ) === false && strpos( $current_model, 'o3' ) === false ) {
+                        $req_body['temperature'] = isset( $body['generationConfig']['temperature'] ) ? (float) $body['generationConfig']['temperature'] : 0.7;
+                    }
                     if ( isset( $body['generationConfig']['maxOutputTokens'] ) ) {
                         $req_body['max_completion_tokens'] = (int) $body['generationConfig']['maxOutputTokens'];
                     }
