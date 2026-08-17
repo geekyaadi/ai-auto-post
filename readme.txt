@@ -4,7 +4,7 @@ Tags: ai, gemini, auto-post, content-generation, seo, gsc-indexing, article-rewr
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,6 +55,11 @@ Yes! You can paste or upload your Google Cloud Service Account JSON key in **Set
 Yes! Meta descriptions and social share (OpenGraph) images are automatically written to Yoast SEO and RankMath custom meta fields.
 
 == Changelog ==
+
+= 1.3.2 =
+* FIXED: Bulk Planner & Title Generator parsing to support JSON arrays, numbered lists, bullet points, and plain text fallbacks with automatic retry.
+* NEW: System Maintenance & Data Control panel in Settings with "🔄 Reset Settings" and "🧹 Clear Plugin Data & Cache" buttons.
+* ENHANCED: 1000% Human writing style & anti-AI detection prompts to bypass AI detectors and ensure 100% unique, plagiarism-free, E-E-A-T AdSense-ready articles in all languages.
 
 = 1.3.1 =
 * Cleaned up repository assets and optimized typography fonts (Roboto-Bold).
