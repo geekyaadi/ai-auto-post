@@ -36,8 +36,32 @@ class AAP_Rate_Limits {
     const MODELS = [
 
         // ── Google Gemini Text Models ─────────────────────────────────────────
+        'gemini-2.5-flash' => [
+            'label'       => 'Gemini 2.5 Flash ⭐ (Recommended - Fast & High Quota)',
+            'api_id'      => 'gemini-2.5-flash',
+            'rpm'         => 15,
+            'tpm'         => 1000000,
+            'rpd'         => 1500,
+            'type'        => 'text',
+            'provider'    => 'gemini',
+            'free'        => true,
+            'recommended' => true,
+        ],
+
+        'gemini-2.5-pro' => [
+            'label'       => 'Gemini 2.5 Pro (Advanced Reasoning & Deep Articles)',
+            'api_id'      => 'gemini-2.5-pro',
+            'rpm'         => 2,
+            'tpm'         => 32000,
+            'rpd'         => 50,
+            'type'        => 'text',
+            'provider'    => 'gemini',
+            'free'        => true,
+            'recommended' => false,
+        ],
+
         'gemini-3.1-flash-lite-preview' => [
-            'label'       => 'Gemini 3.1 Flash Lite ⭐ (Best free — 500/day)',
+            'label'       => 'Gemini 3.1 Flash Lite (High Daily Quota - 500/day)',
             'api_id'      => 'gemini-3.1-flash-lite-preview',
             'rpm'         => 15,
             'tpm'         => 250000,
@@ -45,51 +69,51 @@ class AAP_Rate_Limits {
             'type'        => 'text',
             'provider'    => 'gemini',
             'free'        => true,
-            'recommended' => true,
+            'recommended' => false,
         ],
 
-        'gemini-2.5-flash-lite-preview-06-17' => [
-            'label'       => 'Gemini 2.5 Flash Lite',
-            'api_id'      => 'gemini-2.5-flash-lite-preview-06-17',
-            'rpm'         => 10,
-            'tpm'         => 250000,
-            'rpd'         => 20,
+        'gemini-2.0-flash' => [
+            'label'       => 'Gemini 2.0 Flash',
+            'api_id'      => 'gemini-2.0-flash',
+            'rpm'         => 15,
+            'tpm'         => 1000000,
+            'rpd'         => 1500,
             'type'        => 'text',
             'provider'    => 'gemini',
             'free'        => true,
             'recommended' => false,
         ],
 
-        'gemini-2.5-flash-preview-05-20' => [
-            'label'       => 'Gemini 2.5 Flash',
-            'api_id'      => 'gemini-2.5-flash-preview-05-20',
-            'rpm'         => 5,
-            'tpm'         => 250000,
-            'rpd'         => 20,
+        'gemini-2.0-flash-lite' => [
+            'label'       => 'Gemini 2.0 Flash Lite',
+            'api_id'      => 'gemini-2.0-flash-lite',
+            'rpm'         => 30,
+            'tpm'         => 1000000,
+            'rpd'         => 1500,
             'type'        => 'text',
             'provider'    => 'gemini',
             'free'        => true,
             'recommended' => false,
         ],
 
-        'gemini-3-flash' => [
-            'label'       => 'Gemini 3 Flash',
-            'api_id'      => 'gemini-3-flash',
-            'rpm'         => 5,
-            'tpm'         => 250000,
-            'rpd'         => 20,
+        'gemini-1.5-flash' => [
+            'label'       => 'Gemini 1.5 Flash',
+            'api_id'      => 'gemini-1.5-flash',
+            'rpm'         => 15,
+            'tpm'         => 1000000,
+            'rpd'         => 1500,
             'type'        => 'text',
             'provider'    => 'gemini',
             'free'        => true,
             'recommended' => false,
         ],
 
-        'gemini-3.5-flash' => [
-            'label'       => 'Gemini 3.5 Flash',
-            'api_id'      => 'gemini-3.5-flash',
-            'rpm'         => 5,
-            'tpm'         => 250000,
-            'rpd'         => 20,
+        'gemini-1.5-pro' => [
+            'label'       => 'Gemini 1.5 Pro',
+            'api_id'      => 'gemini-1.5-pro',
+            'rpm'         => 2,
+            'tpm'         => 32000,
+            'rpd'         => 50,
             'type'        => 'text',
             'provider'    => 'gemini',
             'free'        => true,
@@ -98,7 +122,7 @@ class AAP_Rate_Limits {
 
         // ── OpenAI ChatGPT Text Models ────────────────────────────────────────
         'gpt-4o-mini' => [
-            'label'       => 'GPT-4o Mini ⭐ (Recommended for speed/cost)',
+            'label'       => 'GPT-4o Mini ⭐ (Recommended for speed & cost)',
             'api_id'      => 'gpt-4o-mini',
             'rpm'         => 15,
             'tpm'         => 200000,
@@ -110,8 +134,44 @@ class AAP_Rate_Limits {
         ],
 
         'gpt-4o' => [
-            'label'       => 'GPT-4o (Higher quality, slower)',
+            'label'       => 'GPT-4o (High Intelligence)',
             'api_id'      => 'gpt-4o',
+            'rpm'         => 3,
+            'tpm'         => 30000,
+            'rpd'         => 500,
+            'type'        => 'text',
+            'provider'    => 'openai',
+            'free'        => true,
+            'recommended' => false,
+        ],
+
+        'o3-mini' => [
+            'label'       => 'OpenAI o3-mini (Advanced Reasoning)',
+            'api_id'      => 'o3-mini',
+            'rpm'         => 3,
+            'tpm'         => 50000,
+            'rpd'         => 1000,
+            'type'        => 'text',
+            'provider'    => 'openai',
+            'free'        => true,
+            'recommended' => false,
+        ],
+
+        'o1-mini' => [
+            'label'       => 'OpenAI o1-mini (Reasoning Model)',
+            'api_id'      => 'o1-mini',
+            'rpm'         => 3,
+            'tpm'         => 50000,
+            'rpd'         => 1000,
+            'type'        => 'text',
+            'provider'    => 'openai',
+            'free'        => true,
+            'recommended' => false,
+        ],
+
+        'gpt-4-turbo' => [
+            'label'       => 'GPT-4 Turbo',
+            'api_id'      => 'gpt-4-turbo',
             'rpm'         => 3,
             'tpm'         => 30000,
             'rpd'         => 500,
