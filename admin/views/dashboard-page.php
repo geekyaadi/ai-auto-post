@@ -7,44 +7,76 @@ $key_stats  = AAP_Key_Manager::get_stats();
 $all_keys   = AAP_Key_Manager::get_all_keys();
 
 $msg_map = [
-    'deleted' => ['type'=>'success','text'=>'✅ History entry deleted.'],
-    'cleared' => ['type'=>'success','text'=>'✅ History cleared.'],
+    'deleted'        => ['type'=>'success','text'=>'✅ History entry deleted.'],
+    'cleared'        => ['type'=>'success','text'=>'✅ History cleared.'],
+    'cache_purged'   => ['type'=>'success','text'=>'⚡ All Site & Transients Caches Purged Successfully!'],
+    'settings_reset' => ['type'=>'success','text'=>'⚙️ All Plugin Settings Reset to Defaults.'],
 ];
 $msg = $_GET['msg'] ?? '';
 $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across models
 ?>
 
 <div class="aap-wrap">
+    <!-- Main Top Navigation -->
     <div class="aap-header">
         <div class="aap-header-inner">
             <div class="aap-logo">
                 <img src="<?php echo esc_url( AAP_PLUGIN_URL . 'admin/ai-auto-post-by-aadi.png' ); ?>" alt="Logo" style="height:32px; width:auto; vertical-align:middle; margin-right:10px; border-radius:4px;">
                 <span class="aap-logo-badge">Control Center</span>
             </div>
-                        <div class="aap-header-nav">
-    <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link active">Dashboard</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link">Scheduler</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Tool</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Tool</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Translator</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Indexing</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Rewriter</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Optimizer</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-redirects'); ?>" class="aap-nav-link">Redirect</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-codes'); ?>" class="aap-nav-link">Codes</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
-</div>
+            <div class="aap-header-nav">
+                <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link active">Dashboard</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link">Scheduler</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Tool</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Tool</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Translator</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Indexing</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Rewriter</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Optimizer</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-redirects'); ?>" class="aap-nav-link">Redirect</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-codes'); ?>" class="aap-nav-link">Codes</a>
+                <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
+            </div>
         </div>
     </div>
 
     <div class="aap-content">
         <?php if ( $msg && isset($msg_map[$msg]) ): ?>
-        <div class="aap-alert aap-alert-<?php echo $msg_map[$msg]['type']; ?>"><?php echo esc_html($msg_map[$msg]['text']); ?></div>
+            <div class="aap-alert aap-alert-<?php echo $msg_map[$msg]['type']; ?>" style="margin-bottom:18px;">
+                <?php echo esc_html($msg_map[$msg]['text']); ?>
+            </div>
         <?php endif; ?>
+
+        <!-- Control Action Bar: Red Purge Cache & Reset Settings Buttons -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px; background:#ffffff; border:1px solid #c3c4c7; padding:14px 20px; border-radius:6px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+            <div>
+                <h2 style="font-size:16px; font-weight:600; margin:0 0 4px 0; color:var(--aap-text-dark); display:flex; align-items:center; gap:8px;">
+                    <span>⚡</span> AI Auto Post Control Center &amp; Quick Actions
+                </h2>
+                <p style="margin:0; font-size:13px; color:var(--aap-text-muted);">Manage AI Generation, API Keys, Scheduled Automation, &amp; Site Cache Purge.</p>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" style="margin:0;">
+                    <?php wp_nonce_field('aap_purge_speed_cache'); ?>
+                    <input type="hidden" name="action" value="aap_purge_speed_cache">
+                    <button type="submit" class="button button-primary" style="background:#d63638; border-color:#b32d2e; color:#ffffff; font-weight:600; padding:4px 14px; cursor:pointer;">
+                        ⚡ Purge All Site Caches Now
+                    </button>
+                </form>
+
+                <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" style="margin:0;" onsubmit="return confirm('Reset all plugin settings to defaults?')">
+                    <?php wp_nonce_field('aap_reset_settings'); ?>
+                    <input type="hidden" name="action" value="aap_reset_settings">
+                    <button type="submit" class="button button-secondary" style="font-weight:600; padding:4px 14px; cursor:pointer;">
+                        ⚙️ Reset Plugin Settings
+                    </button>
+                </form>
+            </div>
+        </div>
 
         <!-- Two Column Dashboard Grid -->
         <div class="aap-two-col">
@@ -82,17 +114,13 @@ $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across mod
                         <h2 class="aap-panel-title">🔑 API Key Health Dashboard</h2>
                         <div class="aap-panel-actions">
                             <button type="button" id="aap-btn-ping-all" class="aap-btn aap-btn-secondary aap-btn-sm">🏓 Ping All</button>
-                                            <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
-                                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-btn aap-btn-ghost aap-btn-sm">⚙️ Manage</a>
+                            <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-btn aap-btn-ghost aap-btn-sm">⚙️ Manage Keys</a>
                         </div>
                     </div>
 
                     <?php if (empty($all_keys)): ?>
                     <div class="aap-empty-state">
-                        No API keys configured.                 <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
-                                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">Configure keys first →</a>
+                        No API keys configured. <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">Configure keys first →</a>
                     </div>
                     <?php else: ?>
                     <table class="aap-table" id="aap-keys-table">
@@ -362,7 +390,7 @@ $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across mod
         <!-- Preview Modal Overlay -->
         <div class="aap-preview-panel" id="aap-preview-panel" style="display:none;">
             <div class="aap-preview-header">
-                <div class="aap-preview-header-title">👁 Post Preview (SEO & Readability Approved)</div>
+                <div class="aap-preview-header-title">👁 Post Preview (SEO &amp; Readability Approved)</div>
                 <div class="aap-preview-header-actions">
                     <button id="aap-btn-confirm-publish" class="aap-btn aap-btn-primary">🚀 Publish Post Now</button>
                     <button id="aap-btn-cancel-preview" class="aap-btn aap-btn-secondary">✕ Close</button>
