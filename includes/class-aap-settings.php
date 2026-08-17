@@ -23,6 +23,8 @@ class AAP_Settings {
         add_action( 'admin_post_aap_delete_selected_queue', [ __CLASS__, 'handle_delete_selected_queue' ] );
         add_action( 'admin_post_aap_delete_history', [ __CLASS__, 'handle_delete_history' ] );
         add_action( 'admin_post_aap_clear_history',  [ __CLASS__, 'handle_clear_history' ] );
+        add_action( 'admin_post_aap_reset_settings',   [ __CLASS__, 'handle_reset_settings' ] );
+        add_action( 'admin_post_aap_clear_plugin_data', [ __CLASS__, 'handle_clear_plugin_data' ] );
     }
 
     // -------------------------------------------------------------------------
@@ -386,6 +388,59 @@ class AAP_Settings {
         AAP_History::clear_all();
 
         wp_redirect( add_query_arg( [ 'page' => 'aap-dashboard', 'msg' => 'cleared' ], admin_url( 'admin.php' ) ) );
+        exit;
+    }
+
+    public static function handle_reset_settings() {
+        check_admin_referer( 'aap_reset_settings' );
+        if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Unauthorized' );
+
+        $options_to_delete = [
+            'aap_default_status', 'aap_default_author', 'aap_word_count', 'aap_tag_count',
+            'aap_content_tone', 'aap_blacklist_words', 'aap_key_reset_minutes', 'aap_review_mode',
+            'aap_text_model', 'aap_image_model', 'aap_active_provider', 'aap_openai_model',
+            'aap_enable_internal_linking', 'aap_max_internal_links', 'aap_enable_indexnow',
+            'aap_enable_comments', 'aap_comments_count', 'aap_enable_text_overlay',
+            'aap_overlay_font_size', 'aap_overlay_color', 'aap_overlay_bg_color',
+            'aap_overlay_bg_opacity', 'aap_overlay_position', 'aap_thumb_type',
+            'aap_t2i_bg_type', 'aap_t2i_bg_val', 'aap_t2i_size', 'aap_enable_faq',
+            'aap_faq_count', 'aap_gsc_json', 'aap_enable_gsc_auto_ping', 'aap_prompt_titles',
+            'aap_prompt_article', 'aap_prompt_meta', 'aap_prompt_tags', 'aap_prompt_faq',
+            'aap_default_reference_image'
+        ];
+
+        foreach ( $options_to_delete as $opt ) {
+            delete_option( $opt );
+        }
+
+        if ( function_exists( 'aap_purge_all_caches' ) ) {
+            aap_purge_all_caches();
+        }
+
+        wp_redirect( add_query_arg( [ 'page' => 'aap-settings', 'msg' => 'settings_reset' ], admin_url( 'admin.php' ) ) );
+        exit;
+    }
+
+    public static function handle_clear_plugin_data() {
+        check_admin_referer( 'aap_clear_plugin_data' );
+        if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Unauthorized' );
+
+        // 1. Delete all plugin transients
+        global $wpdb;
+        $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_aap_%' OR option_name LIKE '_site_transient_aap_%'" );
+
+        // 2. Clear Queue
+        AAP_Queue::clear_all();
+
+        // 3. Clear History Log
+        AAP_History::clear_all();
+
+        // 4. Multi-engine Cache Purge
+        if ( function_exists( 'aap_purge_all_caches' ) ) {
+            aap_purge_all_caches();
+        }
+
+        wp_redirect( add_query_arg( [ 'page' => 'aap-settings', 'msg' => 'data_cleared' ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
