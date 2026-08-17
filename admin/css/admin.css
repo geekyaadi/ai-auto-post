@@ -93,36 +93,41 @@
 
 .aap-header-nav {
     display: flex;
-    gap: 4px 6px;
+    gap: 3px;
     margin-bottom: -1px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
     max-width: 100%;
+    padding-bottom: 2px;
 }
 
 .aap-nav-link {
-    background: #e0e0e0;
+    background: #f6f7f7;
     border: 1px solid var(--aap-border);
     border-bottom: none;
     color: var(--aap-primary);
-    padding: 5px 11px;
+    padding: 6px 9px;
     font-size: 12px;
-    line-height: 1.71428571;
+    line-height: 1.4;
     font-weight: 600;
     text-decoration: none;
     border-radius: 4px 4px 0 0;
     white-space: nowrap;
     transition: background 0.1s, color 0.1s;
+    flex-shrink: 0;
 }
 
 .aap-nav-link:hover {
-    background: #f6f7f7;
+    background: #ffffff;
     color: var(--aap-primary-hover);
 }
 
 .aap-nav-link.active {
-    background: var(--aap-bg);
+    background: #ffffff;
     color: var(--aap-text-dark);
-    border-bottom: 1px solid var(--aap-bg);
+    border: 1px solid var(--aap-border);
+    border-bottom: 2px solid #ffffff;
+    margin-bottom: -1px;
 }
 
 /* ── Panels ───────────────────────────────────────────────────────────────── */
