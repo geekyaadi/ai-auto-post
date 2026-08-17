@@ -22,6 +22,11 @@ class AAP_Scheduler {
     // -------------------------------------------------------------------------
 
     public static function enable() {
+        if ( function_exists( 'as_next_scheduled_action' ) && function_exists( 'as_schedule_recurring_action' ) ) {
+            if ( ! as_next_scheduled_action( self::CRON_HOOK ) ) {
+                as_schedule_recurring_action( time(), 3600, self::CRON_HOOK, [], 'ai-auto-post' );
+            }
+        }
         if ( ! wp_next_scheduled( self::CRON_HOOK ) ) {
             wp_schedule_event( time(), 'hourly', self::CRON_HOOK );
         }
@@ -29,6 +34,9 @@ class AAP_Scheduler {
     }
 
     public static function disable() {
+        if ( function_exists( 'as_unschedule_all_actions' ) ) {
+            as_unschedule_all_actions( self::CRON_HOOK, [], 'ai-auto-post' );
+        }
         $timestamp = wp_next_scheduled( self::CRON_HOOK );
         if ( $timestamp ) {
             wp_unschedule_event( $timestamp, self::CRON_HOOK );
