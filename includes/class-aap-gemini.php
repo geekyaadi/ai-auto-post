@@ -402,18 +402,27 @@ Return ONLY a numbered list (1. Title, 2. Title, etc.) with no additional conver
         $raw    = self::extract_text( $result['data'] );
         $titles = self::parse_numbered_list( $raw );
 
+        if ( empty( $titles ) ) {
+            $fallback = "Generate exactly 5 blog post titles for topic: \"{$niche}\". Write in language: {$language}. Return ONLY a numbered list 1 to 5.";
+            $result = self::request( $session_id, self::get_text_model(), self::text_body( $fallback ) );
+            if ( ! is_wp_error( $result ) ) {
+                $raw    = self::extract_text( $result['data'] );
+                $titles = self::parse_numbered_list( $raw );
+            }
+        }
+
         set_transient( $cache_key, $titles, self::CACHE_TTL );
 
         return [
             'titles'   => $titles,
             'cached'   => false,
-            'key_used' => $result['key_used'],
-            'switched' => $result['switched'],
+            'key_used' => is_array($result) ? $result['key_used'] : '',
+            'switched' => is_array($result) ? $result['switched'] : false,
         ];
     }
 
     public static function get_planner_title_suggestions( string $session_id, string $niche, string $language = 'English', int $count = 20 ) {
-        $default_prompt = "Generate exactly {count} unique, highly engaging, CTR-optimized, SEO blog post title ideas for the niche: \"{niche}\".
+        $default_prompt = "Generate exactly {count} unique, highly engaging, CTR-optimized, SEO blog post title ideas for the niche/topic: \"{niche}\".
 Write the titles in the language: \"{language}\".
 The titles must catch curiosity, vary in angles, and target search traffic in that language.
 Return ONLY a numbered list (1. Title, 2. Title, etc.) with no additional conversational text, notes, or markdown.";
@@ -430,102 +439,70 @@ Return ONLY a numbered list (1. Title, 2. Title, etc.) with no additional conver
         $raw    = self::extract_text( $result['data'] );
         $titles = self::parse_numbered_list( $raw );
 
+        if ( empty( $titles ) ) {
+            $fallback = "Generate exactly {$count} blog post title ideas for topic: \"{$niche}\". Write in language: {$language}. Return ONLY a numbered list (1. Title, 2. Title, etc.).";
+            $result = self::request( $session_id, self::get_text_model(), self::text_body( $fallback ) );
+            if ( ! is_wp_error( $result ) ) {
+                $raw    = self::extract_text( $result['data'] );
+                $titles = self::parse_numbered_list( $raw );
+            }
+        }
+
         return [
             'titles'   => $titles,
+            'key_used' => is_array($result) ? $result['key_used'] : '',
+            'switched' => is_array($result) ? $result['switched'] : false,
+        ];
+    }
+
+    public static function get_silo_suggestions( string $session_id, string $niche, string $language = 'English' ) {
+        $prompt = "Create a search engine optimized Pillar-Cluster (Silo) content structure for the niche/topic: \"{$niche}\".
+Language: \"{$language}\".
+Return ONLY valid JSON with this exact structure:
+{
+  \"pillar\": \"Main Pillar Article Title\",
+  \"clusters\": [ \"Cluster Article Title 1\", \"Cluster Article Title 2\", \"Cluster Article Title 3\", \"Cluster Article Title 4\", \"Cluster Article Title 5\" ]
+}";
+
+        $result = self::request( $session_id, self::get_text_model(), self::text_body( $prompt ) );
+        if ( is_wp_error( $result ) ) return $result;
+
+        $raw    = self::extract_text( $result['data'] );
+        $clean  = preg_replace( '/^```json\s*/i', '', trim( $raw ) );
+        $clean  = preg_replace( '/```\s*$/', '', $clean );
+        $decoded = json_decode( $clean, true );
+
+        return [
+            'silo'     => is_array( $decoded ) ? $decoded : [],
             'key_used' => $result['key_used'],
             'switched' => $result['switched'],
         ];
     }
 
-    public static function get_silo_suggestions( string $session_id, string $niche, string $language = 'English' ) {
-        $blacklist = self::get_blacklist_phrase();
-        $prompt = "Create a search engine optimized Pillar-Cluster (Silo) content structure for the niche/topic: \"{$niche}\".
-Write the response in the language: \"{$language}\".
-You must generate exactly 1 primary Pillar Article Title, and exactly 5 highly related Supporting Cluster Article Titles.
-Return the response ONLY as a valid JSON object structure with no additional conversational text or markdown code block formatting. The JSON schema MUST be exactly:
-{
-  \"pillar\": \"Pillar Article Title\",
-  \"subposts\": [
-    \"Cluster Title 1\",
-    \"Cluster Title 2\",
-    \"Cluster Title 3\",
-    \"Cluster Title 4\",
-    \"Cluster Title 5\"
-  ]
-}
-{$blacklist}";
-
-        $body = self::text_body( $prompt, [
-            'generationConfig' => [
-                'temperature'     => 0.7,
-                'responseMimeType' => 'application/json',
-            ]
-        ] );
-
-        $result = self::request( $session_id, self::get_text_model(), $body );
-        if ( is_wp_error( $result ) ) return $result;
-
-        $raw = self::extract_text( $result['data'] );
-        $raw = trim( preg_replace( '/^```(?:json)?|```$/i', '', trim( $raw ) ) );
-
-        $decoded = json_decode( $raw, true );
-        if ( ! is_array( $decoded ) || empty( $decoded['pillar'] ) || empty( $decoded['subposts'] ) ) {
-            return new WP_Error( 'json_parse_failed', 'Failed to parse generated silo structure JSON. Raw response: ' . substr( $raw, 0, 500 ) );
-        }
-
-        return [
-            'silo'     => $decoded,
-            'key_used' => $result['key_used'] ?? '',
-            'switched' => $result['switched'] ?? false,
-        ];
-    }
-
-    public static function generate_comments( string $session_id, string $title, int $count = 2, string $language = 'English' ) {
+    public static function generate_comments( string $session_id, string $title, int $count = 2 ) {
         $prompt = "Write exactly {$count} realistic user comments for a blog post titled: \"{$title}\".
-The comments must sound natural, like different real people expressing thoughts, questions, or feedback in the language: \"{$language}\".
-Return the response ONLY as a valid JSON array of objects, with no additional conversational text or markdown code block formatting. Each object MUST contain exactly:
-- \"name\": a realistic display name of the commenter
-- \"email\": a realistic dummy email address
-- \"comment\": the comment text
-Example schema:
-[
-  {
-    \"name\": \"Jane Doe\",
-    \"email\": \"jane.doe@example.com\",
-    \"comment\": \"This is a fantastic guide! Extremely helpful.\"
-  }
-]";
+Return ONLY a JSON array of strings, e.g. [\"Comment 1\", \"Comment 2\"]. No conversational text.";
 
         $body = self::text_body( $prompt, [
-            'generationConfig' => [
-                'temperature'     => 0.7,
-                'responseMimeType' => 'application/json',
-            ]
+            'generationConfig' => [ 'temperature' => 0.8, 'maxOutputTokens' => 1024 ],
         ] );
 
         $result = self::request( $session_id, self::get_text_model(), $body );
-        if ( is_wp_error( $result ) ) return $result;
+        if ( is_wp_error( $result ) ) return [];
 
-        $raw = self::extract_text( $result['data'] );
-        $raw = trim( preg_replace( '/^```(?:json)?|```$/i', '', trim( $raw ) ) );
+        $raw   = self::extract_text( $result['data'] );
+        $clean = preg_replace( '/^```json\s*/i', '', trim( $raw ) );
+        $clean = preg_replace( '/```\s*$/', '', $clean );
+        $arr   = json_decode( $clean, true );
 
-        $decoded = json_decode( $raw, true );
-        if ( ! is_array( $decoded ) ) {
-            return new WP_Error( 'json_parse_failed', 'Failed to parse generated comments JSON. Raw response: ' . substr( $raw, 0, 500 ) );
-        }
-
-        return [
-            'comments' => $decoded,
-            'key_used' => $result['key_used'] ?? '',
-            'switched' => $result['switched'] ?? false,
-        ];
+        return is_array( $arr ) ? $arr : [];
     }
 
     // -------------------------------------------------------------------------
-    // Step 2: Article Generation
+    // Step 2: Article Generation (AdSense Ready, 1000% Human Style, Zero AI Clichés)
     // -------------------------------------------------------------------------
 
-    public static function generate_article( string $session_id, string $title, string $focus_keywords = '', string $language = 'English' ) {
+    public static function get_article( string $session_id, string $title, string $focus_keywords = '', string $language = 'English' ) {
         $cache_key = 'aap_article_' . $session_id;
         $cached    = get_transient( $cache_key );
         if ( $cached ) return [ 'article' => $cached, 'cached' => true, 'switched' => false ];
@@ -533,21 +510,18 @@ Example schema:
         $word_count = (int) get_option( 'aap_word_count', 1000 );
         $tone       = get_option( 'aap_content_tone', 'professional' );
         $default_prompt = "Write a comprehensive, 100% unique, human-like, SEO-optimized blog post titled: \"{title}\".
-Write the response in the language: \"{language}\".
+Write the entire article in the specified language: \"{language}\".
 Word count target: {word_count} words.
 Tone: {tone}.
 {focus_clause}
 
-Writing instructions for AdSense approval and human readability:
-1. Write the entire post in the specified language: \"{language}\". Ensure it is grammatically correct and natural-sounding for native speakers of that language.
-2. Vary sentence lengths (mix short punchy sentences with longer complex sentences) to create a natural, engaging flow (burstiness) and bypass AI detectors.
-3. Do NOT use typical AI clichés, generic buzzwords, or repetitive transitions (e.g., ban the use of: \"in conclusion\", \"it is important to note\", \"delve\", \"testament\", \"tapestry\", \"moreover\", \"furthermore\", \"crucial\", \"essential\", \"first and foremost\", \"look no further\").
-4. Use active voice and write in a conversational, authoritative expert persona (E-E-A-T friendly) with natural transition flow.
-5. Organize content with clear H2 and H3 subheadings. Integrate focus keywords naturally in at least one subheading, in the introduction paragraph, and in the conclusion.
-6. Keep paragraphs short (2-3 sentences max) for readability.
-7. Use standard list formatting (bullet points) where appropriate.
-
-Return ONLY the HTML content formatted with tags (h2, h3, p, ul, li, strong) suitable for WordPress. Do not include page title, markdown backticks, or any conversational intro/outro text in your response.";
+CRITICAL INSTRUCTIONS FOR 1000% HUMAN WRITING STYLE & EASY ADSENSE APPROVAL:
+1. NATIVE HUMAN PROSE: Write like a seasoned human journalist and niche expert. Vary sentence structures naturally (burstiness), mixing brief punchy thoughts with detailed explanations.
+2. NO CLICHÉ AI INTROS: Do NOT open with generic AI phrases (e.g. avoid: \"In today's fast-paced digital world\", \"Have you ever wondered\", \"Welcome to our guide\", \"In this article, we will explore\"). Start IMMEDIATELY with an engaging hook, a compelling real-world observation, or a bold direct sentence.
+3. NO CLICHÉ AI OUTROS: Do NOT end with robotic summary titles or lines (e.g. avoid: \"In conclusion\", \"To sum up\", \"All in all\", \"Final thoughts\", \"In summary\"). Conclude with a realistic, practical human insight.
+4. STRICTLY BANNED ROBOTIC BUZZWORDS: Do NOT use any of these overused AI words in any language: \"delve\", \"tapestry\", \"testament\", \"spearhead\", \"paramount\", \"beacon\", \"game-changer\", \"seamless\", \"unleash\", \"elevate\", \"crucial\", \"moreover\", \"furthermore\", \"first and foremost\", \"it is worth noting that\".
+5. E-E-A-T & VALUE: Provide genuine depth, actionable tips, pros/cons, real-world scenario insights, and structured formatting. Content must be 100% original and plagiarism-free.
+6. HTML FORMATTING: Use clean HTML tags (h2, h3, p, ul, li, strong, em). Paragraphs must be short (2-3 sentences max). Do NOT include code block fences. Output ONLY the raw HTML content.";
 
         $focus_clause = $focus_keywords
             ? "Focus Keywords to integrate naturally: \"{$focus_keywords}\"."
@@ -569,7 +543,7 @@ Return ONLY the HTML content formatted with tags (h2, h3, p, ul, li, strong) sui
 
         $article = self::extract_text( $result['data'] );
         // Strip markdown code fences if present
-        $article = preg_replace( '/^```html\s*/i', '', $article );
+        $article = preg_replace( '/^```(?:html)?\s*/i', '', $article );
         $article = preg_replace( '/```\s*$/', '', $article );
 
         set_transient( $cache_key, $article, self::CACHE_TTL );
@@ -890,15 +864,51 @@ Return ONLY the alt text, nothing else.";
     // -------------------------------------------------------------------------
 
     private static function parse_numbered_list( string $text ) {
+        $text = trim( $text );
+        if ( empty( $text ) ) return [];
+
+        // 1. Try JSON array decoding if format is JSON
+        if ( strpos( $text, '[' ) === 0 || strpos( $text, '```' ) !== false ) {
+            $clean_json = preg_replace( '/^```(?:json)?\s*|\s*```$/i', '', $text );
+            $decoded    = json_decode( trim( $clean_json ), true );
+            if ( is_array( $decoded ) && ! empty( $decoded ) ) {
+                $results = [];
+                foreach ( $decoded as $item ) {
+                    if ( is_string( $item ) && ! empty( trim( $item ) ) ) {
+                        $results[] = trim( $item, " \t\n\r\0\x0B\"'" );
+                    } elseif ( is_array( $item ) && isset( $item['title'] ) ) {
+                        $results[] = trim( $item['title'], " \t\n\r\0\x0B\"'" );
+                    }
+                }
+                if ( ! empty( $results ) ) return array_values( array_unique( $results ) );
+            }
+        }
+
+        // 2. Numbered list or bullet lines
         $lines  = explode( "\n", $text );
         $titles = [];
         foreach ( $lines as $line ) {
             $line = trim( $line );
-            if ( preg_match( '/^\d+[\.\)]\s*(.+)/', $line, $m ) ) {
-                $titles[] = trim( $m[1] );
+            if ( empty( $line ) ) continue;
+            if ( preg_match( '/^(?:\d+[\.\)\-]?|\*|\-)\s*["\']?(.*?)["\']?$/', $line, $m ) ) {
+                $val = trim( $m[1], " \t\n\r\0\x0B\"'[]`" );
+                if ( ! empty( $val ) && strlen( $val ) >= 3 ) {
+                    $titles[] = $val;
+                }
             }
         }
-        return $titles;
+
+        // 3. Fallback: non-empty lines
+        if ( empty( $titles ) ) {
+            foreach ( $lines as $line ) {
+                $clean = trim( $line, " \t\n\r\0\x0B\"'[]`" );
+                if ( ! empty( $clean ) && strlen( $clean ) >= 3 && strpos( $clean, '{' ) === false ) {
+                    $titles[] = $clean;
+                }
+            }
+        }
+
+        return array_values( array_unique( $titles ) );
     }
 
     private static function extract_image_data( array $data ) {
