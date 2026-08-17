@@ -22,9 +22,14 @@ class AAP_Settings {
         add_action( 'admin_post_aap_clear_queue',    [ __CLASS__, 'handle_clear_queue' ] );
         add_action( 'admin_post_aap_delete_selected_queue', [ __CLASS__, 'handle_delete_selected_queue' ] );
         add_action( 'admin_post_aap_delete_history', [ __CLASS__, 'handle_delete_history' ] );
-        add_action( 'admin_post_aap_clear_history',  [ __CLASS__, 'handle_clear_history' ] );
+        add_action( 'admin_post_aap_clear_history',  [ __CLASS__, 'clear_history' ] );
         add_action( 'admin_post_aap_reset_settings',   [ __CLASS__, 'handle_reset_settings' ] );
         add_action( 'admin_post_aap_clear_plugin_data', [ __CLASS__, 'handle_clear_plugin_data' ] );
+        add_action( 'admin_post_aap_save_speed_settings', [ __CLASS__, 'save_speed_settings' ] );
+        add_action( 'admin_post_aap_purge_speed_cache',   [ __CLASS__, 'handle_purge_speed_cache' ] );
+        add_action( 'admin_post_aap_save_sitemap_settings', [ __CLASS__, 'save_sitemap_settings' ] );
+        add_action( 'admin_post_aap_generate_essential_pages', [ __CLASS__, 'handle_generate_essential_pages' ] );
+        add_action( 'admin_post_aap_save_cookie_settings',     [ __CLASS__, 'handle_save_cookie_settings' ] );
     }
 
     // -------------------------------------------------------------------------
@@ -51,6 +56,9 @@ class AAP_Settings {
         add_submenu_page( 'ai-auto-post', __( 'Bulk Translator', 'ai-auto-post' ),  __( 'Bulk Translator', 'ai-auto-post' ),  'manage_options', 'aap-translator',           [ __CLASS__, 'render_translator_page' ] );
         add_submenu_page( 'ai-auto-post', __( 'Google Indexing Tool', 'ai-auto-post' ), __( 'Google Indexing Tool', 'ai-auto-post' ), 'manage_options', 'aap-gsc',      [ __CLASS__, 'render_gsc_page' ] );
         add_submenu_page( 'ai-auto-post', __( 'Article Rewriter', 'ai-auto-post' ), __( 'Article Rewriter', 'ai-auto-post' ), 'manage_options', 'aap-rewriter',   [ __CLASS__, 'render_rewriter_page' ] );
+        add_submenu_page( 'ai-auto-post', __( 'Speed Optimizer', 'ai-auto-post' ), __( '⚡ Speed Optimizer', 'ai-auto-post' ), 'manage_options', 'aap-speed',      [ __CLASS__, 'render_speed_page' ] );
+        add_submenu_page( 'ai-auto-post', __( 'XML Sitemap Manager', 'ai-auto-post' ), __( '🗺️ Sitemap Manager', 'ai-auto-post' ), 'manage_options', 'aap-sitemap',   [ __CLASS__, 'render_sitemap_page' ] );
+        add_submenu_page( 'ai-auto-post', __( 'Pages & Cookie Consent', 'ai-auto-post' ), __( '📄 Pages & Cookies', 'ai-auto-post' ), 'manage_options', 'aap-pages',   [ __CLASS__, 'render_pages_generator_page' ] );
         add_submenu_page( 'ai-auto-post', __( 'Settings', 'ai-auto-post' ),       __( 'Settings', 'ai-auto-post' ),       'manage_options', 'aap-settings',             [ __CLASS__, 'render_settings_page' ] );
     }
 
@@ -70,6 +78,9 @@ class AAP_Settings {
             'ai-auto-post_page_aap-translator',
             'ai-auto-post_page_aap-gsc',
             'ai-auto-post_page_aap-rewriter',
+            'ai-auto-post_page_aap-speed',
+            'ai-auto-post_page_aap-sitemap',
+            'ai-auto-post_page_aap-pages',
         ];
         if ( ! in_array( $hook, $aap_pages, true ) ) return;
 
@@ -137,6 +148,18 @@ class AAP_Settings {
         require_once AAP_PLUGIN_DIR . 'admin/views/rewriter-page.php';
     }
 
+    public static function render_speed_page() {
+        require_once AAP_PLUGIN_DIR . 'admin/views/speed-optimizer-page.php';
+    }
+
+    public static function render_sitemap_page() {
+        require_once AAP_PLUGIN_DIR . 'admin/views/sitemap-page.php';
+    }
+
+    public static function render_pages_generator_page() {
+        require_once AAP_PLUGIN_DIR . 'admin/views/pages-generator-page.php';
+    }
+
     public static function render_settings_page() {
         require_once AAP_PLUGIN_DIR . 'admin/views/settings-page.php';
     }
@@ -147,6 +170,161 @@ class AAP_Settings {
 
     public static function render_dashboard_page() {
         require_once AAP_PLUGIN_DIR . 'admin/views/dashboard-page.php';
+    }
+
+    // -------------------------------------------------------------------------
+    // Essential Pages & Cookie Handlers
+    // -------------------------------------------------------------------------
+
+    public static function handle_generate_essential_pages() {
+        check_admin_referer( 'aap_generate_essential_pages' );
+        if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Unauthorized' );
+
+        $site_name = sanitize_text_field( $_POST['aap_site_name'] ?? '' );
+        $site_url  = esc_url_raw( $_POST['aap_site_url'] ?? '' );
+        $email     = sanitize_email( $_POST['aap_contact_email'] ?? '' );
+
+        update_option( 'aap_site_name', $site_name );
+        update_option( 'aap_site_url', $site_url );
+        update_option( 'aap_contact_email', $email );
+
+        $selected_pages = isset( $_POST['pages'] ) && is_array( $_POST['pages'] ) ? $_POST['pages'] : [];
+        $created_count = 0;
+
+        foreach ( $selected_pages as $page_type ) {
+            $res = AAP_Pages_Generator::create_page( sanitize_text_field( $page_type ), $site_name, $site_url, $email );
+            if ( ! is_wp_error( $res ) ) {
+                $created_count++;
+            }
+        }
+
+        wp_safe_redirect( admin_url( 'admin.php?page=aap-pages&pages_created=' . $created_count ) );
+        exit;
+    }
+
+    public static function handle_save_cookie_settings() {
+        check_admin_referer( 'aap_save_cookie_settings' );
+        if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Unauthorized' );
+
+        $enable        = isset( $_POST['aap_cookie_enable'] ) ? '1' : '0';
+        $style         = sanitize_text_field( $_POST['aap_cookie_style'] ?? 'bottom_banner' );
+        $text          = sanitize_textarea_field( $_POST['aap_cookie_text'] ?? '' );
+        $btn_text      = sanitize_text_field( $_POST['aap_cookie_btn_text'] ?? 'Accept All' );
+        $enable_reject = isset( $_POST['aap_cookie_enable_reject'] ) ? '1' : '0';
+        $reject_text   = sanitize_text_field( $_POST['aap_cookie_reject_btn_text'] ?? 'Decline Non-Essential' );
+        $privacy_url   = esc_url_raw( $_POST['aap_cookie_privacy_url'] ?? '' );
+
+        update_option( 'aap_cookie_enable', $enable );
+        update_option( 'aap_cookie_style', $style );
+        update_option( 'aap_cookie_text', $text );
+        update_option( 'aap_cookie_btn_text', $btn_text );
+        update_option( 'aap_cookie_enable_reject', $enable_reject );
+        update_option( 'aap_cookie_reject_btn_text', $reject_text );
+        update_option( 'aap_cookie_privacy_url', $privacy_url );
+
+        wp_safe_redirect( admin_url( 'admin.php?page=aap-pages&cookie_updated=true' ) );
+        exit;
+    }
+
+    // -------------------------------------------------------------------------
+    // Sitemap Manager Handlers
+    // -------------------------------------------------------------------------
+
+    public static function save_sitemap_settings() {
+        check_admin_referer( 'aap_save_sitemap_settings' );
+        if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Unauthorized' );
+
+        $slug = isset( $_POST['aap_sitemap_slug'] ) ? sanitize_title( $_POST['aap_sitemap_slug'] ) : 'sitemap';
+        if ( empty( $slug ) ) $slug = 'sitemap';
+        if ( strpos( $slug, '.xml' ) === false ) $slug .= '.xml';
+        update_option( 'aap_sitemap_slug', $slug );
+
+        $fields = [
+            'aap_sitemap_priority_home'    => 'sanitize_text_field',
+            'aap_sitemap_changefreq_home'  => 'sanitize_text_field',
+            'aap_sitemap_priority_post'    => 'sanitize_text_field',
+            'aap_sitemap_changefreq_post'  => 'sanitize_text_field',
+            'aap_sitemap_priority_page'    => 'sanitize_text_field',
+            'aap_sitemap_changefreq_page'  => 'sanitize_text_field',
+            'aap_sitemap_priority_cat'     => 'sanitize_text_field',
+            'aap_sitemap_changefreq_cat'   => 'sanitize_text_field',
+            'aap_sitemap_priority_tag'     => 'sanitize_text_field',
+            'aap_sitemap_changefreq_tag'   => 'sanitize_text_field',
+        ];
+
+        foreach ( $fields as $opt => $sanitizer ) {
+            $val = isset( $_POST[ $opt ] ) ? $sanitizer( $_POST[ $opt ] ) : '';
+            update_option( $opt, $val );
+        }
+
+        $checkboxes = [
+            'aap_sitemap_enable_home',
+            'aap_sitemap_enable_posts',
+            'aap_sitemap_enable_pages',
+            'aap_sitemap_enable_cats',
+            'aap_sitemap_enable_tags',
+            'aap_sitemap_include_images',
+            'aap_sitemap_auto_ping_google',
+            'aap_sitemap_auto_ping_bing',
+        ];
+
+        foreach ( $checkboxes as $cb ) {
+            $val = isset( $_POST[ $cb ] ) ? '1' : '0';
+            update_option( $cb, $val );
+        }
+
+        // Flush rewrite rules for custom sitemap slug
+        AAP_Sitemap::add_rewrite_rules();
+        flush_rewrite_rules();
+
+        if ( function_exists( 'aap_purge_all_caches' ) ) {
+            aap_purge_all_caches();
+        }
+
+        wp_safe_redirect( admin_url( 'admin.php?page=aap-sitemap&updated=true' ) );
+        exit;
+    }
+
+    // -------------------------------------------------------------------------
+    // Speed Optimizer Handlers
+    // -------------------------------------------------------------------------
+
+    public static function save_speed_settings() {
+        check_admin_referer( 'aap_save_speed_settings' );
+        if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Unauthorized' );
+
+        $speed_options = [
+            'aap_speed_lazy_loading',
+            'aap_speed_html_minification',
+            'aap_speed_webp_compression',
+            'aap_speed_auto_cache_purge',
+            'aap_speed_preload_assets',
+            'aap_speed_defer_js',
+        ];
+
+        foreach ( $speed_options as $opt ) {
+            $val = isset( $_POST[ $opt ] ) ? '1' : '0';
+            update_option( $opt, $val );
+        }
+
+        if ( function_exists( 'aap_purge_all_caches' ) ) {
+            aap_purge_all_caches();
+        }
+
+        wp_safe_redirect( admin_url( 'admin.php?page=aap-speed&updated=true' ) );
+        exit;
+    }
+
+    public static function handle_purge_speed_cache() {
+        check_admin_referer( 'aap_purge_speed_cache' );
+        if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Unauthorized' );
+
+        if ( function_exists( 'aap_purge_all_caches' ) ) {
+            aap_purge_all_caches();
+        }
+
+        wp_safe_redirect( admin_url( 'admin.php?page=aap-speed&purged=true' ) );
+        exit;
     }
 
     // -------------------------------------------------------------------------
@@ -172,6 +350,12 @@ class AAP_Settings {
             'aap_openai_model'            => 'sanitize_text_field',
             'aap_enable_internal_linking' => 'intval',
             'aap_max_internal_links'      => 'intval',
+            'aap_internal_link_style'     => 'sanitize_text_field',
+            'aap_enable_outbound_linking' => 'intval',
+            'aap_max_outbound_links'      => 'intval',
+            'aap_outbound_target'         => 'sanitize_text_field',
+            'aap_outbound_rel'            => 'sanitize_text_field',
+            'aap_outbound_blacklist'      => 'sanitize_textarea_field',
             'aap_enable_indexnow'         => 'intval',
             'aap_enable_comments'         => 'intval',
             'aap_comments_count'          => 'intval',
@@ -185,6 +369,7 @@ class AAP_Settings {
             'aap_t2i_bg_type'             => 'sanitize_text_field',
             'aap_t2i_bg_val'              => 'sanitize_text_field',
             'aap_t2i_size'                => 'sanitize_text_field',
+            'aap_enable_toc'              => 'intval',
             'aap_enable_faq'              => 'intval',
             'aap_faq_count'               => 'intval',
             'aap_gsc_json'                => 'sanitize_textarea_field',
