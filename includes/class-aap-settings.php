@@ -349,6 +349,7 @@ class AAP_Settings {
 
         $fields = [
             'aap_default_status'          => 'sanitize_text_field',
+            'aap_auto_update_enabled'     => 'intval',
             'aap_default_author'          => 'intval',
             'aap_word_count'              => 'intval',
             'aap_tag_count'               => 'intval',
