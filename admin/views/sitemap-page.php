@@ -67,16 +67,16 @@ $saved = isset( $_GET['updated'] ) && $_GET['updated'] === 'true';
         <?php endif; ?>
 
         <!-- Hero Card -->
-        <div class="aap-panel" style="margin-bottom:20px; background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); border: 1px solid #4338ca;">
-            <div class="aap-panel-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
+        <div class="aap-panel" style="margin-bottom:20px;">
+            <div class="aap-panel-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; border-bottom:1px solid #e2e8f0; padding-bottom:12px; margin-bottom:15px;">
                 <div>
-                    <h2 class="aap-panel-title" style="color:#e0e7ff; font-size:20px; margin:0 0 5px 0; display:flex; align-items:center; gap:8px;">
-                        <span>🗺️</span> Complete XML Sitemap Index & Priority Controller
+                    <h2 class="aap-panel-title" style="font-size:16px; font-weight:600; margin:0 0 4px 0; color:var(--aap-text-dark);">
+                        🗺️ Complete XML Sitemap Index & Priority Controller
                     </h2>
-                    <p style="color:#a5b4fc; margin:0; font-size:13px;">Manage Site URL, Posts, Pages, Categories & Tags with custom priority weights and change frequency.</p>
+                    <p style="color:var(--aap-text-muted); margin:0; font-size:13px;">Manage Site URL, Posts, Pages, Categories & Tags with custom priority weights and change frequency.</p>
                 </div>
                 <div>
-                    <a href="<?php echo esc_url($sitemap_url); ?>" target="_blank" class="aap-btn" style="background:#6366f1; color:#fff; border:none; padding:10px 18px; font-weight:600; text-decoration:none; display:inline-block; border-radius:6px;">
+                    <a href="<?php echo esc_url($sitemap_url); ?>" target="_blank" class="button button-primary">
                         🌐 View Live XML Sitemap ↗
                     </a>
                 </div>
@@ -90,17 +90,42 @@ $saved = isset( $_GET['updated'] ) && $_GET['updated'] === 'true';
             <!-- Card 1: Main Sitemap Index Name & Slug -->
             <div class="aap-panel" style="margin-bottom:20px;">
                 <div class="aap-panel-header">
-                    <h3 class="aap-panel-title">🏷️ Main Sitemap Index Filename / Slug</h3>
+                    <h3 class="aap-panel-title">🏷️ Sitemap Architecture &amp; Sub-Sitemaps Index</h3>
                 </div>
                 <div class="aap-panel-body">
                     <table class="form-table aap-settings-table">
                         <tr>
                             <th scope="row">
-                                <label for="aap_sitemap_slug">Main Sitemap Index Name</label>
+                                <label for="aap_sitemap_slug">Main Sitemap Index Slug</label>
                             </th>
                             <td>
                                 <input type="text" id="aap_sitemap_slug" name="aap_sitemap_slug" value="<?php echo esc_attr($slug); ?>" class="regular-text" style="font-family:monospace; font-weight:600;" placeholder="sitemap.xml">
-                                <p class="description">Main URL: <code><?php echo esc_html(home_url('/')); ?><strong><?php echo esc_html($slug); ?></strong></code>. (e.g. <code>sitemap.xml</code> or <code>sitemap_index.xml</code>).</p>
+                                <p class="description">Main Index URL: <code><?php echo esc_html(home_url('/')); ?><strong><?php echo esc_html($slug); ?></strong></code> or <code><?php echo esc_html(home_url('/sitemap_index.xml')); ?></code>.</p>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th scope="row">
+                                <label for="aap_sitemap_mode">Sitemap Structure Mode</label>
+                            </th>
+                            <td>
+                                <select id="aap_sitemap_mode" name="aap_sitemap_mode" class="regular-text">
+                                    <option value="index" <?php selected(get_option('aap_sitemap_mode', 'index'), 'index'); ?>>🗺️ Modular Sitemap Index (RankMath / Yoast Style - Recommended)</option>
+                                    <option value="single" <?php selected(get_option('aap_sitemap_mode', 'index'), 'single'); ?>>📄 Single Combined XML File</option>
+                                </select>
+                                <p class="description">Modular Index organizes posts, pages, categories, and tags into separate specialized sub-sitemaps for faster crawling.</p>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th scope="row">Active Modular Sub-Sitemaps</th>
+                            <td>
+                                <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:12px 16px; border-radius:6px; font-family:monospace; font-size:12px;">
+                                    <div style="margin-bottom:6px;">📝 Posts Sitemap: <a href="<?php echo esc_url(home_url('/post-sitemap.xml')); ?>" target="_blank" style="color:#2563eb; font-weight:600;"><?php echo esc_html(home_url('/post-sitemap.xml')); ?> ↗</a></div>
+                                    <div style="margin-bottom:6px;">📄 Pages Sitemap: <a href="<?php echo esc_url(home_url('/page-sitemap.xml')); ?>" target="_blank" style="color:#2563eb; font-weight:600;"><?php echo esc_html(home_url('/page-sitemap.xml')); ?> ↗</a></div>
+                                    <div style="margin-bottom:6px;">📁 Categories Sitemap: <a href="<?php echo esc_url(home_url('/category-sitemap.xml')); ?>" target="_blank" style="color:#2563eb; font-weight:600;"><?php echo esc_html(home_url('/category-sitemap.xml')); ?> ↗</a></div>
+                                    <div>🏷️ Tags Sitemap: <a href="<?php echo esc_url(home_url('/tag-sitemap.xml')); ?>" target="_blank" style="color:#2563eb; font-weight:600;"><?php echo esc_html(home_url('/tag-sitemap.xml')); ?> ↗</a></div>
+                                </div>
                             </td>
                         </tr>
 
