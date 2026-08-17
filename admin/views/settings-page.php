@@ -246,6 +246,15 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                             </div>
 
                             <div class="aap-field">
+                                <label class="aap-label">Automatic Background Updates</label>
+                                <label class="aap-switch" style="display:inline-block; margin-top:4px;">
+                                    <input type="checkbox" name="aap_auto_update_enabled" value="1" <?php checked(get_option('aap_auto_update_enabled','1'),'1'); ?>>
+                                    <span class="aap-slider round"></span>
+                                </label>
+                                <div class="aap-hint">Automatically download &amp; install new releases from GitHub.</div>
+                            </div>
+
+                            <div class="aap-field">
                                 <label class="aap-label">Default Author</label>
                                 <?php
                                 wp_dropdown_users([
