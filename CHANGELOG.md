@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## [v1.4.5] - 2026-08-21
+
+### 📅 Post Date Randomizer & Backdater Engine
+- Added brand new module `📅 Date Randomizer` (`aap-randomizer`) to bulk randomize publication dates and comment timestamps within a specified date range (`Start Date` -> `End Date`).
+- Supports Post Type selection, comment date synchronization, and updating "Last Modified" timestamps.
+
+### 🔀 Redirect & 404 Manager Redesign & 404 Auto-Homepage Redirect
+- Added **Auto-Redirect 404 Errors to Home Page (ON/OFF Toggle Switch)** to instantly reroute broken link traffic to homepage (`/`) for 301 SEO protection.
+- Redesigned 404 Error Monitor & Log Tracker into spacious **Full-Width Cards** layout.
+
+### 🌐 Universal Post Support Across Tools
+- Expanded **Bulk Translator**, **Thumbnail Generator**, **Tags Manager**, and **Google Indexing Tool** to support **ALL blog posts** on the WordPress site (old WordPress posts, manual posts, imported articles, and AI-generated posts).
+
+### 🎨 UI Contrast & Theme Cleanups
+- Fixed low contrast text in System Maintenance & Data Control settings panel.
+- Cleaned notice alert warning boxes and removed stray navigation button links inside alert text.
+
+---
+
 ## [v1.3.5] - 2026-08-17
 
 ### 🌐 Auto External Outbound High-DA Links Engine
