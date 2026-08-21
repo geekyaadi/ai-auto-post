@@ -22,6 +22,7 @@
     <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap</a>
     <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
     <a href="<?php echo admin_url('admin.php?page=aap-redirects'); ?>" class="aap-nav-link">Redirect</a>
+        <a href="<?php echo admin_url('admin.php?page=aap-randomizer'); ?>" class="aap-nav-link">Date Randomizer</a>
     <a href="<?php echo admin_url('admin.php?page=aap-codes'); ?>" class="aap-nav-link">Codes</a>
     <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
 </div>
@@ -36,18 +37,14 @@
         ?>
         <div class="aap-alert aap-alert-warning">
             <span class="aap-alert-icon">⚠️</span>
-            No API keys configured.                 <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
-                                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">Add your Gemini API key →</a>
+            No API keys configured. <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">Add your Gemini API key →</a>
         </div>
         <?php endif; ?>
 
         <?php if ( $key_stats['active'] === 0 && $key_stats['total'] > 0 ): ?>
         <div class="aap-alert aap-alert-error">
             <span class="aap-alert-icon">🔴</span>
-            All API keys are currently exhausted. Keys auto-reset after <?php echo (int) get_option('aap_key_reset_minutes', 60); ?> minutes, or you can                 <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap Manager</a>
-                                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">manually reset them</a>.
+            All API keys are currently exhausted. Keys auto-reset after <?php echo (int) get_option('aap_key_reset_minutes', 60); ?> minutes, or you can <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">manually reset them</a>.
         </div>
         <?php endif; ?>
 
