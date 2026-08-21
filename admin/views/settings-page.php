@@ -426,8 +426,28 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                                 <div class="aap-hint">Choose how internal links are rendered inside generated articles.</div>
                             </div>
 
+                            <!-- 📌 TABLE OF CONTENTS (TOC) ENGINE -->
+                            <div class="aap-field aap-field-full" style="border-top: 1px dashed #cbd5e1; padding-top: 15px; margin-top: 10px;">
+                                <label class="aap-label">📌 Table of Contents (TOC) Engine</label>
+                                <label class="aap-toggle">
+                                    <input type="checkbox" name="aap_enable_toc" value="1" <?php checked(get_option('aap_enable_toc', 1), 1); ?>>
+                                    <span class="aap-toggle-slider"></span>
+                                    <span class="aap-toggle-label">Enable Dynamic Table of Contents</span>
+                                </label>
+                                <div class="aap-hint">Dynamically renders a Table of Contents box before the first H2 heading across your articles.</div>
+                            </div>
+
+                            <div class="aap-field">
+                                <label class="aap-label">TOC Accordion Default State</label>
+                                <select name="aap_toc_default_state" class="aap-select">
+                                    <option value="open" <?php selected(get_option('aap_toc_default_state', 'open'), 'open'); ?>>📖 Default Open / Expanded [Hide]</option>
+                                    <option value="closed" <?php selected(get_option('aap_toc_default_state', 'open'), 'closed'); ?>>🙈 Default Closed / Collapsed [Show]</option>
+                                </select>
+                                <div class="aap-hint">Choose whether the Table of Contents box is open or collapsed by default.</div>
+                            </div>
+
                             <!-- 🌐 AUTO OUTBOUND HIGH-DA LINKING ENGINE -->
-                            <div class="aap-field aap-field-full" style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px; margin-top: 10px;">
+                            <div class="aap-field aap-field-full" style="border-top: 1px dashed #cbd5e1; padding-top: 15px; margin-top: 10px;">
                                 <label class="aap-label">🌐 Auto Outbound High-DA Links Engine</label>
                                 <label class="aap-toggle">
                                     <input type="checkbox" name="aap_enable_outbound_linking" value="1" <?php checked(get_option('aap_enable_outbound_linking', 1), 1); ?>>
