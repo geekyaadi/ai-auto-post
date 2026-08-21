@@ -465,23 +465,23 @@ class AAP_Post_Creator {
             return $content;
         }
 
-        $link_count = 0;
-        foreach ( $posts as $p ) {
-            if ( $link_count >= $max_links ) {
-                break;
-            }
+        if ( $link_style === 'inline' ) {
+            $link_count = 0;
+            foreach ( $posts as $p ) {
+                if ( $link_count >= $max_links ) {
+                    break;
+                }
 
-            $title = html_entity_decode( $p->post_title, ENT_QUOTES, 'UTF-8' );
-            if ( strlen( $title ) < 4 ) {
-                continue;
-            }
+                $title = html_entity_decode( $p->post_title, ENT_QUOTES, 'UTF-8' );
+                if ( strlen( $title ) < 4 ) {
+                    continue;
+                }
 
-            $url = get_permalink( $p->ID );
-            if ( ! $url ) {
-                continue;
-            }
+                $url = get_permalink( $p->ID );
+                if ( ! $url ) {
+                    continue;
+                }
 
-            if ( $link_style === 'inline' ) {
                 $pattern = '/<a[^>]*>.*?<\/a>|<[^>]+>|(?:\b)(' . preg_quote( $title, '/' ) . ')(?:\b)/isu';
                 $replaced = false;
 
@@ -495,32 +495,87 @@ class AAP_Post_Creator {
                     }
                     return $matches[0];
                 }, $content );
-            } else {
-                // Callout Box or Card Design
-                $link_count++;
-                if ( $link_style === 'card' ) {
-                    $link_html = "\n<div class=\"aap-related-card\" style=\"background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #334155; border-radius: 10px; padding: 16px 20px; margin: 24px 0; font-family: system-ui, -apple-system, sans-serif;\">";
-                    $link_html .= "<div style=\"font-size: 11px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px;\">📌 RECOMMENDED READ</div>";
-                    $link_html .= "<div style=\"font-size: 15px; font-weight: 600;\"><a href=\"" . esc_url( $url ) . "\" style=\"color: #f8fafc; text-decoration: none;\">" . esc_html( $title ) . " ➔</a></div>";
-                    $link_html .= "</div>\n";
-                } else {
-                    // Default Callout Box
-                    $link_html = "\n<div class=\"aap-related-box\" style=\"background: #f8fafc; border-left: 4px solid #0284c7; padding: 12px 18px; margin: 20px 0; border-radius: 6px; font-family: system-ui, -apple-system, sans-serif;\">";
-                    $link_html .= "<strong style=\"color: #0284c7; font-size: 14px;\">📖 READ ALSO:</strong> <a href=\"" . esc_url( $url ) . "\" style=\"color: #0f172a; font-weight: 600; text-decoration: none;\">" . esc_html( $title ) . "</a>";
-                    $link_html .= "</div>\n";
-                }
+            }
+            return $content;
+        }
 
-                // Insert after paragraph </p>
-                if ( preg_match( '/<\/p>/i', $content, $m, PREG_OFFSET_CAPTURE ) ) {
-                    $pos = $m[0][1] + 4;
-                    $content = substr( $content, 0, $pos ) . $link_html . substr( $content, $pos );
-                } else {
-                    $content .= $link_html;
-                }
+        // Callout Box or Card Design — Even Paragraph Distribution Engine
+        $candidate_links = [];
+        foreach ( $posts as $p ) {
+            if ( count( $candidate_links ) >= $max_links ) {
+                break;
+            }
+            $title = html_entity_decode( $p->post_title, ENT_QUOTES, 'UTF-8' );
+            if ( strlen( $title ) < 4 ) continue;
+            $url = get_permalink( $p->ID );
+            if ( ! $url ) continue;
+
+            $candidate_links[] = [ 'title' => $title, 'url' => $url ];
+        }
+
+        if ( empty( $candidate_links ) ) {
+            return $content;
+        }
+
+        preg_match_all( '/<\/p>/i', $content, $matches, PREG_OFFSET_CAPTURE );
+        $p_offsets = $matches[0] ?? [];
+        $total_p   = count( $p_offsets );
+
+        if ( $total_p === 0 ) {
+            foreach ( $candidate_links as $link ) {
+                $content .= self::format_link_html( $link['title'], $link['url'], $link_style );
+            }
+            return $content;
+        }
+
+        $num_links = count( $candidate_links );
+        $target_indices = [];
+        if ( $total_p <= $num_links ) {
+            for ( $i = 0; $i < $num_links; $i++ ) {
+                $target_indices[] = min( $i, $total_p - 1 );
+            }
+        } else {
+            $step = $total_p / ( $num_links + 1 );
+            for ( $i = 1; $i <= $num_links; $i++ ) {
+                $idx = (int) round( $i * $step ) - 1;
+                $target_indices[] = max( 0, min( $total_p - 1, $idx ) );
             }
         }
 
+        $insertions = [];
+        for ( $i = 0; $i < $num_links; $i++ ) {
+            $p_idx   = $target_indices[$i];
+            $offset  = $p_offsets[$p_idx][1] + 4;
+            $link    = $candidate_links[$i];
+            $html    = self::format_link_html( $link['title'], $link['url'], $link_style );
+
+            $insertions[] = [ 'offset' => $offset, 'html' => $html ];
+        }
+
+        usort( $insertions, function( $a, $b ) {
+            return $b['offset'] <=> $a['offset'];
+        } );
+
+        foreach ( $insertions as $ins ) {
+            $off = $ins['offset'];
+            $content = substr( $content, 0, $off ) . $ins['html'] . substr( $content, $off );
+        }
+
         return $content;
+    }
+
+    private static function format_link_html( string $title, string $url, string $link_style ): string {
+        if ( $link_style === 'card' ) {
+            $html = "\n<div class=\"aap-related-card\" style=\"background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #334155; border-radius: 10px; padding: 16px 20px; margin: 24px 0; font-family: system-ui, -apple-system, sans-serif;\">";
+            $html .= "<div style=\"font-size: 11px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px;\">📌 RECOMMENDED READ</div>";
+            $html .= "<div style=\"font-size: 15px; font-weight: 600;\"><a href=\"" . esc_url( $url ) . "\" style=\"color: #f8fafc; text-decoration: none;\">" . esc_html( $title ) . " ➔</a></div>";
+            $html .= "</div>\n";
+        } else {
+            $html = "\n<div class=\"aap-related-box\" style=\"background: #f8fafc; border-left: 4px solid #0284c7; padding: 12px 18px; margin: 20px 0; border-radius: 6px; font-family: system-ui, -apple-system, sans-serif;\">";
+            $html .= "<strong style=\"color: #0284c7; font-size: 14px;\">📖 READ ALSO:</strong> <a href=\"" . esc_url( $url ) . "\" style=\"color: #0f172a; font-weight: 600; text-decoration: none;\">" . esc_html( $title ) . "</a>";
+            $html .= "</div>\n";
+        }
+        return $html;
     }
 
     private static function generate_auto_comments( int $post_id, string $title ) {
