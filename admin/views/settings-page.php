@@ -56,6 +56,7 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
     <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap</a>
     <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
     <a href="<?php echo admin_url('admin.php?page=aap-redirects'); ?>" class="aap-nav-link">Redirect</a>
+        <a href="<?php echo admin_url('admin.php?page=aap-randomizer'); ?>" class="aap-nav-link">Date Randomizer</a>
     <a href="<?php echo admin_url('admin.php?page=aap-codes'); ?>" class="aap-nav-link">Codes</a>
     <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link active">Settings</a>
 </div>
@@ -477,22 +478,22 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
 
                             <div class="aap-field aap-field-full">
                                 <label class="aap-label">Google Service Account JSON Key</label>
-                                <div class="aap-gsc-tabs" style="display: flex; gap: 5px; margin-bottom: 10px; background: rgba(255,255,255,0.03); padding: 4px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); max-width: 100%;">
-                                    <button type="button" class="aap-btn aap-gsc-tab-btn active" data-tab="paste" style="flex: 1; font-size: 11px; padding: 6px; border-radius: 4px; background: rgba(255,255,255,0.1); border: none; color: #fff; cursor: pointer; transition: all 0.2s;">📋 Paste JSON</button>
-                                    <button type="button" class="aap-btn aap-gsc-tab-btn" data-tab="upload" style="flex: 1; font-size: 11px; padding: 6px; border-radius: 4px; background: transparent; border: none; color: #94a3b8; cursor: pointer; transition: all 0.2s;">📁 Upload file</button>
+                                <div class="aap-gsc-tabs" style="display: flex; gap: 5px; margin-bottom: 10px; background: #f8fafc; padding: 4px; border-radius: 6px; border: 1px solid #e2e8f0; max-width: 100%;">
+                                    <button type="button" class="aap-btn aap-gsc-tab-btn active" data-tab="paste" style="flex: 1; font-size: 11px; padding: 6px; border-radius: 4px; background: #0284c7; border: none; color: #fff; font-weight: 600; cursor: pointer; transition: all 0.2s;">📋 Paste JSON</button>
+                                    <button type="button" class="aap-btn aap-gsc-tab-btn" data-tab="upload" style="flex: 1; font-size: 11px; padding: 6px; border-radius: 4px; background: transparent; border: none; color: #475569; font-weight: 600; cursor: pointer; transition: all 0.2s;">📁 Upload file</button>
                                 </div>
                                 
                                 <div class="aap-gsc-tab-content" id="aap-gsc-tab-paste">
                                     <textarea name="aap_gsc_json" id="aap_gsc_json_textarea" class="aap-textarea" rows="4" placeholder="Paste your Google Service Account key file (.json) content here..."><?php echo esc_textarea(get_option('aap_gsc_json','')); ?></textarea>
                                 </div>
                                 <div class="aap-gsc-tab-content" id="aap-gsc-tab-upload" style="display: none;">
-                                    <div class="aap-gsc-upload-area" id="aap-gsc-drag-drop-zone" style="border: 2px dashed rgba(255,255,255,0.1); border-radius: 8px; padding: 20px; text-align: center; background: rgba(255,255,255,0.01); cursor: pointer; transition: border-color 0.2s;">
+                                    <div class="aap-gsc-upload-area" id="aap-gsc-drag-drop-zone" style="border: 2px dashed #cbd5e1; border-radius: 8px; padding: 20px; text-align: center; background: #f8fafc; cursor: pointer; transition: border-color 0.2s;">
                                         <span style="font-size: 24px; display: block; margin-bottom: 8px;">📄</span>
-                                        <span style="font-size: 12px; color: #e2e8f0; font-weight: 600;">Choose JSON File</span>
-                                        <span style="font-size: 11px; color: #94a3b8; display: block; margin-top: 4px;">Click or drag file here</span>
+                                        <span style="font-size: 12px; color: #0f172a; font-weight: 600;">Choose JSON File</span>
+                                        <span style="font-size: 11px; color: #64748b; display: block; margin-top: 4px;">Click or drag file here</span>
                                     </div>
                                     <input type="file" id="aap-gsc-file-input" accept=".json" style="opacity: 0; position: absolute; width: 0; height: 0; z-index: -1;">
-                                    <div id="aap-gsc-file-status" style="margin-top: 8px; font-size: 11px; font-weight: 600; text-align: center; color: #34d399;"></div>
+                                    <div id="aap-gsc-file-status" style="margin-top: 8px; font-size: 11px; font-weight: 600; text-align: center; color: #059669;"></div>
                                 </div>
                                 <div class="aap-hint">Required for GSC Indexing Tool. Upload or paste the full JSON content from your Google Cloud Console Service Account key.</div>
                             </div>
@@ -814,20 +815,20 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
         <!-- ============================================================ -->
         <!-- SYSTEM MAINTENANCE & DATA CONTROL -->
         <!-- ============================================================ -->
-        <div class="aap-panel" style="margin-top:20px; border-color: rgba(239, 68, 68, 0.25);">
-            <div class="aap-panel-header" style="border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px; margin-bottom: 15px;">
-                <h2 class="aap-panel-title" style="color: #f87171;">🛠️ System Maintenance &amp; Data Control</h2>
+        <div class="aap-panel" style="margin-top:20px; border: 1px solid #f87171; background: #fff5f5;">
+            <div class="aap-panel-header" style="border-bottom: 1px solid #fca5a5; padding-bottom: 10px; margin-bottom: 15px;">
+                <h2 class="aap-panel-title" style="color: #b91c1c; font-weight: 700;">🛠️ System Maintenance &amp; Data Control</h2>
             </div>
             <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
                 <div>
-                    <div style="font-weight: 600; font-size: 14px; color: #f1f5f9; margin-bottom: 4px;">Reset Settings or Purge Plugin Cache &amp; Data</div>
-                    <div class="aap-hint" style="color: #94a3b8;">Reset all options back to plugin defaults or clear temporary transients, queue data, history logs, and system caches.</div>
+                    <div style="font-weight: 700; font-size: 14px; color: #1e293b; margin-bottom: 4px;">Reset Settings or Purge Plugin Cache &amp; Data</div>
+                    <div class="aap-hint" style="color: #475569; font-size: 13px;">Reset all options back to plugin defaults or clear temporary transients, queue data, history logs, and system caches.</div>
                 </div>
                 <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
                     <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" onsubmit="return confirm('⚠️ Are you sure you want to reset all plugin settings to factory defaults?');" style="margin:0;">
                         <?php wp_nonce_field('aap_reset_settings'); ?>
                         <input type="hidden" name="action" value="aap_reset_settings">
-                        <button type="submit" class="aap-btn aap-btn-secondary" style="border-color: #ef4444; color: #ef4444; padding: 8px 16px;">
+                        <button type="submit" class="aap-btn aap-btn-secondary" style="border: 1px solid #dc2626; color: #dc2626; background: #ffffff; font-weight: 600; padding: 8px 16px;">
                             🔄 Reset Settings
                         </button>
                     </form>
@@ -835,7 +836,7 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                     <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" onsubmit="return confirm('🧹 Clear all plugin cache, temporary transients, queue, and history logs?');" style="margin:0;">
                         <?php wp_nonce_field('aap_clear_plugin_data'); ?>
                         <input type="hidden" name="action" value="aap_clear_plugin_data">
-                        <button type="submit" class="aap-btn aap-btn-danger" style="background: #dc2626; color: #fff; padding: 8px 16px;">
+                        <button type="submit" class="aap-btn aap-btn-danger" style="background: #dc2626; color: #ffffff; font-weight: 600; border: none; padding: 8px 16px;">
                             🧹 Clear Plugin Data &amp; Cache
                         </button>
                     </form>
