@@ -15,6 +15,7 @@ class AAP_Redirects {
         add_action( 'admin_post_aap_delete_redirect_rule', [ __CLASS__, 'handle_delete_redirect_rule' ] );
         add_action( 'admin_post_aap_convert_404_to_301', [ __CLASS__, 'handle_convert_404_to_301' ] );
         add_action( 'admin_post_aap_clear_404_logs', [ __CLASS__, 'handle_clear_404_logs' ] );
+        add_action( 'admin_post_aap_save_404_redirect_settings', [ __CLASS__, 'handle_save_404_redirect_settings' ] );
     }
 
     public static function create_tables() {
@@ -92,7 +93,24 @@ class AAP_Redirects {
                  ON DUPLICATE KEY UPDATE hit_count = hit_count + 1, last_detected = %s",
                 $path_clean, $is_image, $user_agent, current_time( 'mysql' ), current_time( 'mysql' )
             ) );
+
+            // Auto-redirect 404 pages to homepage if toggle switch is enabled
+            if ( get_option( 'aap_redirect_404_to_home', '0' ) === '1' ) {
+                wp_redirect( home_url( '/' ), 301 );
+                exit;
+            }
         }
+    }
+
+    public static function handle_save_404_redirect_settings() {
+        if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Unauthorized' );
+        check_admin_referer( 'aap_redirect_nonce' );
+
+        $enable = isset( $_POST['aap_redirect_404_to_home'] ) ? '1' : '0';
+        update_option( 'aap_redirect_404_to_home', $enable );
+
+        wp_redirect( admin_url( 'admin.php?page=aap-redirects&settings_saved=true' ) );
+        exit;
     }
 
     public static function handle_save_redirect_rule() {
