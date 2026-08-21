@@ -1124,4 +1124,3 @@ HTML to translate:
         ];
     }
 }
-}
