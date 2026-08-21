@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [v1.4.6] - 2026-08-21
+
+### 🔗 Smart Even Internal Link Distribution Engine
+- Fixed internal link placement algorithm so `READ ALSO:` callout boxes and `RECOMMENDED READ` cards are **evenly spaced across the article paragraphs** instead of stacking together at the top of the post.
+
+---
+
 ## [v1.4.5] - 2026-08-21
 
 ### 📅 Post Date Randomizer & Backdater Engine
