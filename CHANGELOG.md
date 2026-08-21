@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [v1.4.7] - 2026-08-21
+
+### 📌 Dynamic Non-Destructive Shortcodes & Collapsible TOC Toggle
+- **Non-Destructive DB Storage**: Replaced raw DB string mutation with dynamic `the_content` display filters and PHP Shortcodes (`[aap_toc]`, `[aap_internal_links]`, `[aap_outbound_links]`) so raw post HTML remains clean.
+- **Collapsible TOC [Show]/[Hide] Accordion Toggle**: Added interactive Show/Hide toggle button to TOC box.
+- **Admin Accordion State Option**: Added setting **TOC Accordion Default State** (`Default Open / Expanded` vs `Default Closed / Collapsed`).
+
+---
+
 ## [v1.4.6] - 2026-08-21
 
 ### 🔗 Smart Even Internal Link Distribution Engine
