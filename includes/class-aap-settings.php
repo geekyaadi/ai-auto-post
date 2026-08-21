@@ -60,6 +60,7 @@ class AAP_Settings {
         add_submenu_page( 'ai-auto-post', __( 'XML Sitemap Manager', 'ai-auto-post' ), __( '🗺️ Sitemap Manager', 'ai-auto-post' ), 'manage_options', 'aap-sitemap',   [ __CLASS__, 'render_sitemap_page' ] );
         add_submenu_page( 'ai-auto-post', __( 'Pages & Cookie Consent', 'ai-auto-post' ), __( '📄 Pages & Cookies', 'ai-auto-post' ), 'manage_options', 'aap-pages',   [ __CLASS__, 'render_pages_generator_page' ] );
         add_submenu_page( 'ai-auto-post', __( 'Redirect & 404 Manager', 'ai-auto-post' ), __( '🔀 Redirect Manager', 'ai-auto-post' ), 'manage_options', 'aap-redirects', [ __CLASS__, 'render_redirects_page' ] );
+        add_submenu_page( 'ai-auto-post', __( 'Date Randomizer', 'ai-auto-post' ),       __( '📅 Date Randomizer', 'ai-auto-post' ), 'manage_options', 'aap-randomizer',[ __CLASS__, 'render_randomizer_page' ] );
         add_submenu_page( 'ai-auto-post', __( 'Codes & ads.txt', 'ai-auto-post' ),       __( '💻 Codes & ads.txt', 'ai-auto-post' ), 'manage_options', 'aap-codes',     [ __CLASS__, 'render_codes_page' ] );
         add_submenu_page( 'ai-auto-post', __( 'Settings', 'ai-auto-post' ),       __( 'Settings', 'ai-auto-post' ),       'manage_options', 'aap-settings',             [ __CLASS__, 'render_settings_page' ] );
     }
@@ -84,6 +85,7 @@ class AAP_Settings {
             'ai-auto-post_page_aap-sitemap',
             'ai-auto-post_page_aap-pages',
             'ai-auto-post_page_aap-redirects',
+            'ai-auto-post_page_aap-randomizer',
             'ai-auto-post_page_aap-codes',
         ];
         if ( ! in_array( $hook, $aap_pages, true ) && strpos( $hook, 'aap' ) === false ) return;
@@ -166,6 +168,10 @@ class AAP_Settings {
 
     public static function render_redirects_page() {
         require_once AAP_PLUGIN_DIR . 'admin/views/redirects-page.php';
+    }
+
+    public static function render_randomizer_page() {
+        require_once AAP_PLUGIN_DIR . 'admin/views/date-randomizer-page.php';
     }
 
     public static function render_codes_page() {
