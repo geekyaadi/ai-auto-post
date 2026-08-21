@@ -443,7 +443,7 @@ class AAP_Post_Creator {
     // Advanced SEO: Auto-Internal Linking & Comments
     // -------------------------------------------------------------------------
 
-    private static function apply_internal_linking( int $post_id, string $content ) {
+    public static function apply_internal_linking( int $post_id, string $content ) {
         if ( ! get_option( 'aap_enable_internal_linking', 1 ) ) {
             return $content;
         }
