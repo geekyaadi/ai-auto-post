@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 $paged = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
 $posts_per_page = 10;
 
-// Query plugin-generated posts with pagination
+// Query all WordPress posts (plugin generated, manual, or imported) with pagination
 $args = [
     'post_type'      => 'post',
     'post_status'    => [ 'publish', 'draft' ],
@@ -12,13 +12,6 @@ $args = [
     'paged'          => $paged,
     'orderby'        => 'date',
     'order'          => 'DESC',
-    'meta_query'     => [
-        [
-            'key'     => '_aap_generated',
-            'value'   => '1',
-            'compare' => '=',
-        ]
-    ]
 ];
 $query = new WP_Query( $args );
 $posts = $query->posts;
@@ -61,6 +54,7 @@ $languages = [
     <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap</a>
     <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
     <a href="<?php echo admin_url('admin.php?page=aap-redirects'); ?>" class="aap-nav-link">Redirect</a>
+        <a href="<?php echo admin_url('admin.php?page=aap-randomizer'); ?>" class="aap-nav-link">Date Randomizer</a>
     <a href="<?php echo admin_url('admin.php?page=aap-codes'); ?>" class="aap-nav-link">Codes</a>
     <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
 </div>
@@ -126,7 +120,7 @@ $languages = [
             </div>
 
             <?php if ( empty($posts) ): ?>
-            <div class="aap-empty-state">No plugin-generated posts found. Generate some posts first!</div>
+            <div class="aap-empty-state">No blog posts found on your WordPress site. Create or generate some posts first!</div>
             <?php else: ?>
             <table class="aap-table" id="aap-translator-table">
                 <thead>
