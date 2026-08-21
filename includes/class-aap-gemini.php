@@ -75,7 +75,7 @@ class AAP_Gemini {
      * On invalid key error (400/403), marks key invalid and skips to next.
      * Returns [ 'data' => mixed, 'key_used' => string, 'switched' => bool ] or WP_Error.
      */
-    private static function request( string $session_id, string $model, array $body ) {
+    public static function request( string $session_id, string $model, array $body ) {
 
         // ── Build the full Key × Model rotation matrix ───────────────────────
         // Order: [Key1+ModelA, Key1+ModelB, ..., Key2+ModelA, Key2+ModelB, ...]
@@ -347,7 +347,7 @@ class AAP_Gemini {
     // Helper: Extract text from Gemini response
     // -------------------------------------------------------------------------
 
-    private static function extract_text( array $data ) {
+    public static function extract_text( array $data ) {
         if ( isset( $data['choices'][0]['message']['content'] ) ) {
             return $data['choices'][0]['message']['content'];
         }
@@ -521,6 +521,10 @@ Return ONLY a JSON array of strings, e.g. [\"Comment 1\", \"Comment 2\"]. No con
     // -------------------------------------------------------------------------
     // Step 2: Article Generation (AdSense Ready, 1000% Human Style, Zero AI Clichés)
     // -------------------------------------------------------------------------
+
+    public static function generate_article( string $session_id, string $title, string $focus_keywords = '', string $language = 'English' ) {
+        return self::get_article( $session_id, $title, $focus_keywords, $language );
+    }
 
     public static function get_article( string $session_id, string $title, string $focus_keywords = '', string $language = 'English' ) {
         $cache_key = 'aap_article_' . $session_id;
