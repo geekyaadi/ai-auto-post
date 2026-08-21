@@ -642,49 +642,6 @@ class AAP_Settings {
         exit;
     }
 
-    public static function save_sitemap_settings() {
-        check_admin_referer( 'aap_save_sitemap_settings' );
-        if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Unauthorized' );
-
-        $slug = sanitize_text_field( $_POST['aap_sitemap_slug'] ?? 'sitemap.xml' );
-        update_option( 'aap_sitemap_slug', $slug );
-
-        $mode = sanitize_text_field( $_POST['aap_sitemap_mode'] ?? 'index' );
-        update_option( 'aap_sitemap_mode', $mode );
-
-        update_option( 'aap_sitemap_enable_home', isset( $_POST['aap_sitemap_enable_home'] ) ? '1' : '0' );
-        update_option( 'aap_sitemap_priority_home', sanitize_text_field( $_POST['aap_sitemap_priority_home'] ?? '1.0' ) );
-        update_option( 'aap_sitemap_changefreq_home', sanitize_text_field( $_POST['aap_sitemap_changefreq_home'] ?? 'daily' ) );
-
-        update_option( 'aap_sitemap_enable_posts', isset( $_POST['aap_sitemap_enable_posts'] ) ? '1' : '0' );
-        update_option( 'aap_sitemap_priority_post', sanitize_text_field( $_POST['aap_sitemap_priority_post'] ?? '0.8' ) );
-        update_option( 'aap_sitemap_changefreq_post', sanitize_text_field( $_POST['aap_sitemap_changefreq_post'] ?? 'daily' ) );
-
-        update_option( 'aap_sitemap_enable_pages', isset( $_POST['aap_sitemap_enable_pages'] ) ? '1' : '0' );
-        update_option( 'aap_sitemap_priority_page', sanitize_text_field( $_POST['aap_sitemap_priority_page'] ?? '0.6' ) );
-        update_option( 'aap_sitemap_changefreq_page', sanitize_text_field( $_POST['aap_sitemap_changefreq_page'] ?? 'weekly' ) );
-
-        update_option( 'aap_sitemap_enable_cats', isset( $_POST['aap_sitemap_enable_cats'] ) ? '1' : '0' );
-        update_option( 'aap_sitemap_priority_cat', sanitize_text_field( $_POST['aap_sitemap_priority_cat'] ?? '0.5' ) );
-        update_option( 'aap_sitemap_changefreq_cat', sanitize_text_field( $_POST['aap_sitemap_changefreq_cat'] ?? 'weekly' ) );
-
-        update_option( 'aap_sitemap_enable_tags', isset( $_POST['aap_sitemap_enable_tags'] ) ? '1' : '0' );
-        update_option( 'aap_sitemap_priority_tag', sanitize_text_field( $_POST['aap_sitemap_priority_tag'] ?? '0.4' ) );
-        update_option( 'aap_sitemap_changefreq_tag', sanitize_text_field( $_POST['aap_sitemap_changefreq_tag'] ?? 'monthly' ) );
-
-        update_option( 'aap_sitemap_include_images', isset( $_POST['aap_sitemap_include_images'] ) ? '1' : '0' );
-        update_option( 'aap_sitemap_auto_ping_google', isset( $_POST['aap_sitemap_auto_ping_google'] ) ? '1' : '0' );
-        update_option( 'aap_sitemap_auto_ping_bing', isset( $_POST['aap_sitemap_auto_ping_bing'] ) ? '1' : '0' );
-
-        if ( class_exists( 'AAP_Sitemap' ) ) {
-            AAP_Sitemap::add_rewrite_rules();
-            flush_rewrite_rules();
-        }
-
-        wp_redirect( admin_url( 'admin.php?page=aap-sitemap&updated=true' ) );
-        exit;
-    }
-
     public static function render_thumbnails_page() {
         require_once AAP_PLUGIN_DIR . 'admin/views/thumbnails-page.php';
     }
