@@ -5,29 +5,25 @@ $tab   = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'pending'
 $paged = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
 $posts_per_page = 10;
 
-// Count total pending
+// Count total pending (missing featured image across ALL posts)
 $pending_count_query = new WP_Query([
     'post_type'      => 'post',
     'post_status'    => [ 'publish', 'draft' ],
     'posts_per_page' => -1,
     'fields'         => 'ids',
     'meta_query'     => [
-        'relation' => 'AND',
-        [ 'key' => '_aap_generated', 'value' => '1', 'compare' => '=' ],
         [ 'key' => '_thumbnail_id', 'compare' => 'NOT EXISTS' ]
     ]
 ]);
 $total_pending = $pending_count_query->post_count;
 
-// Count total completed
+// Count total completed (with featured image across ALL posts)
 $completed_count_query = new WP_Query([
     'post_type'      => 'post',
     'post_status'    => [ 'publish', 'draft' ],
     'posts_per_page' => -1,
     'fields'         => 'ids',
     'meta_query'     => [
-        'relation' => 'AND',
-        [ 'key' => '_aap_generated', 'value' => '1', 'compare' => '=' ],
         [ 'key' => '_thumbnail_id', 'compare' => 'EXISTS' ]
     ]
 ]);
@@ -41,10 +37,7 @@ $args = [
     'paged'          => $paged,
     'orderby'        => 'date',
     'order'          => 'DESC',
-    'meta_query'     => [
-        'relation' => 'AND',
-        [ 'key' => '_aap_generated', 'value' => '1', 'compare' => '=' ]
-    ]
+    'meta_query'     => []
 ];
 
 if ( $tab === 'pending' ) {
@@ -79,6 +72,7 @@ $total_pages   = $query->max_num_pages;
     <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap</a>
     <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
     <a href="<?php echo admin_url('admin.php?page=aap-redirects'); ?>" class="aap-nav-link">Redirect</a>
+        <a href="<?php echo admin_url('admin.php?page=aap-randomizer'); ?>" class="aap-nav-link">Date Randomizer</a>
     <a href="<?php echo admin_url('admin.php?page=aap-codes'); ?>" class="aap-nav-link">Codes</a>
     <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
 </div>
