@@ -87,7 +87,7 @@ class AAP_Updater {
      * Inject update payload into WordPress update_plugins transient
      */
     public function check_update( $transient ) {
-        if ( empty( $transient ) || ! is_object( $transient ) || empty( $transient->checked ) ) {
+        if ( empty( $transient ) || ! is_object( $transient ) ) {
             return $transient;
         }
 
