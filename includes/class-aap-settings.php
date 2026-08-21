@@ -389,6 +389,7 @@ class AAP_Settings {
             'aap_t2i_bg_val'              => 'sanitize_text_field',
             'aap_t2i_size'                => 'sanitize_text_field',
             'aap_enable_toc'              => 'intval',
+            'aap_toc_default_state'       => 'sanitize_text_field',
             'aap_enable_faq'              => 'intval',
             'aap_faq_count'               => 'intval',
             'aap_gsc_json'                => 'sanitize_textarea_field',
