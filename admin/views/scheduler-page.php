@@ -46,7 +46,7 @@ $msg = $_GET['msg'] ?? ( isset($_GET['saved']) ? 'saved' : '' );
     <div class="aap-content">
 
         <?php if ( $msg && isset($msg_map[$msg]) ): ?>
-        <div class="aap-alert aap-alert-<?php echo $msg_map[$msg]['type']; ?>"><?php echo esc_html($msg_map[$msg]['text']); ?></div>
+        <div class="aap-alert aap-alert-<?php echo esc_attr( $msg_map[$msg]['type'] ); ?>"><?php echo esc_html($msg_map[$msg]['text']); ?></div>
         <?php endif; ?>
 
         <div class="aap-two-col">
