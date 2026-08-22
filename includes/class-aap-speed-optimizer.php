@@ -113,7 +113,7 @@ class AAP_Speed_Optimizer {
             $webp_path = preg_replace( '/\.(jpe?g|png)$/i', '.webp', $file_path );
             if ( imagewebp( $image, $webp_path, 82 ) ) {
                 imagedestroy( $image );
-                @unlink( $file_path );
+                @wp_delete_file( $file_path );
 
                 $upload['file'] = $webp_path;
                 $upload['url']  = preg_replace( '/\.(jpe?g|png)$/i', '.webp', $upload['url'] );
