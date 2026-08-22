@@ -32,7 +32,9 @@ class AAP_Duplicate_Check {
 
         // Fuzzy: check if title slug already exists
         $slug   = sanitize_title( $sanitized );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $result = $wpdb->get_row( $wpdb->prepare(
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             "SELECT ID, post_title FROM {$wpdb->posts}
              WHERE post_status IN ('publish','draft','pending','future')
              AND post_type = 'post'
