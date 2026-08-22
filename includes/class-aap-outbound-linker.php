@@ -70,7 +70,7 @@ class AAP_Outbound_Linker {
             if ( $inserted >= $max_links ) break;
 
             // Check if domain in blacklist
-            $domain = parse_url( $url, PHP_URL_HOST );
+            $domain = wp_parse_url( $url, PHP_URL_HOST );
             if ( $domain && in_array( strtolower( $domain ), $blacklist, true ) ) {
                 continue;
             }
