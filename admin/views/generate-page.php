@@ -261,7 +261,7 @@
                     foreach ( $steps as $key => $step ):
                     ?>
                     <div class="aap-progress-step" id="aap-pstep-<?php echo esc_attr($key); ?>" data-step="<?php echo esc_attr($key); ?>">
-                        <div class="aap-pstep-icon"><?php echo $step['icon']; ?></div>
+                        <div class="aap-pstep-icon"><?php echo esc_html( $step['icon'] ); ?></div>
                         <div class="aap-pstep-body">
                             <div class="aap-pstep-label"><?php echo esc_html($step['label']); ?></div>
                             <div class="aap-pstep-meta"></div>
