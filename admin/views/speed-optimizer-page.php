@@ -9,7 +9,9 @@ $auto_cache_purge  = get_option( 'aap_speed_auto_cache_purge', '1' );
 $preload_assets    = get_option( 'aap_speed_preload_assets', '1' );
 $defer_js          = get_option( 'aap_speed_defer_js', '1' );
 
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $saved = isset( $_GET['updated'] ) && $_GET['updated'] === 'true';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $purged = isset( $_GET['purged'] ) && $_GET['purged'] === 'true';
 ?>
 
