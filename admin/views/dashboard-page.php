@@ -47,7 +47,7 @@ $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across mod
 
     <div class="aap-content">
         <?php if ( $msg && isset($msg_map[$msg]) ): ?>
-            <div class="aap-alert aap-alert-<?php echo $msg_map[$msg]['type']; ?>" style="margin-bottom:18px;">
+            <div class="aap-alert aap-alert-<?php echo esc_attr( $msg_map[$msg]['type'] ); ?>" style="margin-bottom:18px;">
                 <?php echo esc_html($msg_map[$msg]['text']); ?>
             </div>
         <?php endif; ?>
@@ -169,7 +169,7 @@ $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across mod
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <span class="aap-progress-pct"><?php echo $rate; ?>%</span>
+                                    <span class="aap-progress-pct"><?php echo (int) $rate; ?>%</span>
                                 </td>
                                 <td>
                                     <button type="button" class="aap-btn-small aap-btn-ghost aap-btn-ping" data-key-index="<?php echo (int) $i; ?>">🏓</button>
@@ -369,7 +369,7 @@ $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across mod
                             ];
                             foreach ( $steps as $step_id => $step_label ):
                             ?>
-                            <div class="aap-progress-step" id="aap-pstep-<?php echo $step_id; ?>">
+                            <div class="aap-progress-step" id="aap-pstep-<?php echo esc_attr( $step_id ); ?>">
                                 <div class="aap-pstep-dot waiting"></div>
                                 <div class="aap-pstep-body">
                                     <div class="aap-pstep-label"><?php echo esc_html($step_label); ?></div>
