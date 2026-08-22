@@ -65,7 +65,7 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
     <div class="aap-content">
 
         <?php if ( $msg && isset($msg_map[$msg]) ): ?>
-        <div class="aap-alert aap-alert-<?php echo $msg_map[$msg]['type']; ?>">
+        <div class="aap-alert aap-alert-<?php echo esc_attr( $msg_map[$msg]['type'] ); ?>">
             <?php echo esc_html($msg_map[$msg]['text']); ?>
         </div>
         <?php endif; ?>
@@ -85,7 +85,7 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                 <div class="aap-key-badge">
                     <?php $stats = AAP_Key_Manager::get_stats(); ?>
                     <span class="aap-key-dot <?php echo $stats['active']>0?'active':'inactive'; ?>"></span>
-                    <?php echo $stats['active']; ?> Active / <?php echo (int) $stats['total']; ?> Total
+                    <?php echo (int) $stats['active']; ?> Active / <?php echo (int) $stats['total']; ?> Total
                 </div>
             </div>
 
@@ -150,7 +150,7 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                         </td>
                         <td><code class="aap-key-masked"><?php echo esc_html(AAP_Key_Manager::mask_key($k['key'])); ?></code></td>
                         <td class="aap-key-status-cell">
-                            <span class="aap-status-badge aap-status-<?php echo $status_cls; ?>">
+                            <span class="aap-status-badge aap-status-<?php echo esc_attr( $status_cls ); ?>">
                                 <?php
                                 if ( $k['status'] === 'active' )         echo '✅ Active';
                                 elseif ( $k['status'] === 'invalid' )    echo '⛔ Invalid';
@@ -316,7 +316,7 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                                 <label class="aap-label">Article Word Count</label>
                                 <select name="aap_word_count" class="aap-select">
                                     <?php foreach ([500,750,1000,1500,2000,2500] as $wc): ?>
-                                    <option value="<?php echo $wc; ?>" <?php selected(get_option('aap_word_count',1000),$wc); ?>><?php echo $wc; ?> words</option>
+                                    <option value="<?php echo (int) $wc; ?>" <?php selected(get_option('aap_word_count',1000),$wc); ?>><?php echo (int) $wc; ?> words</option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -346,7 +346,7 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                             <div class="aap-field">
                                 <label class="aap-label">Key Auto-Reset Interval</label>
                                 <div class="aap-input-suffix">
-                                    <input type="number" name="aap_key_reset_minutes" class="aap-input" value="<?php echo $reset_minutes; ?>" min="1" max="1440">
+                                    <input type="number" name="aap_key_reset_minutes" class="aap-input" value="<?php echo (int) $reset_minutes; ?>" min="1" max="1440">
                                     <span class="aap-suffix">mins</span>
                                 </div>
                             </div>
@@ -384,7 +384,7 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                                 <label class="aap-label">Number of FAQs to Generate</label>
                                 <select name="aap_faq_count" class="aap-select">
                                     <?php foreach ([3,4,5] as $fc): ?>
-                                    <option value="<?php echo $fc; ?>" <?php selected(get_option('aap_faq_count',3),$fc); ?>><?php echo $fc; ?> FAQs</option>
+                                    <option value="<?php echo (int) $fc; ?>" <?php selected(get_option('aap_faq_count',3),$fc); ?>><?php echo (int) $fc; ?> FAQs</option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -669,7 +669,7 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                                 <label class="aap-label">Comments Count</label>
                                 <select name="aap_comments_count" class="aap-select">
                                     <?php foreach ([1,2,3,4,5] as $cc): ?>
-                                    <option value="<?php echo $cc; ?>" <?php selected(get_option('aap_comments_count',2),$cc); ?>><?php echo $cc; ?> Comments</option>
+                                    <option value="<?php echo (int) $cc; ?>" <?php selected(get_option('aap_comments_count',2),$cc); ?>><?php echo (int) $cc; ?> Comments</option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
