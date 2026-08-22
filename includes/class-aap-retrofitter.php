@@ -80,7 +80,7 @@ class AAP_Retrofitter {
         $replacements = [];
         foreach ( $matches as $index => $match ) {
             $raw_h2     = $match[0];
-            $inner_text = strip_tags( $match[1] );
+            $inner_text = wp_strip_all_tags( $match[1] );
             $anchor_id  = 'toc-head-' . ( $index + 1 );
 
             $new_h2 = '<h2 id="' . esc_attr( $anchor_id ) . '">' . $match[1] . '</h2>';
@@ -180,7 +180,7 @@ class AAP_Retrofitter {
             aap_purge_all_caches();
         }
 
-        wp_redirect( admin_url( 'admin.php?page=aap-settings&retrofitted=' . $updated_count ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=aap-settings&retrofitted=' . $updated_count ) );
         exit;
     }
 }
