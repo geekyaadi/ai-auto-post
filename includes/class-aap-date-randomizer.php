@@ -41,10 +41,10 @@ class AAP_Date_Randomizer {
         $end_str   = get_option( 'aap_randomizer_end_date', '' );
 
         if ( empty( $start_str ) ) {
-            $start_str = date( 'Y-m-d H:i:s', strtotime( '-90 days' ) );
+            $start_str = gmdate( 'Y-m-d H:i:s', strtotime( '-90 days' ) );
         }
         if ( empty( $end_str ) ) {
-            $end_str = date( 'Y-m-d H:i:s' );
+            $end_str = gmdate( 'Y-m-d H:i:s' );
         }
 
         $start_ts = strtotime( $start_str );
@@ -72,7 +72,7 @@ class AAP_Date_Randomizer {
 
             foreach ( $posts as $post_id ) {
                 $rand_ts   = rand( $start_ts, $end_ts );
-                $rand_date = date( 'Y-m-d H:i:s', $rand_ts );
+                $rand_date = gmdate( 'Y-m-d H:i:s', $rand_ts );
                 $rand_gmt  = gmdate( 'Y-m-d H:i:s', $rand_ts );
 
                 $update_data = [
@@ -106,7 +106,7 @@ class AAP_Date_Randomizer {
                         $comment_start = $rand_ts;
                         $comment_end   = min( $end_ts, $rand_ts + ( 86400 * 3 ) );
                         $c_rand_ts     = ( $comment_start < $comment_end ) ? rand( $comment_start, $comment_end ) : $comment_start;
-                        $c_rand_date   = date( 'Y-m-d H:i:s', $c_rand_ts );
+                        $c_rand_date   = gmdate( 'Y-m-d H:i:s', $c_rand_ts );
                         $c_rand_gmt    = gmdate( 'Y-m-d H:i:s', $c_rand_ts );
 
                         $wpdb->update(
