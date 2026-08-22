@@ -417,6 +417,21 @@ class AAP_Settings {
             update_option( $key, $val );
         }
 
+        // Synchronize WP native auto_update_plugins option with plugin setting
+        $auto_updates = (array) get_site_option( 'auto_update_plugins', [] );
+        $plugin_slug  = 'ai-auto-post/ai-auto-post.php';
+        if ( get_option( 'aap_auto_update_enabled', 0 ) ) {
+            if ( ! in_array( $plugin_slug, $auto_updates, true ) ) {
+                $auto_updates[] = $plugin_slug;
+                update_site_option( 'auto_update_plugins', array_unique( $auto_updates ) );
+            }
+        } else {
+            if ( in_array( $plugin_slug, $auto_updates, true ) ) {
+                $auto_updates = array_diff( $auto_updates, [ $plugin_slug ] );
+                update_site_option( 'auto_update_plugins', array_values( $auto_updates ) );
+            }
+        }
+
         // Clear LiteSpeed / Autoptimize cache to refresh settings pages
         if ( class_exists( 'LiteSpeed_Cache_API' ) && method_exists( 'LiteSpeed_Cache_API', 'purge_all' ) ) {
             LiteSpeed_Cache_API::purge_all();
