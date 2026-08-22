@@ -19,6 +19,7 @@ class AAP_Codes_Manager {
         if ( is_admin() ) return;
         $code = get_option( 'aap_header_code', '' );
         if ( ! empty( $code ) ) {
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Custom script tag injection by admin
             echo "\n<!-- AI Auto Post Header Script -->\n" . $code . "\n<!-- /AI Auto Post Header Script -->\n";
         }
     }
@@ -27,12 +28,13 @@ class AAP_Codes_Manager {
         if ( is_admin() ) return;
         $code = get_option( 'aap_footer_code', '' );
         if ( ! empty( $code ) ) {
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Custom script tag injection by admin
             echo "\n<!-- AI Auto Post Footer Script -->\n" . $code . "\n<!-- /AI Auto Post Footer Script -->\n";
         }
     }
 
     public static function serve_ads_txt_dynamically() {
-        $request_uri = isset( $_SERVER['REQUEST_URI'] ) ? strtok( $_SERVER['REQUEST_URI'], '?' ) : '';
+        $request_uri = isset( $_SERVER['REQUEST_URI'] ) ? strtok( wp_unslash( $_SERVER['REQUEST_URI'] ), '?' ) : '';
         if ( empty( $request_uri ) ) return;
 
         $path = trim( $request_uri, '/' );
@@ -40,14 +42,14 @@ class AAP_Codes_Manager {
             $content = get_option( 'aap_ads_txt_content', '' );
             header( 'Content-Type: text/plain; charset=utf-8' );
             header( 'X-Robots-Tag: noindex, follow', true );
-            echo $content;
+            echo esc_html( $content );
             exit;
         }
     }
 
     public static function sync_physical_ads_txt( $content ) {
         $file_path = ABSPATH . 'ads.txt';
-        if ( is_writable( ABSPATH ) || ( file_exists( $file_path ) && is_writable( $file_path ) ) ) {
+        if ( wp_is_writable( ABSPATH ) || ( file_exists( $file_path ) && wp_is_writable( $file_path ) ) ) {
             @file_put_contents( $file_path, $content );
         }
     }
@@ -66,7 +68,7 @@ class AAP_Codes_Manager {
 
         self::sync_physical_ads_txt( $ads_txt );
 
-        wp_redirect( admin_url( 'admin.php?page=aap-codes&updated=true' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=aap-codes&updated=true' ) );
         exit;
     }
 }
