@@ -75,6 +75,7 @@ class AAP_History {
     public static function get_all( int $limit = 50, int $offset = 0 ) {
         global $wpdb;
         $table = self::table_name();
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         return $wpdb->get_results( $wpdb->prepare(
             "SELECT * FROM {$table} ORDER BY created_at DESC LIMIT %d OFFSET %d",
             $limit, $offset
@@ -83,7 +84,9 @@ class AAP_History {
 
     public static function count() {
         global $wpdb;
-        return (int) $wpdb->get_var( "SELECT COUNT(*) FROM " . self::table_name() );
+        $table = self::table_name();
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
     }
 
     public static function delete( int $id ) {
@@ -93,7 +96,9 @@ class AAP_History {
 
     public static function clear_all() {
         global $wpdb;
-        $wpdb->query( "TRUNCATE TABLE " . self::table_name() );
+        $table = self::table_name();
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $wpdb->query( "TRUNCATE TABLE {$table}" );
     }
 
     // -------------------------------------------------------------------------
@@ -103,6 +108,7 @@ class AAP_History {
     public static function get_summary_stats() {
         global $wpdb;
         $table = self::table_name();
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         return [
             'total'         => (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" ),
             'success'       => (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE status = 'success'" ),
