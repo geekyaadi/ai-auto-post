@@ -1,6 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $paged = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
 $posts_per_page = 10;
 
@@ -85,8 +86,8 @@ $total_pages = $query->max_num_pages;
                     <?php foreach ( $posts as $p ): 
                         $tags_list = get_the_tags($p->ID);
                     ?>
-                    <tr id="aap-tags-row-<?php echo $p->ID; ?>">
-                        <td><code>#<?php echo $p->ID; ?></code></td>
+                    <tr id="aap-tags-row-<?php echo (int) $p->ID; ?>">
+                        <td><code>#<?php echo (int) $p->ID; ?></code></td>
                         <td>
                             <a href="<?php echo esc_url( get_edit_post_link($p->ID) ); ?>" target="_blank" style="font-weight:600; color: var(--aap-text-dark);">
                                 <?php echo esc_html($p->post_title); ?>
@@ -94,8 +95,8 @@ $total_pages = $query->max_num_pages;
                         </td>
                         <td class="aap-tags-list-cell" style="vertical-align: middle;">
                             <?php if ( ! empty($tags_list) ): ?>
-                                <button type="button" class="aap-btn aap-btn-secondary aap-btn-small" style="padding:4px 8px; font-size:11px; font-weight:600; margin-bottom:5px; border-radius:4px;" onclick="jQuery('#aap-tags-container-<?php echo $p->ID; ?>').toggle(); var t = jQuery(this).text() === '👁️ Show Tags' ? '🙈 Hide Tags' : '👁️ Show Tags'; jQuery(this).text(t);">👁️ Show Tags</button>
-                                <div class="aap-tags-container" id="aap-tags-container-<?php echo $p->ID; ?>" style="display:none; flex-wrap:wrap; gap:5px; margin-top:5px;">
+                                <button type="button" class="aap-btn aap-btn-secondary aap-btn-small" style="padding:4px 8px; font-size:11px; font-weight:600; margin-bottom:5px; border-radius:4px;" onclick="jQuery('#aap-tags-container-<?php echo (int) $p->ID; ?>').toggle(); var t = jQuery(this).text() === '👁️ Show Tags' ? '🙈 Hide Tags' : '👁️ Show Tags'; jQuery(this).text(t);">👁️ Show Tags</button>
+                                <div class="aap-tags-container" id="aap-tags-container-<?php echo (int) $p->ID; ?>" style="display:none; flex-wrap:wrap; gap:5px; margin-top:5px;">
                                     <?php foreach ( $tags_list as $t ): ?>
                                         <span class="aap-status-badge" style="background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.15); color:#6366f1; font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px;">
                                             #<?php echo esc_html($t->name); ?>
@@ -117,7 +118,7 @@ $total_pages = $query->max_num_pages;
                             </select>
                         </td>
                         <td>
-                            <button type="button" class="aap-btn aap-btn-primary aap-btn-small aap-btn-gen-tags" data-post-id="<?php echo $p->ID; ?>" style="background: #4f46e5; border-color: #4f46e5; color: #fff; width:100%; display:block; text-align:center; height:34px; font-weight:600; border-radius:6px;">
+                            <button type="button" class="aap-btn aap-btn-primary aap-btn-small aap-btn-gen-tags" data-post-id="<?php echo (int) $p->ID; ?>" style="background: #4f46e5; border-color: #4f46e5; color: #fff; width:100%; display:block; text-align:center; height:34px; font-weight:600; border-radius:6px;">
                                 ⚡ Generate Tags
                             </button>
                         </td>
