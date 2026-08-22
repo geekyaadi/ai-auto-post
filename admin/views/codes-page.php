@@ -6,6 +6,7 @@ $footer_code = get_option( 'aap_footer_code', '' );
 $ads_txt     = get_option( 'aap_ads_txt_content', '' );
 
 $ads_txt_url = home_url( '/ads.txt' );
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $saved = isset( $_GET['updated'] ) && $_GET['updated'] === 'true';
 ?>
 
