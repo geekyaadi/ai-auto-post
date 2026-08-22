@@ -3,7 +3,7 @@
  * Plugin Name:       AI Auto Post
  * Plugin URI:        https://github.com/geekyaadi/ai-auto-post
  * Description:       Auto-generate SEO blog posts using Google Gemini API - with multi-key rotation, scheduling, queue, history log, and full quality controls.
- * Version:           1.4.8
+ * Version:           1.4.9
  * Author:            Aadi
  * Author URI:        https://github.com/geekyaadi
  * Contributors:      Anand Soni
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Constants
-define( 'AAP_VERSION',     '1.4.8' );
+define( 'AAP_VERSION',     '1.4.9' );
 define( 'AAP_PLUGIN_FILE', __FILE__ );
 define( 'AAP_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
 define( 'AAP_PLUGIN_URL',  plugin_dir_url( __FILE__ ) );
@@ -151,7 +151,7 @@ function aap_indexnow_serve_key() {
     }
 
     $request_uri = $_SERVER['REQUEST_URI'] ?? '';
-    $path = trim( parse_url( $request_uri, PHP_URL_PATH ), '/' );
+    $path = trim( wp_parse_url( $request_uri, PHP_URL_PATH ), '/' );
 
     if ( $path === $key . '.txt' ) {
         header( 'Content-Type: text/plain; charset=utf-8' );
@@ -181,7 +181,7 @@ function aap_indexnow_submit_on_publish( $new_status, $old_status, $post ) {
         return;
     }
 
-    $host = parse_url( home_url(), PHP_URL_HOST );
+    $host = wp_parse_url( home_url(), PHP_URL_HOST );
     $key_location = home_url( '/' . $key . '.txt' );
 
     $body = [
