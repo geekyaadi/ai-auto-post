@@ -25,21 +25,22 @@ $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across mod
                 <span class="aap-logo-badge">Control Center</span>
             </div>
             <div class="aap-header-nav">
-                <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link active">Dashboard</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link">Scheduler</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Tool</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Tool</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Translator</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Indexing</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Rewriter</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Optimizer</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-redirects'); ?>" class="aap-nav-link">Redirect</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-codes'); ?>" class="aap-nav-link">Codes</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=ai-auto-post') ); ?>" class="aap-nav-link active">Dashboard</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-generate') ); ?>" class="aap-nav-link">Generate Post</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-planner') ); ?>" class="aap-nav-link">Bulk Planner</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-scheduler') ); ?>" class="aap-nav-link">Scheduler</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-thumbnails') ); ?>" class="aap-nav-link">Thumbnail Tool</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-tags') ); ?>" class="aap-nav-link">Tags Tool</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-translator') ); ?>" class="aap-nav-link">Translator</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-gsc') ); ?>" class="aap-nav-link">Indexing</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-rewriter') ); ?>" class="aap-nav-link">Rewriter</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-speed') ); ?>" class="aap-nav-link">Optimizer</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-sitemap') ); ?>" class="aap-nav-link">Sitemap</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-pages') ); ?>" class="aap-nav-link">Pages Generator</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-redirects') ); ?>" class="aap-nav-link">Redirect</a>
+                    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-randomizer') ); ?>" class="aap-nav-link">Date Randomizer</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-codes') ); ?>" class="aap-nav-link">Codes</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-settings') ); ?>" class="aap-nav-link">Settings</a>
             </div>
         </div>
     </div>
@@ -88,12 +89,12 @@ $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across mod
                 <div class="aap-stats-grid select-none">
                     <div class="aap-stat-card aap-stat-primary">
                         <div class="aap-stat-icon">📝</div>
-                        <div class="aap-stat-value"><?php echo $stats['total']; ?></div>
+                        <div class="aap-stat-value"><?php echo (int) $stats['total']; ?></div>
                         <div class="aap-stat-label">Total Generated</div>
                     </div>
                     <div class="aap-stat-card aap-stat-success">
                         <div class="aap-stat-icon">✅</div>
-                        <div class="aap-stat-value"><?php echo $stats['success']; ?></div>
+                        <div class="aap-stat-value"><?php echo (int) $stats['success']; ?></div>
                         <div class="aap-stat-label">Successful</div>
                     </div>
                     <div class="aap-stat-card aap-stat-info">
@@ -114,13 +115,13 @@ $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across mod
                         <h2 class="aap-panel-title">🔑 API Key Health Dashboard</h2>
                         <div class="aap-panel-actions">
                             <button type="button" id="aap-btn-ping-all" class="aap-btn aap-btn-secondary aap-btn-sm">🏓 Ping All</button>
-                            <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-btn aap-btn-ghost aap-btn-sm">⚙️ Manage Keys</a>
+                            <a href="<?php echo esc_url( admin_url('admin.php?page=aap-settings') ); ?>" class="aap-btn aap-btn-ghost aap-btn-sm">⚙️ Manage Keys</a>
                         </div>
                     </div>
 
                     <?php if (empty($all_keys)): ?>
                     <div class="aap-empty-state">
-                        No API keys configured. <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">Configure keys first →</a>
+                        No API keys configured. <a href="<?php echo esc_url( admin_url('admin.php?page=aap-settings') ); ?>">Configure keys first →</a>
                     </div>
                     <?php else: ?>
                     <table class="aap-table" id="aap-keys-table">
@@ -142,7 +143,7 @@ $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across mod
                                 $reset = AAP_Key_Manager::seconds_until_reset($k);
                                 $prov  = $k['provider'] ?? 'gemini';
                             ?>
-                            <tr data-key-index="<?php echo $i; ?>" data-reset-ts="<?php echo (int)($k['reset_at_ts'] ?? 0); ?>">
+                            <tr data-key-index="<?php echo (int) $i; ?>" data-reset-ts="<?php echo (int)($k['reset_at_ts'] ?? 0); ?>">
                                 <td>
                                     <span class="aap-badge aap-badge-<?php echo esc_attr($prov); ?>">
                                         <?php echo $prov === 'openai' ? 'OpenAI' : 'Gemini'; ?>
@@ -171,7 +172,7 @@ $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across mod
                                     <span class="aap-progress-pct"><?php echo $rate; ?>%</span>
                                 </td>
                                 <td>
-                                    <button type="button" class="aap-btn-small aap-btn-ghost aap-btn-ping" data-key-index="<?php echo $i; ?>">🏓</button>
+                                    <button type="button" class="aap-btn-small aap-btn-ghost aap-btn-ping" data-key-index="<?php echo (int) $i; ?>">🏓</button>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -185,7 +186,7 @@ $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across mod
                     <div class="aap-panel-header">
                         <h2 class="aap-panel-title">📋 Recent Generations Log</h2>
                         <?php if (!empty($history)): ?>
-                        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" onsubmit="return confirm('Clear ALL history? This cannot be undone.')">
+                        <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" onsubmit="return confirm('Clear ALL history? This cannot be undone.')">
                             <?php wp_nonce_field('aap_clear_history'); ?>
                             <input type="hidden" name="action" value="aap_clear_history">
                             <button class="aap-btn-small aap-btn-danger" type="submit">🗑 Clear All</button>
@@ -209,10 +210,10 @@ $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across mod
                         <tbody>
                             <?php foreach ($history as $row): ?>
                             <tr>
-                                <td><?php echo esc_html(date('M j, H:i', strtotime($row->created_at))); ?></td>
+                                <td><?php echo esc_html(gmdate( 'M j, H:i', strtotime($row->created_at))); ?></td>
                                 <td>
                                     <?php if ($row->post_id): ?>
-                                    <a href="<?php echo get_permalink($row->post_id); ?>" target="_blank" class="aap-history-title-link" style="font-weight:600;">
+                                    <a href="<?php echo esc_url( get_permalink($row->post_id) ); ?>" target="_blank" class="aap-history-title-link" style="font-weight:600;">
                                         <?php echo esc_html(wp_trim_words($row->title, 8)); ?>
                                     </a>
                                     <?php
@@ -260,7 +261,7 @@ $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across mod
                         <h2 class="aap-panel-title">⚡ Quick Post Generator</h2>
                         <div class="aap-key-badge">
                             <span class="aap-key-dot <?php echo $key_stats['active'] > 0 ? 'active' : 'inactive'; ?>"></span>
-                            <span><?php echo $key_stats['active']; ?>/<?php echo $key_stats['total']; ?> Keys Active</span>
+                            <span><?php echo (int) $key_stats['active']; ?>/<?php echo (int) $key_stats['total']; ?> Keys Active</span>
                         </div>
                     </div>
 
