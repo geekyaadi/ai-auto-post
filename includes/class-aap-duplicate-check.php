@@ -17,7 +17,17 @@ class AAP_Duplicate_Check {
         $sanitized = sanitize_text_field( $title );
 
         // Exact title match
-        $exact = get_page_by_title( $sanitized, OBJECT, 'post' );
+        $query = new WP_Query( [
+            'title'                  => $sanitized,
+            'post_type'              => 'post',
+            'post_status'            => 'any',
+            'posts_per_page'         => 1,
+            'no_found_rows'          => true,
+            'ignore_sticky_posts'    => true,
+            'update_post_term_cache' => false,
+            'update_post_meta_cache' => false,
+        ] );
+        $exact = ! empty( $query->posts ) ? $query->posts[0] : null;
         if ( $exact ) return $exact;
 
         // Fuzzy: check if title slug already exists
