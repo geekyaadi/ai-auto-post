@@ -1,6 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $paged = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
 $posts_per_page = 10;
 
@@ -139,9 +140,9 @@ $languages = [
                     ?>
                     <tr>
                         <td>
-                            <input type="checkbox" class="aap-translator-checkbox" data-post-id="<?php echo $p->ID; ?>">
+                            <input type="checkbox" class="aap-translator-checkbox" data-post-id="<?php echo (int) $p->ID; ?>">
                         </td>
-                        <td><code>#<?php echo $p->ID; ?></code></td>
+                        <td><code>#<?php echo (int) $p->ID; ?></code></td>
                         <td>
                             <a href="<?php echo esc_url( get_edit_post_link($p->ID) ); ?>" target="_blank" style="font-weight:600; color:var(--aap-text-dark);">
                                 <?php echo esc_html($p->post_title); ?>
