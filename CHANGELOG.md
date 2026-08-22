@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [v1.4.8] - 2026-08-22
+
+### 🔄 WordPress Native Auto-Updates Policy & Toggle Sync Fix
+- **WordPress Native Toggle Sync**: Fixed `should_auto_update` filter so WordPress native **"Enable auto-updates" / "Disable auto-updates"** action link on `wp-admin/plugins.php` toggles cleanly without being hardcoded or permanently locked.
+- **Bi-Directional Setting Sync**: Synchronized plugin auto-update setting with WordPress core `auto_update_plugins` site option in full compliance with WordPress Plugin Guidelines.
+
+---
+
 ## [v1.4.7] - 2026-08-21
 
 ### 📌 Dynamic Non-Destructive Shortcodes & Collapsible TOC Toggle
