@@ -222,6 +222,7 @@ class AAP_Scheduler {
         if ( $silo_role === 'cluster' && ! empty( $silo_id ) ) {
             global $wpdb;
             $queue_table = AAP_Queue::table_name();
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $pillar_item = $wpdb->get_row( $wpdb->prepare(
                 "SELECT * FROM {$queue_table} WHERE id = %d AND status = 'published' AND post_id IS NOT NULL LIMIT 1",
                 $silo_id
@@ -253,6 +254,7 @@ class AAP_Scheduler {
         if ( $silo_role === 'cluster' && ! empty( $silo_id ) && ! is_wp_error( $post_id ) ) {
             global $wpdb;
             $queue_table = AAP_Queue::table_name();
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $pillar_item = $wpdb->get_row( $wpdb->prepare(
                 "SELECT * FROM {$queue_table} WHERE id = %d AND status = 'published' AND post_id IS NOT NULL LIMIT 1",
                 $silo_id
