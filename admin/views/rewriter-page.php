@@ -1,6 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $paged = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
 $posts_per_page = 10;
 
@@ -72,12 +73,12 @@ $total_pages = $query->max_num_pages;
                 <?php foreach ( $posts as $p ):
                     $word_count = str_word_count( wp_strip_all_tags( $p->post_content ) );
                 ?>
-                <div class="aap-rewriter-item" id="aap-rewriter-row-<?php echo $p->ID; ?>" style="border:1px solid var(--aap-border); border-radius:10px; padding:18px; margin-bottom:12px; background:var(--aap-surface-2);">
+                <div class="aap-rewriter-item" id="aap-rewriter-row-<?php echo (int) $p->ID; ?>" style="border:1px solid var(--aap-border); border-radius:10px; padding:18px; margin-bottom:12px; background:var(--aap-surface-2);">
                     <div style="display:flex; align-items:flex-start; gap:15px; flex-wrap:wrap;">
                         <!-- Post Info -->
                         <div style="flex:1; min-width:280px;">
                             <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-                                <code style="font-size:11px; color:#6366f1;">#<?php echo $p->ID; ?></code>
+                                <code style="font-size:11px; color:#6366f1;">#<?php echo (int) $p->ID; ?></code>
                                 <a href="<?php echo esc_url( get_permalink($p->ID) ); ?>" target="_blank" style="font-weight:700; color:var(--aap-text-dark); font-size:14px; text-decoration:none; transition: color 0.15s ease-in-out;">
                                     <?php echo esc_html($p->post_title); ?>
                                 </a>
@@ -98,13 +99,13 @@ $total_pages = $query->max_num_pages;
                         <!-- Instruction Input + Buttons -->
                         <div style="display:flex; align-items:center; gap:8px; flex-shrink:0; flex-wrap:wrap;">
                             <input type="text"
-                                id="aap-rewrite-instructions-<?php echo $p->ID; ?>"
+                                id="aap-rewrite-instructions-<?php echo (int) $p->ID; ?>"
                                 class="aap-input"
                                 placeholder="Optional: custom instructions..."
                                 style="width:260px; font-size:12px; padding:8px 12px; border-radius:6px; border: 1px solid var(--aap-border);">
                             <button type="button"
                                 class="aap-btn aap-btn-primary aap-btn-small aap-btn-rewrite-post"
-                                data-post-id="<?php echo $p->ID; ?>"
+                                data-post-id="<?php echo (int) $p->ID; ?>"
                                 data-save="preview"
                                 style="background:linear-gradient(135deg,#6366f1,#8b5cf6); border:none; color:#fff; white-space:nowrap; border-radius:6px; font-weight:600; padding:8px 16px;">
                                 🔄 Rewrite Preview
@@ -113,7 +114,7 @@ $total_pages = $query->max_num_pages;
                     </div>
 
                     <!-- Preview Container (hidden by default) -->
-                    <div id="aap-rewrite-preview-<?php echo $p->ID; ?>" style="display:none; margin-top:12px;"></div>
+                    <div id="aap-rewrite-preview-<?php echo (int) $p->ID; ?>" style="display:none; margin-top:12px;"></div>
                 </div>
                 <?php endforeach; ?>
             </div>
