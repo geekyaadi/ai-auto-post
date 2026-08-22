@@ -27,7 +27,7 @@ class AAP_Date_Randomizer {
         update_option( 'aap_randomizer_post_type',    sanitize_text_field( $_POST['post_type'] ?? 'post' ) );
         update_option( 'aap_randomizer_modified_date',isset( $_POST['set_modified_date'] ) ? '1' : '0' );
 
-        wp_redirect( admin_url( 'admin.php?page=aap-randomizer&saved=true' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=aap-randomizer&saved=true' ) );
         exit;
     }
 
@@ -51,7 +51,7 @@ class AAP_Date_Randomizer {
         $end_ts   = strtotime( $end_str );
 
         if ( ! $start_ts || ! $end_ts || $start_ts >= $end_ts ) {
-            wp_redirect( admin_url( 'admin.php?page=aap-randomizer&error=invalid_range' ) );
+            wp_safe_redirect( admin_url( 'admin.php?page=aap-randomizer&error=invalid_range' ) );
             exit;
         }
 
@@ -71,7 +71,7 @@ class AAP_Date_Randomizer {
             ]);
 
             foreach ( $posts as $post_id ) {
-                $rand_ts   = rand( $start_ts, $end_ts );
+                $rand_ts   = wp_rand( $start_ts, $end_ts );
                 $rand_date = gmdate( 'Y-m-d H:i:s', $rand_ts );
                 $rand_gmt  = gmdate( 'Y-m-d H:i:s', $rand_ts );
 
@@ -105,7 +105,7 @@ class AAP_Date_Randomizer {
                         // Comment date between post date and end_ts (or post date + 3 days)
                         $comment_start = $rand_ts;
                         $comment_end   = min( $end_ts, $rand_ts + ( 86400 * 3 ) );
-                        $c_rand_ts     = ( $comment_start < $comment_end ) ? rand( $comment_start, $comment_end ) : $comment_start;
+                        $c_rand_ts     = ( $comment_start < $comment_end ) ? wp_rand( $comment_start, $comment_end ) : $comment_start;
                         $c_rand_date   = gmdate( 'Y-m-d H:i:s', $c_rand_ts );
                         $c_rand_gmt    = gmdate( 'Y-m-d H:i:s', $c_rand_ts );
 
@@ -126,7 +126,7 @@ class AAP_Date_Randomizer {
             aap_purge_all_caches();
         }
 
-        wp_redirect( admin_url( 'admin.php?page=aap-randomizer&run=success&count=' . $affected_count ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=aap-randomizer&run=success&count=' . $affected_count ) );
         exit;
     }
 }
