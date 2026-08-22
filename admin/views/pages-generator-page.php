@@ -26,21 +26,22 @@ $cookie_saved    = isset( $_GET['cookie_updated'] ) && $_GET['cookie_updated'] =
                 <span class="aap-logo-badge">📄 Pages & Cookie Consent</span>
             </div>
                         <div class="aap-header-nav">
-    <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link">Dashboard</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link">Scheduler</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Tool</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Tool</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Translator</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Indexing</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Rewriter</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Optimizer</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link active">Pages Generator</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-redirects'); ?>" class="aap-nav-link">Redirect</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-codes'); ?>" class="aap-nav-link">Codes</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=ai-auto-post') ); ?>" class="aap-nav-link">Dashboard</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-generate') ); ?>" class="aap-nav-link">Generate Post</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-planner') ); ?>" class="aap-nav-link">Bulk Planner</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-scheduler') ); ?>" class="aap-nav-link">Scheduler</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-thumbnails') ); ?>" class="aap-nav-link">Thumbnail Tool</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-tags') ); ?>" class="aap-nav-link">Tags Tool</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-translator') ); ?>" class="aap-nav-link">Translator</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-gsc') ); ?>" class="aap-nav-link">Indexing</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-rewriter') ); ?>" class="aap-nav-link">Rewriter</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-speed') ); ?>" class="aap-nav-link">Optimizer</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-sitemap') ); ?>" class="aap-nav-link">Sitemap</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-pages') ); ?>" class="aap-nav-link active">Pages Generator</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-redirects') ); ?>" class="aap-nav-link">Redirect</a>
+        <a href="<?php echo esc_url( admin_url('admin.php?page=aap-randomizer') ); ?>" class="aap-nav-link">Date Randomizer</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-codes') ); ?>" class="aap-nav-link">Codes</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-settings') ); ?>" class="aap-nav-link">Settings</a>
 </div>
         </div>
     </div>
@@ -48,7 +49,7 @@ $cookie_saved    = isset( $_GET['cookie_updated'] ) && $_GET['cookie_updated'] =
     <div class="aap-content">
         <?php if ( $pages_generated > 0 ): ?>
             <div class="aap-alert aap-alert-success" style="margin-bottom:20px;">
-                <strong>🎉 Successfully Generated & Published <?php echo $pages_generated; ?> Essential Pages!</strong> All selected pages (About, Contact, Privacy Policy, Terms, Disclaimer, DMCA, Editorial) are now live on your site.
+                <strong>🎉 Successfully Generated & Published <?php echo (int) $pages_generated; ?> Essential Pages!</strong> All selected pages (About, Contact, Privacy Policy, Terms, Disclaimer, DMCA, Editorial) are now live on your site.
             </div>
         <?php endif; ?>
 
@@ -65,7 +66,7 @@ $cookie_saved    = isset( $_GET['cookie_updated'] ) && $_GET['cookie_updated'] =
                 <p style="color:var(--aap-text-muted); margin:0; font-size:13px;">Instantly generate 1000+ words, GDPR/AdSense compliant human-written pages tailored for your website.</p>
             </div>
             <div class="aap-panel-body">
-                <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
                     <?php wp_nonce_field('aap_generate_essential_pages'); ?>
                     <input type="hidden" name="action" value="aap_generate_essential_pages">
 
@@ -131,7 +132,7 @@ $cookie_saved    = isset( $_GET['cookie_updated'] ) && $_GET['cookie_updated'] =
                 <p style="color:var(--aap-text-muted); margin:0; font-size:13px;">Customize style, layout, text content, and toggle cookie consent popup on your website.</p>
             </div>
             <div class="aap-panel-body" style="padding:24px;">
-                <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
                     <?php wp_nonce_field('aap_save_cookie_settings'); ?>
                     <input type="hidden" name="action" value="aap_save_cookie_settings">
 
