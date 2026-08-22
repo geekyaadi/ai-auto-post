@@ -143,7 +143,7 @@ $languages = [
                         </td>
                         <td><code>#<?php echo $p->ID; ?></code></td>
                         <td>
-                            <a href="<?php echo get_edit_post_link($p->ID); ?>" target="_blank" style="font-weight:600; color:var(--aap-text-dark);">
+                            <a href="<?php echo esc_url( get_edit_post_link($p->ID) ); ?>" target="_blank" style="font-weight:600; color:var(--aap-text-dark);">
                                 <?php echo esc_html($p->post_title); ?>
                             </a>
                         </td>
