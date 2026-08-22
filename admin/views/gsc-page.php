@@ -4,6 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 $gsc_json = get_option( 'aap_gsc_json', '' );
 $has_creds = ! empty( $gsc_json );
 
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $paged = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
 $posts_per_page = 10;
 
@@ -101,8 +102,8 @@ $total_pages = $query->max_num_pages;
                     <?php foreach ( $posts as $p ):
                         $last_ping = get_post_meta($p->ID, '_aap_gsc_last_ping', true);
                     ?>
-                    <tr id="aap-gsc-row-<?php echo $p->ID; ?>">
-                        <td><code>#<?php echo $p->ID; ?></code></td>
+                    <tr id="aap-gsc-row-<?php echo (int) $p->ID; ?>">
+                        <td><code>#<?php echo (int) $p->ID; ?></code></td>
                         <td>
                             <a href="<?php echo esc_url( get_permalink($p->ID) ); ?>" target="_blank" style="font-weight:600; color:var(--aap-text-dark);">
                                 <?php echo esc_html($p->post_title); ?>
@@ -121,7 +122,7 @@ $total_pages = $query->max_num_pages;
                         <td>
                             <button type="button"
                                 class="aap-btn aap-btn-primary aap-btn-small aap-btn-request-indexing"
-                                data-post-id="<?php echo $p->ID; ?>"
+                                data-post-id="<?php echo (int) $p->ID; ?>"
                                 style="background:#059669; border-color:#059669; color:#fff; width:100%; border-radius:6px; font-weight:600;"
                                 <?php disabled( ! $has_creds ); ?>>
                                 🚀 Request Indexing
