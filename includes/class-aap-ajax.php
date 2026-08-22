@@ -62,9 +62,9 @@ class AAP_Ajax {
     public static function handle_aap_get_titles() {
         self::verify_nonce();
 
-        $niche          = sanitize_text_field( $_POST['niche'] ?? '' );
-        $focus_keywords = sanitize_text_field( $_POST['focus_keywords'] ?? '' );
-        $session_id     = sanitize_text_field( $_POST['session_id'] ?? uniqid( 'aap_' ) );
+        $niche          = sanitize_text_field( wp_unslash( $_POST['niche'] ?? ''  ) );
+        $focus_keywords = sanitize_text_field( wp_unslash( $_POST['focus_keywords'] ?? ''  ) );
+        $session_id     = sanitize_text_field( wp_unslash( $_POST['session_id'] ?? uniqid( 'aap_'  ) ) );
 
         if ( empty( $niche ) ) {
             self::error( __( 'Please enter a niche.', 'ai-auto-post' ) );
@@ -94,12 +94,12 @@ class AAP_Ajax {
     public static function handle_aap_generate_post() {
         self::verify_nonce();
 
-        $session_id     = sanitize_text_field( $_POST['session_id'] ?? '' );
-        $title          = sanitize_text_field( $_POST['title'] ?? '' );
-        $niche          = sanitize_text_field( $_POST['niche'] ?? '' );
-        $focus_keywords = sanitize_text_field( $_POST['focus_keywords'] ?? '' );
-        $step           = sanitize_text_field( $_POST['step'] ?? 'article' );
-        $post_status    = sanitize_text_field( $_POST['post_status'] ?? get_option( 'aap_default_status', 'draft' ) );
+        $session_id     = sanitize_text_field( wp_unslash( $_POST['session_id'] ?? ''  ) );
+        $title          = sanitize_text_field( wp_unslash( $_POST['title'] ?? ''  ) );
+        $niche          = sanitize_text_field( wp_unslash( $_POST['niche'] ?? ''  ) );
+        $focus_keywords = sanitize_text_field( wp_unslash( $_POST['focus_keywords'] ?? ''  ) );
+        $step           = sanitize_text_field( wp_unslash( $_POST['step'] ?? 'article'  ) );
+        $post_status    = sanitize_text_field( wp_unslash( $_POST['post_status'] ?? get_option( 'aap_default_status', 'draft'  ) ) );
         $skip_publish   = (bool) ( $_POST['preview_only'] ?? false );
 
         if ( empty( $session_id ) || empty( $title ) ) {
@@ -155,7 +155,7 @@ class AAP_Ajax {
 
             // ------------------------------------------------------------------
             case 'category':
-                $user_category = sanitize_text_field( $_POST['category'] ?? '' );
+                $user_category = sanitize_text_field( wp_unslash( $_POST['category'] ?? ''  ) );
                 if ( ! empty( $user_category ) ) {
                     // Set transient cache so the publish step picks it up!
                     $cache_key = 'aap_cat_' . $session_id;
@@ -186,18 +186,18 @@ class AAP_Ajax {
             case 'thumbnail':
                 // Accept per-request reference image (base64 sent from JS file reader)
                 $ref_image = [];
-                $ref_b64   = sanitize_text_field( $_POST['ref_image_b64']   ?? '' );
-                $ref_mime  = sanitize_text_field( $_POST['ref_image_mime']  ?? '' );
+                $ref_b64   = sanitize_text_field( wp_unslash( $_POST['ref_image_b64'] ?? ''  ) );
+                $ref_mime  = sanitize_text_field( wp_unslash( $_POST['ref_image_mime'] ?? ''  ) );
                 if ( $ref_b64 && $ref_mime ) {
                     $ref_image = [ 'base64' => $ref_b64, 'mime_type' => $ref_mime ];
                 }
 
                 // Gather Title-to-Image choices
                 $t2i_opts = [
-                    'thumb_type' => sanitize_text_field( $_POST['thumb_type'] ?? '' ),
-                    'bg_type'    => sanitize_text_field( $_POST['t2i_bg_type'] ?? '' ),
-                    'bg_val'     => sanitize_text_field( $_POST['t2i_bg_val'] ?? '' ),
-                    'size'       => sanitize_text_field( $_POST['t2i_size'] ?? '' ),
+                    'thumb_type' => sanitize_text_field( wp_unslash( $_POST['thumb_type'] ?? ''  ) ),
+                    'bg_type'    => sanitize_text_field( wp_unslash( $_POST['t2i_bg_type'] ?? ''  ) ),
+                    'bg_val'     => sanitize_text_field( wp_unslash( $_POST['t2i_bg_val'] ?? ''  ) ),
+                    'size'       => sanitize_text_field( wp_unslash( $_POST['t2i_size'] ?? ''  ) ),
                 ];
 
                 $result = AAP_Gemini::generate_thumbnail( $session_id, $title, $ref_image, $t2i_opts );
@@ -214,9 +214,9 @@ class AAP_Ajax {
             // ------------------------------------------------------------------
             case 'og_image':
                 $t2i_opts = [
-                    'thumb_type' => sanitize_text_field( $_POST['thumb_type'] ?? '' ),
-                    'bg_type'    => sanitize_text_field( $_POST['t2i_bg_type'] ?? '' ),
-                    'bg_val'     => sanitize_text_field( $_POST['t2i_bg_val'] ?? '' ),
+                    'thumb_type' => sanitize_text_field( wp_unslash( $_POST['thumb_type'] ?? ''  ) ),
+                    'bg_type'    => sanitize_text_field( wp_unslash( $_POST['t2i_bg_type'] ?? ''  ) ),
+                    'bg_val'     => sanitize_text_field( wp_unslash( $_POST['t2i_bg_val'] ?? ''  ) ),
                 ];
 
                 $result = AAP_Gemini::generate_og_image( $session_id, $title, $t2i_opts );
@@ -378,7 +378,7 @@ class AAP_Ajax {
 
     public static function handle_aap_check_duplicate() {
         self::verify_nonce();
-        $title = sanitize_text_field( $_POST['title'] ?? '' );
+        $title = sanitize_text_field( wp_unslash( $_POST['title'] ?? ''  ) );
         $dup   = AAP_Duplicate_Check::find_duplicate( $title );
 
         if ( $dup ) {
@@ -399,7 +399,7 @@ class AAP_Ajax {
 
     public static function handle_aap_get_step_status() {
         self::verify_nonce();
-        $session_id = sanitize_text_field( $_POST['session_id'] ?? '' );
+        $session_id = sanitize_text_field( wp_unslash( $_POST['session_id'] ?? ''  ) );
 
         $steps = [ 'titles', 'article', 'tags', 'meta', 'cat', 'thumb', 'og', 'alt' ];
         $done  = [];
@@ -427,7 +427,7 @@ class AAP_Ajax {
         }
 
         $base64    = $_POST['image_b64']  ?? '';
-        $mime_type = sanitize_text_field( $_POST['image_mime'] ?? 'image/jpeg' );
+        $mime_type = sanitize_text_field( wp_unslash( $_POST['image_mime'] ?? 'image/jpeg'  ) );
 
         if ( empty( $base64 ) ) {
             self::error( 'No image data received.' );
@@ -587,9 +587,9 @@ class AAP_Ajax {
             return;
         }
 
-        $niche      = sanitize_text_field( $_POST['niche'] ?? '' );
-        $language   = sanitize_text_field( $_POST['language'] ?? 'English' );
-        $mode       = sanitize_text_field( $_POST['mode'] ?? 'standard' );
+        $niche      = sanitize_text_field( wp_unslash( $_POST['niche'] ?? ''  ) );
+        $language   = sanitize_text_field( wp_unslash( $_POST['language'] ?? 'English'  ) );
+        $mode       = sanitize_text_field( wp_unslash( $_POST['mode'] ?? 'standard'  ) );
         $session_id = 'planner_' . uniqid();
 
         if ( empty( $niche ) ) {
@@ -650,9 +650,9 @@ class AAP_Ajax {
             return;
         }
 
-        $niche     = sanitize_text_field( $_POST['niche'] ?? '' );
-        $language  = sanitize_text_field( $_POST['language'] ?? 'English' );
-        $mode      = sanitize_text_field( $_POST['mode'] ?? 'standard' );
+        $niche     = sanitize_text_field( wp_unslash( $_POST['niche'] ?? ''  ) );
+        $language  = sanitize_text_field( wp_unslash( $_POST['language'] ?? 'English'  ) );
+        $mode      = sanitize_text_field( wp_unslash( $_POST['mode'] ?? 'standard'  ) );
         $tasks     = isset( $_POST['tasks'] ) ? (array) $_POST['tasks'] : [];
         $tag_count = isset( $_POST['tag_count'] ) ? (int) $_POST['tag_count'] : 0;
         
@@ -804,7 +804,7 @@ class AAP_Ajax {
             return;
         }
 
-        $engine = sanitize_text_field( $_POST['engine'] ?? '' );
+        $engine = sanitize_text_field( wp_unslash( $_POST['engine'] ?? ''  ) );
         if ( ! in_array( $engine, [ 'ai', 'text_to_image' ], true ) ) {
             $engine = get_option( 'aap_thumb_type', 'ai' );
         }
@@ -906,8 +906,8 @@ class AAP_Ajax {
         }
 
         $post_id     = (int) ( $_POST['post_id'] ?? 0 );
-        $target_lang = sanitize_text_field( $_POST['target_lang'] ?? 'Spanish' );
-        $status      = sanitize_text_field( $_POST['status'] ?? 'draft' );
+        $target_lang = sanitize_text_field( wp_unslash( $_POST['target_lang'] ?? 'Spanish'  ) );
+        $status      = sanitize_text_field( wp_unslash( $_POST['status'] ?? 'draft'  ) );
 
         if ( ! $post_id ) {
             self::error( 'Invalid Post ID.' );
@@ -1067,8 +1067,8 @@ class AAP_Ajax {
         }
 
         $post_id      = (int) ( $_POST['post_id'] ?? 0 );
-        $instructions = sanitize_textarea_field( $_POST['instructions'] ?? '' );
-        $save         = sanitize_text_field( $_POST['save'] ?? 'preview' );
+        $instructions = sanitize_textarea_field( wp_unslash( $_POST['instructions'] ?? ''  ) );
+        $save         = sanitize_text_field( wp_unslash( $_POST['save'] ?? 'preview'  ) );
 
         if ( ! $post_id ) {
             self::error( 'Invalid Post ID.' );
