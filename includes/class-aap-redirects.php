@@ -77,7 +77,7 @@ class AAP_Redirects {
             ) );
 
             $code = in_array( (int)$rule->redirect_type, [ 301, 302, 307 ], true ) ? (int)$rule->redirect_type : 301;
-            wp_redirect( $rule->target_url, $code );
+            wp_safe_redirect( $rule->target_url, $code );
             exit;
         }
 
@@ -96,7 +96,7 @@ class AAP_Redirects {
 
             // Auto-redirect 404 pages to homepage if toggle switch is enabled
             if ( get_option( 'aap_redirect_404_to_home', '0' ) === '1' ) {
-                wp_redirect( home_url( '/' ), 301 );
+                wp_safe_redirect( home_url( '/' ), 301 );
                 exit;
             }
         }
@@ -109,7 +109,7 @@ class AAP_Redirects {
         $enable = isset( $_POST['aap_redirect_404_to_home'] ) ? '1' : '0';
         update_option( 'aap_redirect_404_to_home', $enable );
 
-        wp_redirect( admin_url( 'admin.php?page=aap-redirects&settings_saved=true' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=aap-redirects&settings_saved=true' ) );
         exit;
     }
 
@@ -123,7 +123,7 @@ class AAP_Redirects {
         $type   = intval( $_POST['redirect_type'] ?? 301 );
 
         if ( ! empty( $source ) && ! empty( $target ) ) {
-            $source_clean = '/' . ltrim( parse_url( $source, PHP_URL_PATH ) ?: $source, '/' );
+            $source_clean = '/' . ltrim( wp_parse_url( $source, PHP_URL_PATH ) ?: $source, '/' );
             $table_redir  = $wpdb->prefix . 'aap_redirects';
 
             $wpdb->query( $wpdb->prepare(
@@ -134,7 +134,7 @@ class AAP_Redirects {
             ) );
         }
 
-        wp_redirect( admin_url( 'admin.php?page=aap-redirects&updated=true' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=aap-redirects&updated=true' ) );
         exit;
     }
 
@@ -149,7 +149,7 @@ class AAP_Redirects {
             $wpdb->delete( $table_redir, [ 'id' => $id ], [ '%d' ] );
         }
 
-        wp_redirect( admin_url( 'admin.php?page=aap-redirects&deleted=true' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=aap-redirects&deleted=true' ) );
         exit;
     }
 
@@ -162,7 +162,7 @@ class AAP_Redirects {
         $target = sanitize_text_field( $_POST['target_url'] ?? '' );
 
         if ( ! empty( $source ) && ! empty( $target ) ) {
-            $source_clean = '/' . ltrim( parse_url( $source, PHP_URL_PATH ) ?: $source, '/' );
+            $source_clean = '/' . ltrim( wp_parse_url( $source, PHP_URL_PATH ) ?: $source, '/' );
             $table_redir  = $wpdb->prefix . 'aap_redirects';
             $table_404s   = $wpdb->prefix . 'aap_404_logs';
 
@@ -178,7 +178,7 @@ class AAP_Redirects {
             $wpdb->delete( $table_404s, [ 'url' => $source_clean ], [ '%s' ] );
         }
 
-        wp_redirect( admin_url( 'admin.php?page=aap-redirects&converted=true' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=aap-redirects&converted=true' ) );
         exit;
     }
 
@@ -190,7 +190,7 @@ class AAP_Redirects {
         $table_404s = $wpdb->prefix . 'aap_404_logs';
         $wpdb->query( "TRUNCATE TABLE {$table_404s}" );
 
-        wp_redirect( admin_url( 'admin.php?page=aap-redirects&logs_cleared=true' ) );
+        wp_safe_redirect( admin_url( 'admin.php?page=aap-redirects&logs_cleared=true' ) );
         exit;
     }
 
