@@ -212,13 +212,15 @@ class AAP_Updater {
 
     /**
      * Instruct WordPress automatic background updater to update this plugin
+     * Respects WordPress native site administrator preferences (auto_update_plugins option).
      */
     public function should_auto_update( $update, $item ) {
         if ( is_object( $item ) && isset( $item->plugin ) && $item->plugin === $this->slug ) {
             $auto_updates = (array) get_site_option( 'auto_update_plugins', [] );
-            if ( in_array( $this->slug, $auto_updates, true ) || get_option( 'aap_auto_update_enabled', '1' ) === '1' ) {
+            if ( in_array( $this->slug, $auto_updates, true ) ) {
                 return true;
             }
+            return false;
         }
         return $update;
     }
