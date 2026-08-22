@@ -1,14 +1,14 @@
 === AI Auto Post ===
 Contributors: Anand Soni, Aadi
-Tags: ai, gemini, auto-post, content-generation, seo, gsc-indexing, article-rewriter, translator, thumbnail-generator
+Tags: ai, gemini, auto-post, seo, content-generator
 Requires at least: 6.0
-Tested up to: 6.8
+Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.4.8
+Stable tag: 1.4.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Auto-generate, rewrite, translate, and index SEO-optimized blog posts using Google Gemini API & OpenAI ChatGPT with multi-key rotation, automated scheduling, local GD thumbnail generation, and Google Search Console indexing.
+Auto-generate, rewrite, translate, and index SEO-optimized blog posts using Google Gemini & OpenAI API with multi-key rotation.
 
 == Description ==
 
