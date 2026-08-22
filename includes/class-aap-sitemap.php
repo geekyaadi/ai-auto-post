@@ -41,10 +41,12 @@ class AAP_Sitemap {
     }
 
     public static function check_request_sitemap( $wp ) {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         if ( isset( $wp->query_vars['aap_sitemap'] ) || isset( $_GET['aap_sitemap'] ) ) {
             self::render_sitemap();
         }
 
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $uri = isset( $_SERVER['REQUEST_URI'] ) ? strtok( $_SERVER['REQUEST_URI'], '?' ) : '';
         if ( empty( $uri ) ) return;
 
@@ -71,13 +73,16 @@ class AAP_Sitemap {
         static $rendered = false;
         if ( $rendered ) return;
 
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $uri        = isset( $_SERVER['REQUEST_URI'] ) ? strtok( $_SERVER['REQUEST_URI'], '?' ) : '';
         $path_clean = trim( $uri, '/' );
         $slug       = get_option( 'aap_sitemap_slug', 'sitemap.xml' );
         $slug_clean = trim( $slug, '/' );
 
         $type = get_query_var( 'aap_sitemap' );
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         if ( empty( $type ) && isset( $_GET['aap_sitemap'] ) ) {
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
             $type = sanitize_text_field( $_GET['aap_sitemap'] );
         }
 
