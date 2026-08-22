@@ -48,6 +48,7 @@ class AAP_Codes_Manager {
     }
 
     public static function sync_physical_ads_txt( $content ) {
+        // phpcs:ignore PluginCheck.CodeAnalysis.WriteFile.ABSPATHDetected, WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
         $file_path = ABSPATH . 'ads.txt';
         if ( wp_is_writable( ABSPATH ) || ( file_exists( $file_path ) && wp_is_writable( $file_path ) ) ) {
             @file_put_contents( $file_path, $content );
