@@ -188,7 +188,7 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                                 else echo '❓';
                                 ?>
                             </span>
-                            <span class="aap-ping-time"><?php echo esc_html(date('H:i', strtotime($k['last_ping_at']))); ?></span>
+                            <span class="aap-ping-time"><?php echo esc_html(gmdate('H:i', strtotime($k['last_ping_at']))); ?></span>
                             <?php else: ?>
                             <span class="aap-text-muted">—</span>
                             <?php endif; ?>
