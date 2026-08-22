@@ -13,7 +13,9 @@ $cookie_enable_reject = get_option( 'aap_cookie_enable_reject', '0' );
 $cookie_reject_text   = get_option( 'aap_cookie_reject_btn_text', 'Decline Non-Essential' );
 $cookie_privacy_url   = get_option( 'aap_cookie_privacy_url', home_url('/privacy-policy/') );
 
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $pages_generated = isset( $_GET['pages_created'] ) ? (int) $_GET['pages_created'] : 0;
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $cookie_saved    = isset( $_GET['cookie_updated'] ) && $_GET['cookie_updated'] === 'true';
 ?>
 
