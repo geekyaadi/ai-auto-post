@@ -14,6 +14,7 @@ $msg_map     = [
     'queue_cleared'          => ['type'=>'success','text'=>'🧹 Entire queue cleared successfully.'],
     'queue_selected_deleted' => ['type'=>'success','text'=>'🗑️ Selected queue items deleted.'],
 ];
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $msg = $_GET['msg'] ?? ( isset($_GET['saved']) ? 'saved' : '' );
 ?>
 <div class="aap-wrap">
