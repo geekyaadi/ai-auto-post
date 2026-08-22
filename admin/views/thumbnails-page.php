@@ -59,32 +59,32 @@ $total_pages   = $query->max_num_pages;
                 <span class="aap-logo-badge">Thumbnail Manager</span>
             </div>
                         <div class="aap-header-nav">
-    <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link">Dashboard</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link">Scheduler</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link active">Thumbnail Tool</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Tool</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Translator</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Indexing</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Rewriter</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Optimizer</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-redirects'); ?>" class="aap-nav-link">Redirect</a>
-        <a href="<?php echo admin_url('admin.php?page=aap-randomizer'); ?>" class="aap-nav-link">Date Randomizer</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-codes'); ?>" class="aap-nav-link">Codes</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=ai-auto-post') ); ?>" class="aap-nav-link">Dashboard</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-generate') ); ?>" class="aap-nav-link">Generate Post</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-planner') ); ?>" class="aap-nav-link">Bulk Planner</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-scheduler') ); ?>" class="aap-nav-link">Scheduler</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-thumbnails') ); ?>" class="aap-nav-link active">Thumbnail Tool</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-tags') ); ?>" class="aap-nav-link">Tags Tool</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-translator') ); ?>" class="aap-nav-link">Translator</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-gsc') ); ?>" class="aap-nav-link">Indexing</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-rewriter') ); ?>" class="aap-nav-link">Rewriter</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-speed') ); ?>" class="aap-nav-link">Optimizer</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-sitemap') ); ?>" class="aap-nav-link">Sitemap</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-pages') ); ?>" class="aap-nav-link">Pages Generator</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-redirects') ); ?>" class="aap-nav-link">Redirect</a>
+        <a href="<?php echo esc_url( admin_url('admin.php?page=aap-randomizer') ); ?>" class="aap-nav-link">Date Randomizer</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-codes') ); ?>" class="aap-nav-link">Codes</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-settings') ); ?>" class="aap-nav-link">Settings</a>
 </div>
         </div>
     </div>
 
     <!-- Tab navigation -->
     <div class="aap-tabs" style="display:flex; gap:10px; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:10px;">
-        <a href="<?php echo admin_url('admin.php?page=aap-thumbnails&tab=pending'); ?>" class="aap-btn <?php echo $tab === 'pending' ? 'aap-btn-primary' : 'aap-btn-secondary'; ?>" style="font-weight:600; border-radius:6px; font-size:12px; padding:8px 16px;">
+        <a href="<?php echo esc_url( admin_url('admin.php?page=aap-thumbnails&tab=pending') ); ?>" class="aap-btn <?php echo $tab === 'pending' ? 'aap-btn-primary' : 'aap-btn-secondary'; ?>" style="font-weight:600; border-radius:6px; font-size:12px; padding:8px 16px;">
             ⚠️ Pending Thumbnails (<?php echo $total_pending; ?>)
         </a>
-        <a href="<?php echo admin_url('admin.php?page=aap-thumbnails&tab=completed'); ?>" class="aap-btn <?php echo $tab === 'completed' ? 'aap-btn-primary' : 'aap-btn-secondary'; ?>" style="font-weight:600; border-radius:6px; font-size:12px; padding:8px 16px;">
+        <a href="<?php echo esc_url( admin_url('admin.php?page=aap-thumbnails&tab=completed') ); ?>" class="aap-btn <?php echo $tab === 'completed' ? 'aap-btn-primary' : 'aap-btn-secondary'; ?>" style="font-weight:600; border-radius:6px; font-size:12px; padding:8px 16px;">
             🖼️ Existing Featured Images (<?php echo $total_completed; ?>)
         </a>
     </div>
@@ -171,16 +171,14 @@ $total_pages   = $query->max_num_pages;
             <!-- Pagination Links -->
             <?php if ( $total_pages > 1 ): ?>
             <div class="aap-pagination" style="display:flex; justify-content:center; gap:5px; margin-top:20px;">
-                <?php
-                echo paginate_links([
+                <?php echo wp_kses_post( paginate_links([
                     'base'     => add_query_arg( 'paged', '%#%' ),
                     'format'   => '',
                     'total'    => $total_pages,
                     'current'  => $paged,
                     'prev_text' => '« Prev',
                     'next_text' => 'Next »',
-                ]);
-                ?>
+                ]) ); ?>
             </div>
             <?php endif; ?>
 
@@ -238,16 +236,14 @@ $total_pages   = $query->max_num_pages;
             <!-- Pagination Links -->
             <?php if ( $total_pages > 1 ): ?>
             <div class="aap-pagination" style="display:flex; justify-content:center; gap:5px; margin-top:20px;">
-                <?php
-                echo paginate_links([
+                <?php echo wp_kses_post( paginate_links([
                     'base'     => add_query_arg( 'paged', '%#%' ),
                     'format'   => '',
                     'total'    => $total_pages,
                     'current'  => $paged,
                     'prev_text' => '« Prev',
                     'next_text' => 'Next »',
-                ]);
-                ?>
+                ]) ); ?>
             </div>
             <?php endif; ?>
 
