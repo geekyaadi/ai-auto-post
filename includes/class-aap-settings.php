@@ -440,7 +440,7 @@ class AAP_Settings {
             autoptimizeCache::clearall();
         }
 
-        wp_redirect( add_query_arg( [ 'page' => 'aap-settings', 'saved' => '1' ], admin_url( 'admin.php' ) ) );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'aap-settings', 'saved' => '1' ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
@@ -461,7 +461,7 @@ class AAP_Settings {
             $msg = 'key_empty';
         }
 
-        wp_redirect( add_query_arg( [ 'page' => 'aap-settings', 'msg' => $msg ], admin_url( 'admin.php' ) ) );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'aap-settings', 'msg' => $msg ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
@@ -472,7 +472,7 @@ class AAP_Settings {
         $index = (int) ( $_POST['key_index'] ?? -1 );
         AAP_Key_Manager::delete_key( $index );
 
-        wp_redirect( add_query_arg( [ 'page' => 'aap-settings', 'msg' => 'key_deleted' ], admin_url( 'admin.php' ) ) );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'aap-settings', 'msg' => 'key_deleted' ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
@@ -483,7 +483,7 @@ class AAP_Settings {
         $index = (int) ( $_POST['key_index'] ?? -1 );
         AAP_Key_Manager::reset_key( $index );
 
-        wp_redirect( add_query_arg( [ 'page' => 'aap-settings', 'msg' => 'key_reset' ], admin_url( 'admin.php' ) ) );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'aap-settings', 'msg' => 'key_reset' ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
@@ -508,7 +508,7 @@ class AAP_Settings {
             AAP_Scheduler::disable();
         }
 
-        wp_redirect( add_query_arg( [ 'page' => 'aap-scheduler', 'saved' => '1' ], admin_url( 'admin.php' ) ) );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'aap-scheduler', 'saved' => '1' ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
@@ -521,7 +521,7 @@ class AAP_Settings {
             AAP_Queue::enqueue( $niche );
         }
 
-        wp_redirect( add_query_arg( [ 'page' => 'aap-scheduler', 'msg' => 'queued' ], admin_url( 'admin.php' ) ) );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'aap-scheduler', 'msg' => 'queued' ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
@@ -532,7 +532,7 @@ class AAP_Settings {
         $id = (int) ( $_POST['queue_id'] ?? 0 );
         if ( $id ) AAP_Queue::delete( $id );
 
-        wp_redirect( add_query_arg( [ 'page' => 'aap-scheduler', 'msg' => 'queue_deleted' ], admin_url( 'admin.php' ) ) );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'aap-scheduler', 'msg' => 'queue_deleted' ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
@@ -545,7 +545,7 @@ class AAP_Settings {
             AAP_Queue::mark_paused( $id );
         }
 
-        wp_redirect( add_query_arg( [ 'page' => 'aap-scheduler', 'msg' => 'queue_paused' ], admin_url( 'admin.php' ) ) );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'aap-scheduler', 'msg' => 'queue_paused' ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
@@ -558,7 +558,7 @@ class AAP_Settings {
             AAP_Queue::mark_resumed( $id );
         }
 
-        wp_redirect( add_query_arg( [ 'page' => 'aap-scheduler', 'msg' => 'queue_resumed' ], admin_url( 'admin.php' ) ) );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'aap-scheduler', 'msg' => 'queue_resumed' ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
@@ -568,7 +568,7 @@ class AAP_Settings {
 
         AAP_Queue::clear_all();
 
-        wp_redirect( add_query_arg( [ 'page' => 'aap-scheduler', 'msg' => 'queue_cleared' ], admin_url( 'admin.php' ) ) );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'aap-scheduler', 'msg' => 'queue_cleared' ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
@@ -582,7 +582,7 @@ class AAP_Settings {
             AAP_Queue::delete_multiple( $ids );
         }
 
-        wp_redirect( add_query_arg( [ 'page' => 'aap-scheduler', 'msg' => 'queue_selected_deleted' ], admin_url( 'admin.php' ) ) );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'aap-scheduler', 'msg' => 'queue_selected_deleted' ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
@@ -597,7 +597,7 @@ class AAP_Settings {
         $id = (int) ( $_POST['history_id'] ?? 0 );
         if ( $id ) AAP_History::delete( $id );
 
-        wp_redirect( add_query_arg( [ 'page' => 'aap-dashboard', 'msg' => 'deleted' ], admin_url( 'admin.php' ) ) );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'aap-dashboard', 'msg' => 'deleted' ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
@@ -607,7 +607,7 @@ class AAP_Settings {
 
         AAP_History::clear_all();
 
-        wp_redirect( add_query_arg( [ 'page' => 'aap-dashboard', 'msg' => 'cleared' ], admin_url( 'admin.php' ) ) );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'aap-dashboard', 'msg' => 'cleared' ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
@@ -637,7 +637,7 @@ class AAP_Settings {
             aap_purge_all_caches();
         }
 
-        wp_redirect( add_query_arg( [ 'page' => 'aap-settings', 'msg' => 'settings_reset' ], admin_url( 'admin.php' ) ) );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'aap-settings', 'msg' => 'settings_reset' ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
@@ -660,7 +660,7 @@ class AAP_Settings {
             aap_purge_all_caches();
         }
 
-        wp_redirect( add_query_arg( [ 'page' => 'aap-settings', 'msg' => 'data_cleared' ], admin_url( 'admin.php' ) ) );
+        wp_safe_redirect( add_query_arg( [ 'page' => 'aap-settings', 'msg' => 'data_cleared' ], admin_url( 'admin.php' ) ) );
         exit;
     }
 
