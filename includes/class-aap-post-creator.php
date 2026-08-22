@@ -226,7 +226,7 @@ class AAP_Post_Creator {
         foreach ( $matches as $m ) {
             $tag   = strtolower( $m[1] ); // h2 or h3
             $attrs = $m[2];
-            $title = strip_tags( $m[3] );
+            $title = wp_strip_all_tags( $m[3] );
             if ( empty( trim( $title ) ) ) continue;
 
             $anchor_id = 'aap-toc-' . $index;
@@ -416,7 +416,7 @@ class AAP_Post_Creator {
 
         $attachment_id = media_handle_sideload( $file_array, 0, $filename_base );
 
-        @unlink( $tmp );
+        @wp_delete_file( $tmp );
 
         if ( is_wp_error( $attachment_id ) ) return $attachment_id;
 
