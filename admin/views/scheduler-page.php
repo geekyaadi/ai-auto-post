@@ -24,21 +24,22 @@ $msg = $_GET['msg'] ?? ( isset($_GET['saved']) ? 'saved' : '' );
                 <span class="aap-logo-badge">Scheduler</span>
             </div>
                         <div class="aap-header-nav">
-    <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link">Dashboard</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link active">Scheduler</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Tool</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Tool</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Translator</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Indexing</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Rewriter</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Optimizer</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-redirects'); ?>" class="aap-nav-link">Redirect</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-codes'); ?>" class="aap-nav-link">Codes</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=ai-auto-post') ); ?>" class="aap-nav-link">Dashboard</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-generate') ); ?>" class="aap-nav-link">Generate Post</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-planner') ); ?>" class="aap-nav-link">Bulk Planner</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-scheduler') ); ?>" class="aap-nav-link active">Scheduler</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-thumbnails') ); ?>" class="aap-nav-link">Thumbnail Tool</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-tags') ); ?>" class="aap-nav-link">Tags Tool</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-translator') ); ?>" class="aap-nav-link">Translator</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-gsc') ); ?>" class="aap-nav-link">Indexing</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-rewriter') ); ?>" class="aap-nav-link">Rewriter</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-speed') ); ?>" class="aap-nav-link">Optimizer</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-sitemap') ); ?>" class="aap-nav-link">Sitemap</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-pages') ); ?>" class="aap-nav-link">Pages Generator</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-redirects') ); ?>" class="aap-nav-link">Redirect</a>
+        <a href="<?php echo esc_url( admin_url('admin.php?page=aap-randomizer') ); ?>" class="aap-nav-link">Date Randomizer</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-codes') ); ?>" class="aap-nav-link">Codes</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-settings') ); ?>" class="aap-nav-link">Settings</a>
 </div>
         </div>
     </div>
@@ -67,7 +68,7 @@ $msg = $_GET['msg'] ?? ( isset($_GET['saved']) ? 'saved' : '' );
                     </div>
                     <div class="aap-info-row">
                         <span class="aap-info-label">Posts/Day:</span>
-                        <span class="aap-info-value"><?php echo $per_day; ?></span>
+                        <span class="aap-info-value"><?php echo (int) $per_day; ?></span>
                     </div>
                     <div class="aap-info-row">
                         <span class="aap-info-label">Queue Pending:</span>
@@ -76,7 +77,7 @@ $msg = $_GET['msg'] ?? ( isset($_GET['saved']) ? 'saved' : '' );
                 </div>
                 <?php endif; ?>
 
-                <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
                     <?php wp_nonce_field('aap_save_schedule'); ?>
                     <input type="hidden" name="action" value="aap_save_schedule">
 
@@ -91,7 +92,7 @@ $msg = $_GET['msg'] ?? ( isset($_GET['saved']) ? 'saved' : '' );
 
                     <div class="aap-field">
                         <label class="aap-label">Posts Per Day</label>
-                        <input type="number" name="posts_per_day" class="aap-input aap-input-sm" value="<?php echo $per_day; ?>" min="1" max="50">
+                        <input type="number" name="posts_per_day" class="aap-input aap-input-sm" value="<?php echo (int) $per_day; ?>" min="1" max="50">
                     </div>
 
                     <div class="aap-field">
@@ -131,7 +132,7 @@ $msg = $_GET['msg'] ?? ( isset($_GET['saved']) ? 'saved' : '' );
                 </div>
 
                 <!-- Add to queue -->
-                <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" class="aap-add-key-form">
+                <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" class="aap-add-key-form">
                     <?php wp_nonce_field('aap_enqueue_niche'); ?>
                     <input type="hidden" name="action" value="aap_enqueue_niche">
                     <div class="aap-input-row">
@@ -150,7 +151,7 @@ $msg = $_GET['msg'] ?? ( isset($_GET['saved']) ? 'saved' : '' );
                         <button type="button" id="aap-btn-delete-selected" class="aap-btn aap-btn-danger aap-btn-sm" style="display:none; background:#ea580c; border-color:#ea580c;" onclick="aapDeleteSelectedQueue()">✕ Delete Selected</button>
                     </div>
                     <div class="aap-queue-toolbar-right">
-                        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" onsubmit="return confirm('Are you sure you want to clear the entire queue? This cannot be undone.')" style="margin:0;">
+                        <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" onsubmit="return confirm('Are you sure you want to clear the entire queue? This cannot be undone.')" style="margin:0;">
                             <?php wp_nonce_field('aap_clear_queue'); ?>
                             <input type="hidden" name="action" value="aap_clear_queue">
                             <button type="submit" class="aap-btn aap-btn-danger aap-btn-sm" style="background:#dc2626; border-color:#dc2626;">🗑️ Clear All Queue</button>
@@ -159,7 +160,7 @@ $msg = $_GET['msg'] ?? ( isset($_GET['saved']) ? 'saved' : '' );
                 </div>
 
                 <!-- Hidden Delete Selected Form -->
-                <form id="aap-form-delete-selected-queue" method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                <form id="aap-form-delete-selected-queue" method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
                     <?php wp_nonce_field('aap_delete_selected_queue'); ?>
                     <input type="hidden" name="action" value="aap_delete_selected_queue">
                     <input type="hidden" name="queue_ids" id="aap-hidden-delete-queue-ids" value="">
@@ -210,21 +211,21 @@ $msg = $_GET['msg'] ?? ( isset($_GET['saved']) ? 'saved' : '' );
                                 </div>
                                 <?php endif; ?>
                             </td>
-                            <td><span style="font-size:11px;"><?php echo esc_html(date('M j, H:i', strtotime($item->created_at))); ?></span></td>
+                            <td><span style="font-size:11px;"><?php echo esc_html(gmdate( 'M j, H:i', strtotime($item->created_at))); ?></span></td>
                             <td>
                                 <?php if ($item->status === 'published' && $item->post_id): ?>
-                                <a href="<?php echo get_permalink($item->post_id); ?>" target="_blank" class="aap-btn-small aap-btn-ghost">View</a>
+                                <a href="<?php echo esc_url( get_permalink($item->post_id) ); ?>" target="_blank" class="aap-btn-small aap-btn-ghost">View</a>
                                 <?php endif; ?>
                                 
                                 <?php if ( in_array($item->status, ['queued', 'processing'], true) ): ?>
-                                <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" style="display:inline;">
+                                <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" style="display:inline;">
                                     <?php wp_nonce_field('aap_pause_queue'); ?>
                                     <input type="hidden" name="action" value="aap_pause_queue">
                                     <input type="hidden" name="queue_id" value="<?php echo (int)$item->id; ?>">
                                     <button class="aap-btn-small aap-btn-ghost" type="submit" title="Pause Task" style="background:#fffcf0; border-color:#fbbf24; color:#d97706; font-size:9px;">⏸</button>
                                 </form>
                                 <?php elseif ( in_array($item->status, ['paused', 'failed'], true) ): ?>
-                                <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" style="display:inline;">
+                                <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" style="display:inline;">
                                     <?php wp_nonce_field('aap_resume_queue'); ?>
                                     <input type="hidden" name="action" value="aap_resume_queue">
                                     <input type="hidden" name="queue_id" value="<?php echo (int)$item->id; ?>">
@@ -234,7 +235,7 @@ $msg = $_GET['msg'] ?? ( isset($_GET['saved']) ? 'saved' : '' );
                                 </form>
                                 <?php endif; ?>
 
-                                <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" style="display:inline;" onsubmit="return confirm('Delete this queue item?')">
+                                <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" style="display:inline;" onsubmit="return confirm('Delete this queue item?')">
                                     <?php wp_nonce_field('aap_delete_queue'); ?>
                                     <input type="hidden" name="action" value="aap_delete_queue">
                                     <input type="hidden" name="queue_id" value="<?php echo (int)$item->id; ?>">
