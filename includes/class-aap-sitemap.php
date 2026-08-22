@@ -127,7 +127,7 @@ class AAP_Sitemap {
     }
 
     private static function render_index_sitemap() {
-        $lastmod = date( 'c', strtotime( get_lastpostmodified( 'GMT' ) ?: current_time( 'mysql' ) ) );
+        $lastmod = gmdate( 'c', strtotime( get_lastpostmodified( 'GMT' ) ?: current_time( 'mysql' ) ) );
 
         echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         echo '<?xml-stylesheet type="text/xsl" href="' . esc_url( AAP_PLUGIN_URL . 'admin/sitemap-style.xsl' ) . '"?>' . "\n";
@@ -186,7 +186,7 @@ class AAP_Sitemap {
         foreach ( $posts as $p ) {
             echo '  <url>' . "\n";
             echo '    <loc>' . esc_xml( get_permalink( $p->ID ) ) . '</loc>' . "\n";
-            echo '    <lastmod>' . date( 'c', strtotime( $p->post_modified_gmt ) ) . '</lastmod>' . "\n";
+            echo '    <lastmod>' . gmdate( 'c', strtotime( $p->post_modified_gmt ) ) . '</lastmod>' . "\n";
             echo '    <changefreq>' . esc_xml( $post_freq ) . '</changefreq>' . "\n";
             echo '    <priority>' . esc_xml( $post_priority ) . '</priority>' . "\n";
 
@@ -225,7 +225,7 @@ class AAP_Sitemap {
         foreach ( $pages as $page ) {
             echo '  <url>' . "\n";
             echo '    <loc>' . esc_xml( get_permalink( $page->ID ) ) . '</loc>' . "\n";
-            echo '    <lastmod>' . date( 'c', strtotime( $page->post_modified_gmt ) ) . '</lastmod>' . "\n";
+            echo '    <lastmod>' . gmdate( 'c', strtotime( $page->post_modified_gmt ) ) . '</lastmod>' . "\n";
             echo '    <changefreq>' . esc_xml( $page_freq ) . '</changefreq>' . "\n";
             echo '    <priority>' . esc_xml( $page_priority ) . '</priority>' . "\n";
             echo '  </url>' . "\n";
@@ -306,7 +306,7 @@ class AAP_Sitemap {
         if ( $enable_home ) {
             echo '  <url>' . "\n";
             echo '    <loc>' . esc_xml( home_url( '/' ) ) . '</loc>' . "\n";
-            echo '    <lastmod>' . date( 'c', strtotime( get_lastpostmodified( 'GMT' ) ?: current_time('mysql') ) ) . '</lastmod>' . "\n";
+            echo '    <lastmod>' . gmdate( 'c', strtotime( get_lastpostmodified( 'GMT' ) ?: current_time('mysql') ) ) . '</lastmod>' . "\n";
             echo '    <changefreq>' . esc_xml( $home_freq ) . '</changefreq>' . "\n";
             echo '    <priority>' . esc_xml( $home_priority ) . '</priority>' . "\n";
             echo '  </url>' . "\n";
@@ -317,7 +317,7 @@ class AAP_Sitemap {
             foreach ( $posts as $p ) {
                 echo '  <url>' . "\n";
                 echo '    <loc>' . esc_xml( get_permalink( $p->ID ) ) . '</loc>' . "\n";
-                echo '    <lastmod>' . date( 'c', strtotime( $p->post_modified_gmt ) ) . '</lastmod>' . "\n";
+                echo '    <lastmod>' . gmdate( 'c', strtotime( $p->post_modified_gmt ) ) . '</lastmod>' . "\n";
                 echo '    <changefreq>' . esc_xml( $post_freq ) . '</changefreq>' . "\n";
                 echo '    <priority>' . esc_xml( $post_priority ) . '</priority>' . "\n";
                 echo '  </url>' . "\n";
@@ -329,7 +329,7 @@ class AAP_Sitemap {
             foreach ( $pages as $page ) {
                 echo '  <url>' . "\n";
                 echo '    <loc>' . esc_xml( get_permalink( $page->ID ) ) . '</loc>' . "\n";
-                echo '    <lastmod>' . date( 'c', strtotime( $page->post_modified_gmt ) ) . '</lastmod>' . "\n";
+                echo '    <lastmod>' . gmdate( 'c', strtotime( $page->post_modified_gmt ) ) . '</lastmod>' . "\n";
                 echo '    <changefreq>' . esc_xml( $page_freq ) . '</changefreq>' . "\n";
                 echo '    <priority>' . esc_xml( $page_priority ) . '</priority>' . "\n";
                 echo '  </url>' . "\n";
