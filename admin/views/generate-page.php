@@ -9,22 +9,22 @@
                 <span class="aap-logo-badge">Generator</span>
             </div>
                         <div class="aap-header-nav">
-    <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link">Dashboard</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link active">Generate Post</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link">Scheduler</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Tool</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Tool</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Translator</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Indexing</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Rewriter</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Optimizer</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-redirects'); ?>" class="aap-nav-link">Redirect</a>
-        <a href="<?php echo admin_url('admin.php?page=aap-randomizer'); ?>" class="aap-nav-link">Date Randomizer</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-codes'); ?>" class="aap-nav-link">Codes</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=ai-auto-post') ); ?>" class="aap-nav-link">Dashboard</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-generate') ); ?>" class="aap-nav-link active">Generate Post</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-planner') ); ?>" class="aap-nav-link">Bulk Planner</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-scheduler') ); ?>" class="aap-nav-link">Scheduler</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-thumbnails') ); ?>" class="aap-nav-link">Thumbnail Tool</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-tags') ); ?>" class="aap-nav-link">Tags Tool</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-translator') ); ?>" class="aap-nav-link">Translator</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-gsc') ); ?>" class="aap-nav-link">Indexing</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-rewriter') ); ?>" class="aap-nav-link">Rewriter</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-speed') ); ?>" class="aap-nav-link">Optimizer</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-sitemap') ); ?>" class="aap-nav-link">Sitemap</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-pages') ); ?>" class="aap-nav-link">Pages Generator</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-redirects') ); ?>" class="aap-nav-link">Redirect</a>
+        <a href="<?php echo esc_url( admin_url('admin.php?page=aap-randomizer') ); ?>" class="aap-nav-link">Date Randomizer</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-codes') ); ?>" class="aap-nav-link">Codes</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-settings') ); ?>" class="aap-nav-link">Settings</a>
 </div>
         </div>
     </div>
@@ -37,14 +37,14 @@
         ?>
         <div class="aap-alert aap-alert-warning">
             <span class="aap-alert-icon">⚠️</span>
-            No API keys configured. <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">Add your Gemini API key →</a>
+            No API keys configured. <a href="<?php echo esc_url( admin_url('admin.php?page=aap-settings') ); ?>">Add your Gemini API key →</a>
         </div>
         <?php endif; ?>
 
         <?php if ( $key_stats['active'] === 0 && $key_stats['total'] > 0 ): ?>
         <div class="aap-alert aap-alert-error">
             <span class="aap-alert-icon">🔴</span>
-            All API keys are currently exhausted. Keys auto-reset after <?php echo (int) get_option('aap_key_reset_minutes', 60); ?> minutes, or you can <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>">manually reset them</a>.
+            All API keys are currently exhausted. Keys auto-reset after <?php echo (int) get_option('aap_key_reset_minutes', 60); ?> minutes, or you can <a href="<?php echo esc_url( admin_url('admin.php?page=aap-settings') ); ?>">manually reset them</a>.
         </div>
         <?php endif; ?>
 
@@ -56,7 +56,7 @@
                     <h2 class="aap-panel-title">✦ Generate New Post</h2>
                     <div class="aap-key-badge">
                         <span class="aap-key-dot <?php echo $key_stats['active'] > 0 ? 'active' : 'inactive'; ?>"></span>
-                        <span><?php echo $key_stats['active']; ?>/<?php echo $key_stats['total']; ?> Keys Active</span>
+                        <span><?php echo (int) $key_stats['active']; ?>/<?php echo (int) $key_stats['total']; ?> Keys Active</span>
                     </div>
                 </div>
 
@@ -112,7 +112,7 @@
                                     $saved_count = (int) get_option( 'aap_tag_count', 15 );
                                     foreach ( [5, 10, 15, 20, 25, 30, 40, 50, 75, 100] as $tc ):
                                     ?>
-                                    <option value="<?php echo $tc; ?>" <?php selected( $saved_count, $tc ); ?>><?php echo $tc; ?> tags</option>
+                                    <option value="<?php echo (int) $tc; ?>" <?php selected( $saved_count, $tc ); ?>><?php echo (int) $tc; ?> tags</option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -216,7 +216,7 @@
 
                             <?php if ( $has_default ): ?>
                             <div class="aap-ref-default-note" id="aap-ref-default-note">
-                                <span>ℹ️ Using your <a href="<?php echo admin_url('admin.php?page=aap-settings#thumbnail-ref'); ?>">default reference image</a> from Settings. Upload above to override for this post only.</span>
+                                <span>ℹ️ Using your <a href="<?php echo esc_url( admin_url('admin.php?page=aap-settings#thumbnail-ref') ); ?>">default reference image</a> from Settings. Upload above to override for this post only.</span>
                             </div>
                             <?php endif; ?>
                         </div>
