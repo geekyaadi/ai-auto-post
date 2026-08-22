@@ -40,25 +40,25 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
         <div class="aap-header-inner">
             <div class="aap-logo">
                 <img src="<?php echo esc_url( AAP_PLUGIN_URL . 'admin/ai-auto-post-by-aadi.png' ); ?>" alt="Logo" style="height:32px; width:auto; vertical-align:middle; margin-right:10px; border-radius:4px;">
-                <span class="aap-logo-badge">Settings (v<?php echo AAP_VERSION; ?>)</span>
+                <span class="aap-logo-badge">Settings (v<?php echo esc_html( AAP_VERSION ); ?>)</span>
             </div>
                         <div class="aap-header-nav">
-    <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link">Dashboard</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link">Scheduler</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Tool</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Tool</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Translator</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Indexing</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Rewriter</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Optimizer</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-redirects'); ?>" class="aap-nav-link">Redirect</a>
-        <a href="<?php echo admin_url('admin.php?page=aap-randomizer'); ?>" class="aap-nav-link">Date Randomizer</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-codes'); ?>" class="aap-nav-link">Codes</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link active">Settings</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=ai-auto-post') ); ?>" class="aap-nav-link">Dashboard</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-generate') ); ?>" class="aap-nav-link">Generate Post</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-planner') ); ?>" class="aap-nav-link">Bulk Planner</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-scheduler') ); ?>" class="aap-nav-link">Scheduler</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-thumbnails') ); ?>" class="aap-nav-link">Thumbnail Tool</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-tags') ); ?>" class="aap-nav-link">Tags Tool</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-translator') ); ?>" class="aap-nav-link">Translator</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-gsc') ); ?>" class="aap-nav-link">Indexing</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-rewriter') ); ?>" class="aap-nav-link">Rewriter</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-speed') ); ?>" class="aap-nav-link">Optimizer</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-sitemap') ); ?>" class="aap-nav-link">Sitemap</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-pages') ); ?>" class="aap-nav-link">Pages Generator</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-redirects') ); ?>" class="aap-nav-link">Redirect</a>
+        <a href="<?php echo esc_url( admin_url('admin.php?page=aap-randomizer') ); ?>" class="aap-nav-link">Date Randomizer</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-codes') ); ?>" class="aap-nav-link">Codes</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-settings') ); ?>" class="aap-nav-link active">Settings</a>
 </div>
         </div>
     </div>
@@ -85,12 +85,12 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                 <div class="aap-key-badge">
                     <?php $stats = AAP_Key_Manager::get_stats(); ?>
                     <span class="aap-key-dot <?php echo $stats['active']>0?'active':'inactive'; ?>"></span>
-                    <?php echo $stats['active']; ?> Active / <?php echo $stats['total']; ?> Total
+                    <?php echo $stats['active']; ?> Active / <?php echo (int) $stats['total']; ?> Total
                 </div>
             </div>
 
             <!-- Add key -->
-            <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" class="aap-add-key-form">
+            <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" class="aap-add-key-form">
                 <?php wp_nonce_field('aap_add_key'); ?>
                 <input type="hidden" name="action" value="aap_add_key">
                 <div class="aap-add-key-inputs">
@@ -140,7 +140,7 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                         $provider   = $k['provider'] ?? 'gemini';
                     ?>
                     <tr class="aap-key-row <?php echo $k['status'] !== 'active' ? 'aap-row-exhausted' : ''; ?>"
-                        data-key-index="<?php echo $i; ?>"
+                        data-key-index="<?php echo (int) $i; ?>"
                         data-reset-ts="<?php echo (int)($k['reset_at_ts'] ?? 0); ?>">
                         <td><?php echo $i+1; ?></td>
                         <td>
@@ -193,22 +193,22 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                         <td class="aap-actions">
                             <button type="button"
                                 class="aap-btn-small aap-btn-ghost aap-btn-ping"
-                                data-key-index="<?php echo $i; ?>"
+                                data-key-index="<?php echo (int) $i; ?>"
                                 title="Test this key with a minimal API call">
                                 🏓
                             </button>
                             <?php if ( in_array($k['status'], ['exhausted','invalid'], true) ): ?>
-                            <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" style="display:inline;">
+                            <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" style="display:inline;">
                                 <?php wp_nonce_field('aap_reset_key'); ?>
                                 <input type="hidden" name="action" value="aap_reset_key">
-                                <input type="hidden" name="key_index" value="<?php echo $i; ?>">
+                                <input type="hidden" name="key_index" value="<?php echo (int) $i; ?>">
                                 <button class="aap-btn-small aap-btn-success" type="submit" title="Force reset to active">↺</button>
                             </form>
                             <?php endif; ?>
-                            <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" style="display:inline;" onsubmit="return confirm('Delete this API key?')">
+                            <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" style="display:inline;" onsubmit="return confirm('Delete this API key?')">
                                 <?php wp_nonce_field('aap_delete_key'); ?>
                                 <input type="hidden" name="action" value="aap_delete_key">
-                                <input type="hidden" name="key_index" value="<?php echo $i; ?>">
+                                <input type="hidden" name="key_index" value="<?php echo (int) $i; ?>">
                                 <button class="aap-btn-small aap-btn-danger" type="submit">✕</button>
                             </form>
                         </td>
@@ -222,7 +222,7 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
         <!-- ============================================================ -->
         <!-- SETTINGS FORM (Balanced Double Columns Layout) -->
         <!-- ============================================================ -->
-        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+        <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
             <?php wp_nonce_field('aap_save_settings'); ?>
             <input type="hidden" name="action" value="aap_save_settings">
 
@@ -328,7 +328,7 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                                     $saved_tag_count = (int) get_option( 'aap_tag_count', 15 );
                                     foreach ( [5, 10, 15, 20, 25, 30, 40, 50, 75, 100] as $tc ):
                                     ?>
-                                    <option value="<?php echo $tc; ?>" <?php selected( $saved_tag_count, $tc ); ?>><?php echo $tc; ?> tags</option>
+                                    <option value="<?php echo (int) $tc; ?>" <?php selected( $saved_tag_count, $tc ); ?>><?php echo (int) $tc; ?> tags</option>
                                     <?php endforeach; ?>
                                 </select>
                                 <div class="aap-hint">Default number of SEO tags generated per post.</div>
@@ -845,7 +845,7 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                     <div class="aap-hint" style="color: #475569; font-size: 13px;">Reset all options back to plugin defaults or clear temporary transients, queue data, history logs, and system caches.</div>
                 </div>
                 <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
-                    <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" onsubmit="return confirm('⚠️ Are you sure you want to reset all plugin settings to factory defaults?');" style="margin:0;">
+                    <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" onsubmit="return confirm('⚠️ Are you sure you want to reset all plugin settings to factory defaults?');" style="margin:0;">
                         <?php wp_nonce_field('aap_reset_settings'); ?>
                         <input type="hidden" name="action" value="aap_reset_settings">
                         <button type="submit" class="aap-btn aap-btn-secondary" style="border: 1px solid #dc2626; color: #dc2626; background: #ffffff; font-weight: 600; padding: 8px 16px;">
@@ -853,7 +853,7 @@ if ( empty( $val_prompt_faq ) ) $val_prompt_faq = $default_prompt_faq;
                         </button>
                     </form>
 
-                    <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" onsubmit="return confirm('🧹 Clear all plugin cache, temporary transients, queue, and history logs?');" style="margin:0;">
+                    <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" onsubmit="return confirm('🧹 Clear all plugin cache, temporary transients, queue, and history logs?');" style="margin:0;">
                         <?php wp_nonce_field('aap_clear_plugin_data'); ?>
                         <input type="hidden" name="action" value="aap_clear_plugin_data">
                         <button type="submit" class="aap-btn aap-btn-danger" style="background: #dc2626; color: #ffffff; font-weight: 600; border: none; padding: 8px 16px;">
