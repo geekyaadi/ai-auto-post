@@ -147,7 +147,17 @@ Use clean HTML formatting. Do NOT wrap in markdown code blocks.";
         $content = preg_replace( '/```\s*$/', '', $content );
 
         // Check if page already exists
-        $existing = get_page_by_title( $title );
+        $page_query = new WP_Query( [
+            'title'                  => $title,
+            'post_type'              => 'page',
+            'post_status'            => 'any',
+            'posts_per_page'         => 1,
+            'no_found_rows'          => true,
+            'ignore_sticky_posts'    => true,
+            'update_post_term_cache' => false,
+            'update_post_meta_cache' => false,
+        ] );
+        $existing = ! empty( $page_query->posts ) ? $page_query->posts[0] : null;
         if ( $existing ) {
             $page_id = wp_update_post( [
                 'ID'           => $existing->ID,
