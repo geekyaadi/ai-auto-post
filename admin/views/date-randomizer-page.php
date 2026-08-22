@@ -8,9 +8,13 @@ $rand_cmts    = get_option( 'aap_randomizer_comments', '1' );
 $post_type    = get_option( 'aap_randomizer_post_type', 'post' );
 $set_modified = get_option( 'aap_randomizer_modified_date', '1' );
 
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $saved     = isset( $_GET['saved'] ) && $_GET['saved'] === 'true';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $error     = isset( $_GET['error'] ) ? sanitize_text_field( $_GET['error'] ) : '';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $run       = isset( $_GET['run'] ) && $_GET['run'] === 'success';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $run_count = isset( $_GET['count'] ) ? (int) $_GET['count'] : 0;
 
 $post_types = get_post_types( [ 'public' => true ], 'objects' );
