@@ -4,7 +4,7 @@ Tags: ai, gemini, auto-post, content-generation, seo, gsc-indexing, article-rewr
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.4.7
+Stable tag: 1.4.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,8 +51,29 @@ If your active API key hits a rate limit or daily quota, the plugin instantly ma
 = Does it support Google Indexing API (GSC)? =
 Yes! You can paste or upload your Google Cloud Service Account JSON key in **Settings ➔ Indexing**, and enable auto-pinging on post publish or submit URLs manually.
 
-= Will it work with Yoast SEO and RankMath? =
-Yes! Meta descriptions and social share (OpenGraph) images are automatically written to Yoast SEO and RankMath custom meta fields.
+== Third-Party Services ==
+
+This plugin relies on external third-party APIs for AI content generation, image creation, language translation, and search indexing:
+
+* **Google Gemini API** (by Google LLC)
+  - Purpose: Generates blog posts, titles, meta tags, FAQs, and AI featured images.
+  - Terms of Service: https://ai.google.dev/terms
+  - Privacy Policy: https://policies.google.com/privacy
+
+* **OpenAI ChatGPT API** (by OpenAI LLC)
+  - Purpose: Alternative AI engine for article generation, rewriting, and translation.
+  - Terms of Service: https://openai.com/policies/terms-of-use/
+  - Privacy Policy: https://openai.com/policies/privacy-policy/
+
+* **Google Search Console & Indexing API** (by Google LLC)
+  - Purpose: Submits published post URLs to Google Search index.
+  - Terms of Service: https://developers.google.com/terms
+  - Privacy Policy: https://policies.google.com/privacy
+
+* **Wikipedia API** (by Wikimedia Foundation)
+  - Purpose: Contextual search lookup for high-authority E-E-A-T outbound linking.
+  - Terms of Service: https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use
+  - Privacy Policy: https://foundation.wikimedia.org/wiki/Policy:Privacy_policy
 
 == Changelog ==
 
