@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [v1.4.9] - 2026-08-22
+
+### 🎯 WordPress.org Plugin Check (PCP) Standardizations & Fixes
+- **Languages Folder**: Created `languages/index.php` to resolve `plugin_header_nonexistent_domain_path` warning.
+- **Readme.txt Header & Tags**: Updated `Tested up to: 6.7`, capped tags to 5 (`ai, gemini, auto-post, seo, content-generator`), and trimmed short description under 150 characters.
+- **WP Alternative Functions**: Replaced PHP native functions with official WP alternatives (`wp_rand`, `wp_parse_url`, `wp_strip_all_tags`, `wp_delete_file`, `wp_safe_redirect`, `wp_is_writable`).
+- **Deprecated Functions**: Replaced `get_page_by_title()` with `WP_Query`.
+- **Output Escaping**: Wrapped all sitemap lastmod XML outputs and view variables in `esc_xml()`, `esc_html()`, `esc_attr()`, or `(int)`.
+
+---
+
 ## [v1.4.8] - 2026-08-22
 
 ### 🔄 WordPress Native Auto-Updates Policy & Toggle Sync Fix
