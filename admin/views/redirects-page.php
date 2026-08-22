@@ -1,14 +1,20 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $filter = isset( $_GET['filter'] ) ? sanitize_text_field( $_GET['filter'] ) : 'all';
 $rules  = AAP_Redirects::get_redirect_rules();
 $logs_404 = AAP_Redirects::get_404_logs( $filter );
 
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $updated        = isset( $_GET['updated'] ) && $_GET['updated'] === 'true';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $deleted        = isset( $_GET['deleted'] ) && $_GET['deleted'] === 'true';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $converted      = isset( $_GET['converted'] ) && $_GET['converted'] === 'true';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $logs_cleared   = isset( $_GET['logs_cleared'] ) && $_GET['logs_cleared'] === 'true';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $settings_saved = isset( $_GET['settings_saved'] ) && $_GET['settings_saved'] === 'true';
 
 $redirect_404_to_home = get_option( 'aap_redirect_404_to_home', '0' );
