@@ -23,22 +23,22 @@ $redirect_404_to_home = get_option( 'aap_redirect_404_to_home', '0' );
                 <span class="aap-logo-badge">🔀 Redirect & 404 Manager</span>
             </div>
             <div class="aap-header-nav">
-                <a href="<?php echo admin_url('admin.php?page=ai-auto-post'); ?>" class="aap-nav-link">Dashboard</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-generate'); ?>" class="aap-nav-link">Generate Post</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-planner'); ?>" class="aap-nav-link">Bulk Planner</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-scheduler'); ?>" class="aap-nav-link">Scheduler</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-thumbnails'); ?>" class="aap-nav-link">Thumbnail Tool</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-tags'); ?>" class="aap-nav-link">Tags Tool</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-translator'); ?>" class="aap-nav-link">Translator</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-gsc'); ?>" class="aap-nav-link">Indexing</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-rewriter'); ?>" class="aap-nav-link">Rewriter</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-speed'); ?>" class="aap-nav-link">Optimizer</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-sitemap'); ?>" class="aap-nav-link">Sitemap</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-pages'); ?>" class="aap-nav-link">Pages Generator</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-redirects'); ?>" class="aap-nav-link active">Redirect</a>
-                    <a href="<?php echo admin_url('admin.php?page=aap-randomizer'); ?>" class="aap-nav-link">Date Randomizer</a>
-    <a href="<?php echo admin_url('admin.php?page=aap-codes'); ?>" class="aap-nav-link">Codes</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-settings'); ?>" class="aap-nav-link">Settings</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=ai-auto-post') ); ?>" class="aap-nav-link">Dashboard</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-generate') ); ?>" class="aap-nav-link">Generate Post</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-planner') ); ?>" class="aap-nav-link">Bulk Planner</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-scheduler') ); ?>" class="aap-nav-link">Scheduler</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-thumbnails') ); ?>" class="aap-nav-link">Thumbnail Tool</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-tags') ); ?>" class="aap-nav-link">Tags Tool</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-translator') ); ?>" class="aap-nav-link">Translator</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-gsc') ); ?>" class="aap-nav-link">Indexing</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-rewriter') ); ?>" class="aap-nav-link">Rewriter</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-speed') ); ?>" class="aap-nav-link">Optimizer</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-sitemap') ); ?>" class="aap-nav-link">Sitemap</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-pages') ); ?>" class="aap-nav-link">Pages Generator</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-redirects') ); ?>" class="aap-nav-link active">Redirect</a>
+                    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-randomizer') ); ?>" class="aap-nav-link">Date Randomizer</a>
+    <a href="<?php echo esc_url( admin_url('admin.php?page=aap-codes') ); ?>" class="aap-nav-link">Codes</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-settings') ); ?>" class="aap-nav-link">Settings</a>
             </div>
         </div>
     </div>
@@ -186,9 +186,9 @@ $redirect_404_to_home = get_option( 'aap_redirect_404_to_home', '0' );
             <!-- Filter Tabs -->
             <div style="margin-bottom:15px; border-bottom:1px solid #e2e8f0; padding-bottom:10px; display:flex; align-items:center; gap:8px;">
                 <span style="font-weight:700; font-size:13px; margin-right:5px; color:#334155;">Filter 404 Logs:</span>
-                <a href="<?php echo admin_url('admin.php?page=aap-redirects&filter=all'); ?>" class="aap-btn aap-btn-small <?php echo $filter === 'all' ? 'aap-btn-primary' : 'aap-btn-ghost'; ?>">All 404s</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-redirects&filter=links'); ?>" class="aap-btn aap-btn-small <?php echo $filter === 'links' ? 'aap-btn-primary' : 'aap-btn-ghost'; ?>">🔗 Pages & Links Only</a>
-                <a href="<?php echo admin_url('admin.php?page=aap-redirects&filter=images'); ?>" class="aap-btn aap-btn-small <?php echo $filter === 'images' ? 'aap-btn-primary' : 'aap-btn-ghost'; ?>">🖼️ Missing Images Only</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-redirects&filter=all') ); ?>" class="aap-btn aap-btn-small <?php echo $filter === 'all' ? 'aap-btn-primary' : 'aap-btn-ghost'; ?>">All 404s</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-redirects&filter=links') ); ?>" class="aap-btn aap-btn-small <?php echo $filter === 'links' ? 'aap-btn-primary' : 'aap-btn-ghost'; ?>">🔗 Pages & Links Only</a>
+                <a href="<?php echo esc_url( admin_url('admin.php?page=aap-redirects&filter=images') ); ?>" class="aap-btn aap-btn-small <?php echo $filter === 'images' ? 'aap-btn-primary' : 'aap-btn-ghost'; ?>">🖼️ Missing Images Only</a>
             </div>
 
             <?php if ( empty( $logs_404 ) ): ?>
