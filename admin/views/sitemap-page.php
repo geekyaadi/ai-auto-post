@@ -28,6 +28,7 @@ $auto_ping_google  = get_option( 'aap_sitemap_auto_ping_google', '1' );
 $auto_ping_bing    = get_option( 'aap_sitemap_auto_ping_bing', '1' );
 
 $sitemap_url = home_url( '/' . trim( $slug, '/' ) );
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $saved = isset( $_GET['updated'] ) && $_GET['updated'] === 'true';
 ?>
 
@@ -174,14 +175,14 @@ $saved = isset( $_GET['updated'] ) && $_GET['updated'] === 'true';
                                 <td>
                                     <select name="aap_sitemap_priority_home" style="width:100%;">
                                         <?php foreach(['1.0', '0.9', '0.8', '0.7', '0.6', '0.5'] as $p): ?>
-                                            <option value="<?php echo $p; ?>" <?php selected($home_priority, $p); ?>><?php echo $p; ?></option>
+                                            <option value="<?php echo esc_html( $p ); ?>" <?php selected($home_priority, $p); ?>><?php echo esc_html( $p ); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </td>
                                 <td>
                                     <select name="aap_sitemap_changefreq_home" style="width:100%;">
                                         <?php foreach(['always', 'hourly', 'daily', 'weekly', 'monthly'] as $f): ?>
-                                            <option value="<?php echo $f; ?>" <?php selected($home_freq, $f); ?>><?php echo ucfirst($f); ?></option>
+                                            <option value="<?php echo esc_html( $f ); ?>" <?php selected($home_freq, $f); ?>><?php echo esc_html( ucfirst($f) ); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </td>
@@ -199,14 +200,14 @@ $saved = isset( $_GET['updated'] ) && $_GET['updated'] === 'true';
                                 <td>
                                     <select name="aap_sitemap_priority_post" style="width:100%;">
                                         <?php foreach(['1.0', '0.9', '0.8', '0.7', '0.6', '0.5'] as $p): ?>
-                                            <option value="<?php echo $p; ?>" <?php selected($post_priority, $p); ?>><?php echo $p; ?></option>
+                                            <option value="<?php echo esc_html( $p ); ?>" <?php selected($post_priority, $p); ?>><?php echo esc_html( $p ); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </td>
                                 <td>
                                     <select name="aap_sitemap_changefreq_post" style="width:100%;">
                                         <?php foreach(['always', 'hourly', 'daily', 'weekly', 'monthly'] as $f): ?>
-                                            <option value="<?php echo $f; ?>" <?php selected($post_freq, $f); ?>><?php echo ucfirst($f); ?></option>
+                                            <option value="<?php echo esc_html( $f ); ?>" <?php selected($post_freq, $f); ?>><?php echo esc_html( ucfirst($f) ); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </td>
@@ -224,14 +225,14 @@ $saved = isset( $_GET['updated'] ) && $_GET['updated'] === 'true';
                                 <td>
                                     <select name="aap_sitemap_priority_page" style="width:100%;">
                                         <?php foreach(['1.0', '0.9', '0.8', '0.7', '0.6', '0.5', '0.4'] as $p): ?>
-                                            <option value="<?php echo $p; ?>" <?php selected($page_priority, $p); ?>><?php echo $p; ?></option>
+                                            <option value="<?php echo esc_html( $p ); ?>" <?php selected($page_priority, $p); ?>><?php echo esc_html( $p ); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </td>
                                 <td>
                                     <select name="aap_sitemap_changefreq_page" style="width:100%;">
                                         <?php foreach(['always', 'hourly', 'daily', 'weekly', 'monthly'] as $f): ?>
-                                            <option value="<?php echo $f; ?>" <?php selected($page_freq, $f); ?>><?php echo ucfirst($f); ?></option>
+                                            <option value="<?php echo esc_html( $f ); ?>" <?php selected($page_freq, $f); ?>><?php echo esc_html( ucfirst($f) ); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </td>
@@ -249,14 +250,14 @@ $saved = isset( $_GET['updated'] ) && $_GET['updated'] === 'true';
                                 <td>
                                     <select name="aap_sitemap_priority_cat" style="width:100%;">
                                         <?php foreach(['0.8', '0.7', '0.6', '0.5', '0.4', '0.3'] as $p): ?>
-                                            <option value="<?php echo $p; ?>" <?php selected($cat_priority, $p); ?>><?php echo $p; ?></option>
+                                            <option value="<?php echo esc_html( $p ); ?>" <?php selected($cat_priority, $p); ?>><?php echo esc_html( $p ); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </td>
                                 <td>
                                     <select name="aap_sitemap_changefreq_cat" style="width:100%;">
                                         <?php foreach(['always', 'hourly', 'daily', 'weekly', 'monthly'] as $f): ?>
-                                            <option value="<?php echo $f; ?>" <?php selected($cat_freq, $f); ?>><?php echo ucfirst($f); ?></option>
+                                            <option value="<?php echo esc_html( $f ); ?>" <?php selected($cat_freq, $f); ?>><?php echo esc_html( ucfirst($f) ); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </td>
@@ -274,14 +275,14 @@ $saved = isset( $_GET['updated'] ) && $_GET['updated'] === 'true';
                                 <td>
                                     <select name="aap_sitemap_priority_tag" style="width:100%;">
                                         <?php foreach(['0.6', '0.5', '0.4', '0.3', '0.2', '0.1'] as $p): ?>
-                                            <option value="<?php echo $p; ?>" <?php selected($tag_priority, $p); ?>><?php echo $p; ?></option>
+                                            <option value="<?php echo esc_html( $p ); ?>" <?php selected($tag_priority, $p); ?>><?php echo esc_html( $p ); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </td>
                                 <td>
                                     <select name="aap_sitemap_changefreq_tag" style="width:100%;">
                                         <?php foreach(['always', 'hourly', 'daily', 'weekly', 'monthly'] as $f): ?>
-                                            <option value="<?php echo $f; ?>" <?php selected($tag_freq, $f); ?>><?php echo ucfirst($f); ?></option>
+                                            <option value="<?php echo esc_html( $f ); ?>" <?php selected($tag_freq, $f); ?>><?php echo esc_html( ucfirst($f) ); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </td>
