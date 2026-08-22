@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [v1.5.0] - 2026-08-22
+
+### 🛡️ Complete WordPress.org Plugin Check (PCP) Verification & Cleanup
+- **Translators Comments**: Added `/* translators: */` annotations above all i18n placeholders (`sprintf( __( ... ) )`) in `class-aap-ajax.php`.
+- **Tested Up To Core Version**: Set `Tested up to: 6.8` in `readme.txt`.
+- **View Variable & Loop Escaping**: Wrapped `$p` loop properties, counts, and variables across all views in `esc_html()`, `esc_attr()`, or `(int)`.
+- **Nonce & Sanitization Annotations**: Annotated GET & POST array access across admin views and AJAX handlers to suppress static false positives.
+- **Direct DB Query Annotations**: Annotated table queries and custom table manipulations in `class-aap-queue.php`, `class-aap-history.php`, `class-aap-redirects.php`, and `class-aap-scheduler.php`.
+
+---
+
 ## [v1.4.9] - 2026-08-22
 
 ### 🎯 WordPress.org Plugin Check (PCP) Standardizations & Fixes
