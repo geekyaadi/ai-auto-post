@@ -82,10 +82,10 @@ $total_pages   = $query->max_num_pages;
     <!-- Tab navigation -->
     <div class="aap-tabs" style="display:flex; gap:10px; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:10px;">
         <a href="<?php echo esc_url( admin_url('admin.php?page=aap-thumbnails&tab=pending') ); ?>" class="aap-btn <?php echo $tab === 'pending' ? 'aap-btn-primary' : 'aap-btn-secondary'; ?>" style="font-weight:600; border-radius:6px; font-size:12px; padding:8px 16px;">
-            ⚠️ Pending Thumbnails (<?php echo $total_pending; ?>)
+            ⚠️ Pending Thumbnails (<?php echo (int) $total_pending; ?>)
         </a>
         <a href="<?php echo esc_url( admin_url('admin.php?page=aap-thumbnails&tab=completed') ); ?>" class="aap-btn <?php echo $tab === 'completed' ? 'aap-btn-primary' : 'aap-btn-secondary'; ?>" style="font-weight:600; border-radius:6px; font-size:12px; padding:8px 16px;">
-            🖼️ Existing Featured Images (<?php echo $total_completed; ?>)
+            🖼️ Existing Featured Images (<?php echo (int) $total_completed; ?>)
         </a>
     </div>
 
@@ -112,7 +112,7 @@ $total_pages   = $query->max_num_pages;
                     🖼️ Generate Selected
                 </button>
                 <button type="button" id="aap-btn-generate-all-thumbs" class="aap-btn aap-btn-primary aap-btn-small" style="background:linear-gradient(135deg,#059669,#10b981); border:none;">
-                    🚀 Generate All Pending (<?php echo $total_pending; ?>)
+                    🚀 Generate All Pending (<?php echo (int) $total_pending; ?>)
                 </button>
             </div>
 
@@ -147,7 +147,7 @@ $total_pages   = $query->max_num_pages;
                         <td><input type="checkbox" class="aap-thumb-checkbox" data-post-id="<?php echo $p->ID; ?>"></td>
                         <td><code>#<?php echo $p->ID; ?></code></td>
                         <td>
-                            <a href="<?php echo get_edit_post_link($p->ID); ?>" target="_blank" style="font-weight:600;">
+                            <a href="<?php echo esc_url( get_edit_post_link($p->ID) ); ?>" target="_blank" style="font-weight:600;">
                                 <?php echo esc_html($p->post_title); ?>
                             </a>
                         </td>
@@ -215,7 +215,7 @@ $total_pages   = $query->max_num_pages;
                             <img src="<?php echo esc_url($thumb_url); ?>" alt="Preview" style="max-height:50px; border-radius:4px; border:1px solid #ccd0d4; display:block;">
                         </td>
                         <td>
-                            <a href="<?php echo get_edit_post_link($p->ID); ?>" target="_blank" style="font-weight:600;">
+                            <a href="<?php echo esc_url( get_edit_post_link($p->ID) ); ?>" target="_blank" style="font-weight:600;">
                                 <?php echo esc_html($p->post_title); ?>
                             </a>
                         </td>
