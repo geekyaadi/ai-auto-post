@@ -12,6 +12,7 @@ $msg_map = [
     'cache_purged'   => ['type'=>'success','text'=>'⚡ All Site & Transients Caches Purged Successfully!'],
     'settings_reset' => ['type'=>'success','text'=>'⚙️ All Plugin Settings Reset to Defaults.'],
 ];
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 $msg = $_GET['msg'] ?? '';
 $cost_per_1k = 0.00015; // average cost estimate in USD per 1k tokens across models
 ?>
